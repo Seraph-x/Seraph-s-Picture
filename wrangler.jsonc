@@ -1,4 +1,4 @@
-// Cloudflare Pages configuration for K-Vault.
+// Cloudflare Pages configuration for Seraph's Pictures.
 // Keep this file in sync with the Pages dashboard. When present, it becomes the source of truth for these settings.
 // WARNING: No R2 jurisdiction will be written. This is correct for normal buckets created with Automatic placement.
 {

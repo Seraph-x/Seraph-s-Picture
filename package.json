@@ -1,6 +1,6 @@
 {
-  "name": "k-vault",
-  "description": "K-Vault - Free File Hosting Service based on Telegram",
+  "name": "seraph-pictures",
+  "description": "Seraph's Pictures - private media workspace for Cloudflare Pages and Docker",
   "version": "1.0.0",
   "scripts": {
     "build": "npm run frontend:build",

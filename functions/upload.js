@@ -145,12 +145,12 @@ function validateDirectUpload(storageMode, fileSize) {
     discord: {
       maxBytes: 25 * MB,
       status: 413,
-      message: "Discord upload limit depends on server boost level; K-Vault uses a conservative 25MB default.",
+      message: "Discord upload limit depends on server boost level; Seraph Pictures uses a conservative 25MB default.",
     },
     huggingface: {
       maxBytes: 35 * MB,
       status: 413,
-      message: "HuggingFace regular upload is capped at 35MB in K-Vault. Use another storage backend for larger files.",
+      message: "HuggingFace regular upload is capped at 35MB in Seraph Pictures. Use another storage backend for larger files.",
     },
     r2: { maxBytes: 100 * MB, status: 413, message: "R2 upload limit is 100MB." },
     s3: { maxBytes: 100 * MB, status: 413, message: "S3 upload limit is 100MB." },

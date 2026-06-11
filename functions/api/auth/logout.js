@@ -6,7 +6,7 @@ import {
   getSessionFromCookie,
   deleteSession,
   createClearSessionCookieHeader,
-  createLegacyClearSessionCookieHeader,
+  createLegacyClearSessionCookieHeaders,
 } from "../../utils/auth.js";
 
 export async function onRequestPost(context) {
@@ -22,7 +22,9 @@ export async function onRequestPost(context) {
       "Content-Type": "application/json",
       "Set-Cookie": createClearSessionCookieHeader(),
     });
-    headers.append("Set-Cookie", createLegacyClearSessionCookieHeader());
+    for (const cookieHeader of createLegacyClearSessionCookieHeaders()) {
+      headers.append("Set-Cookie", cookieHeader);
+    }
 
     return new Response(
       JSON.stringify({

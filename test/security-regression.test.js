@@ -274,11 +274,9 @@ describe('security regressions', function () {
     });
   });
 
-  it('does not load hardcoded browser Sentry from legacy admin pages', function () {
+  it('does not load hardcoded browser Sentry from the legacy admin page', function () {
     const adminHtml = fs.readFileSync(path.join(__dirname, '..', 'admin.html'), 'utf8');
-    const adminImgtcHtml = fs.readFileSync(path.join(__dirname, '..', 'admin-imgtc.html'), 'utf8');
 
     assert.doesNotMatch(adminHtml, /js\.sentry-cdn\.com/);
-    assert.doesNotMatch(adminImgtcHtml, /js\.sentry-cdn\.com/);
   });
 });

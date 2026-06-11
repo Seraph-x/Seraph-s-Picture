@@ -324,7 +324,7 @@ function getUploadLimits() {
       maxBytes: 25 * MB,
       directThreshold: DIRECT_UPLOAD_THRESHOLD,
       supportsChunkUpload: true,
-      message: 'Discord upload limit depends on server boost level; K-Vault uses a conservative 25MB default.',
+      message: 'Discord upload limit depends on server boost level; Seraph Pictures uses a conservative 25MB default.',
     },
     huggingface: {
       maxBytes: 35 * MB,

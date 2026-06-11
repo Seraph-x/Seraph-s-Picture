@@ -20,7 +20,7 @@ const {
 } = require('./lib/utils/telegram-webhook');
 
 const CORS_ALLOW_METHODS = 'GET,POST,PUT,PATCH,DELETE,OPTIONS';
-const CORS_ALLOW_HEADERS = 'Content-Type, Authorization, Range, X-KVault-Client, Accept';
+const CORS_ALLOW_HEADERS = 'Content-Type, Authorization, Range, X-Seraph-Client, Accept';
 const CORS_EXPOSE_HEADERS = 'Content-Length, Content-Range, Accept-Ranges, Content-Disposition';
 
 function createCorsMiddleware(env = {}) {
@@ -111,9 +111,9 @@ function createApp() {
   }
 
   function prefersV2Envelope(c) {
-    const client = String(c.req.header('X-KVault-Client') || '').toLowerCase();
+    const client = String(c.req.header('X-Seraph-Client') || '').toLowerCase();
     const accept = String(c.req.header('accept') || '').toLowerCase();
-    return client === 'app-v2' || accept.includes('application/vnd.kvault.v2+json');
+    return client === 'app-v2' || accept.includes('application/vnd.seraph.v2+json');
   }
 
   function jsonError(c, statusCode, code, message, detail, retriable = false, extra = {}) {
@@ -520,7 +520,7 @@ function createApp() {
         maxBytes: Math.min(maxUploadSize, 25 * mb),
         directThreshold,
         supportsChunkUpload: true,
-        message: 'Discord upload limit depends on server boost level; K-Vault uses a conservative 25MB default.',
+        message: 'Discord upload limit depends on server boost level; Seraph Pictures uses a conservative 25MB default.',
       },
       huggingface: {
         maxBytes: Math.min(maxUploadSize, 35 * mb),

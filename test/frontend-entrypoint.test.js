@@ -68,6 +68,21 @@ describe('frontend Pages entrypoint', function () {
     assert.match(readDistFile(webdavPath), /WebDAV 上传中心/);
   });
 
+  it('does not emit retired Nuxt or old admin pages', function () {
+    const retiredPaths = [
+      path.join(repoRoot, 'frontend', 'dist', 'admin-imgtc.html'),
+      path.join(repoRoot, 'frontend', 'dist', 'admin-waterfall.html'),
+      path.join(repoRoot, 'frontend', 'dist', 'legacy', 'admin-imgtc.html'),
+      path.join(repoRoot, 'frontend', 'dist', 'legacy', 'admin-waterfall.html'),
+      path.join(repoRoot, 'frontend', 'dist', '_nuxt'),
+      path.join(repoRoot, 'frontend', 'dist', 'legacy', '_nuxt'),
+    ];
+
+    for (const retiredPath of retiredPaths) {
+      assert.strictEqual(fs.existsSync(retiredPath), false, `${retiredPath} should not be emitted`);
+    }
+  });
+
   it('uses root API paths from the legacy WebDAV page copy', function () {
     const webdavHtml = readDistFile(legacyWebdavPath);
 

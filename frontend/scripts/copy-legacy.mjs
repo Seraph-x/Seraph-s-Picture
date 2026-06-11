@@ -9,8 +9,6 @@ const legacyFiles = [
   'index.html',
   'login.html',
   'admin.html',
-  'admin-imgtc.html',
-  'admin-waterfall.html',
   'gallery.html',
   'preview.html',
   'webdav.html',
@@ -32,7 +30,7 @@ const legacyFiles = [
   'music.svg',
 ];
 
-const legacyDirs = ['_nuxt'];
+const legacyDirs = [];
 const SPA_REWRITE_STATUS = 200;
 const appDeepLinkRoutes = ['login', 'drive', 'admin', 'storage', 'status'];
 

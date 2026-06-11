@@ -107,7 +107,7 @@ class UploadService {
       response = await this.requestRemote(parsedUrl, {
         signal: controller.signal,
         headers: {
-          'User-Agent': 'K-Vault/2.0 (+https://github.com/katelya77/K-Vault)',
+          'User-Agent': 'Seraphs-Pictures/2.0',
           Accept: '*/*',
         },
       });

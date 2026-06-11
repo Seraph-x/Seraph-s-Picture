@@ -12,15 +12,12 @@ COPY login.html /usr/share/nginx/html/
 COPY preview.html /usr/share/nginx/html/
 COPY block-img.html /usr/share/nginx/html/
 COPY whitelist-on.html /usr/share/nginx/html/
-COPY admin-imgtc.html /usr/share/nginx/html/
-COPY admin-waterfall.html /usr/share/nginx/html/
 
 COPY *.css /usr/share/nginx/html/
 COPY *.js /usr/share/nginx/html/
 COPY *.svg /usr/share/nginx/html/
 COPY *.png /usr/share/nginx/html/
 COPY *.ico /usr/share/nginx/html/
-COPY _nuxt /usr/share/nginx/html/_nuxt
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

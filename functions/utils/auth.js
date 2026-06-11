@@ -3,8 +3,8 @@
  * 支持 Cookie-based 会话认证和 Basic Auth
  */
 
-const SESSION_COOKIE_NAME = 'k_vault_session';
-const LEGACY_SESSION_COOKIE_NAME = 'katelya_session';
+const SESSION_COOKIE_NAME = 'seraph_pictures_session';
+const LEGACY_SESSION_COOKIE_NAMES = ['k_vault_session', 'katelya_session'];
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24小时
 
 /**
@@ -55,7 +55,7 @@ export function getSessionFromCookie(request) {
   const cookies = cookieHeader.split(';').map(c => c.trim());
   for (const cookie of cookies) {
     const [name, value] = cookie.split('=');
-    if (name === SESSION_COOKIE_NAME || name === LEGACY_SESSION_COOKIE_NAME) {
+    if (name === SESSION_COOKIE_NAME || LEGACY_SESSION_COOKIE_NAMES.includes(name)) {
       return value;
     }
   }
@@ -126,8 +126,10 @@ export function createClearSessionCookieHeader() {
   return `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`;
 }
 
-export function createLegacyClearSessionCookieHeader() {
-  return `${LEGACY_SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`;
+export function createLegacyClearSessionCookieHeaders() {
+  return LEGACY_SESSION_COOKIE_NAMES.map((name) => (
+    `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
+  ));
 }
 
 /**

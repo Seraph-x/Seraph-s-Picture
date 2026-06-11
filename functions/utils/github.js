@@ -72,7 +72,7 @@ async function parseErrorBody(response) {
 function authHeaders(config, extra = {}, accept = null) {
   return {
     Authorization: `Bearer ${config.token}`,
-    'User-Agent': 'k-vault-cloudflare-functions',
+    'User-Agent': 'seraph-pictures-cloudflare-functions',
     Accept: accept || 'application/vnd.github+json',
     ...extra,
   };
@@ -119,7 +119,7 @@ async function uploadViaContents(config, { arrayBuffer, storageKey, fileName }) 
 
   const existing = await getContentsMetadata(config, pathInRepo);
   const payload = {
-    message: `k-vault upload: ${pathInRepo}`,
+    message: `seraph-pictures upload: ${pathInRepo}`,
     content: arrayBufferToBase64(arrayBuffer),
   };
   if (config.branch) payload.branch = config.branch;
@@ -170,7 +170,7 @@ async function getLatestRelease(config, createIfMissing = false) {
 
   if (response.status === 404) {
     if (!createIfMissing) return null;
-    return createRelease(config, 'k-vault-storage');
+    return createRelease(config, 'seraph-pictures-storage');
   }
   if (!response.ok) {
     const detail = await parseErrorBody(response);
@@ -358,7 +358,7 @@ async function deleteViaContents(config, storageKey, metadata = {}) {
   if (!existing?.sha) return true;
 
   const payload = {
-    message: `k-vault delete: ${pathInRepo}`,
+    message: `seraph-pictures delete: ${pathInRepo}`,
     sha: existing.sha,
   };
   if (config.branch) payload.branch = config.branch;

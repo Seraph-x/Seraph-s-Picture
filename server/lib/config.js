@@ -64,7 +64,7 @@ function loadConfig(env = process.env) {
 
     basicUser: normalizeEnvString(env.BASIC_USER),
     basicPass: normalizeEnvString(env.BASIC_PASS),
-    sessionCookieName: normalizeEnvString(env.SESSION_COOKIE_NAME, 'k_vault_session'),
+    sessionCookieName: normalizeEnvString(env.SESSION_COOKIE_NAME, 'seraph_pictures_session'),
     sessionDurationMs: toInt(env.SESSION_DURATION_MS, 24 * 60 * 60 * 1000),
 
     guestUploadEnabled: toBool(env.GUEST_UPLOAD, false),
@@ -79,11 +79,11 @@ function loadConfig(env = process.env) {
     sessionSecret: normalizeEnvString(env.SESSION_SECRET) || normalizeEnvString(env.FILE_URL_SECRET) || normalizeEnvString(env.CONFIG_ENCRYPTION_KEY) || '',
 
     dataDir,
-    dbPath: env.DB_PATH ? path.resolve(normalizeEnvString(env.DB_PATH)) : path.join(dataDir, 'k-vault.db'),
+    dbPath: env.DB_PATH ? path.resolve(normalizeEnvString(env.DB_PATH)) : path.join(dataDir, 'seraph-pictures.db'),
     chunkDir: env.CHUNK_DIR ? path.resolve(normalizeEnvString(env.CHUNK_DIR)) : path.join(dataDir, 'chunks'),
     settingsStore: normalizeEnvString(env.SETTINGS_STORE, 'sqlite').toLowerCase(),
     settingsRedisUrl: normalizeEnvString(env.SETTINGS_REDIS_URL) || normalizeEnvString(env.REDIS_URL) || '',
-    settingsRedisPrefix: normalizeEnvString(env.SETTINGS_REDIS_PREFIX, 'k-vault'),
+    settingsRedisPrefix: normalizeEnvString(env.SETTINGS_REDIS_PREFIX, 'seraph-pictures'),
     settingsRedisConnectTimeoutMs: toInt(env.SETTINGS_REDIS_CONNECT_TIMEOUT_MS, 5000),
 
     telegramApiBase: telegramApiBase.value,

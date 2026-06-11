@@ -196,7 +196,7 @@ const targetFolderPath = ref('');
 const pendingUploadBatch = ref(null);
 
 const DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024;
-const V2_ACCEPT = 'application/vnd.kvault.v2+json, application/json;q=0.9, text/plain;q=0.5, */*;q=0.1';
+const V2_ACCEPT = 'application/vnd.seraph.v2+json, application/json;q=0.9, text/plain;q=0.5, */*;q=0.1';
 let folderTreeRequestId = 0;
 
 const {
@@ -599,7 +599,7 @@ function directUpload(item) {
     xhr.open('POST', apiUrl('/upload'));
     xhr.withCredentials = true;
     xhr.setRequestHeader('Accept', V2_ACCEPT);
-    xhr.setRequestHeader('X-KVault-Client', 'app-v2');
+    xhr.setRequestHeader('X-Seraph-Client', 'app-v2');
 
     xhr.upload.onprogress = (event) => {
       if (!event.lengthComputable) return;
@@ -644,7 +644,7 @@ async function chunkUpload(item) {
     headers: {
       'Content-Type': 'application/json',
       Accept: V2_ACCEPT,
-      'X-KVault-Client': 'app-v2',
+      'X-Seraph-Client': 'app-v2',
     },
     body: JSON.stringify({
       fileName: item.file.name,
@@ -673,7 +673,7 @@ async function chunkUpload(item) {
       method: 'POST',
       headers: {
         Accept: V2_ACCEPT,
-        'X-KVault-Client': 'app-v2',
+        'X-Seraph-Client': 'app-v2',
       },
       body: chunkBody,
     });
@@ -686,7 +686,7 @@ async function chunkUpload(item) {
     headers: {
       'Content-Type': 'application/json',
       Accept: V2_ACCEPT,
-      'X-KVault-Client': 'app-v2',
+      'X-Seraph-Client': 'app-v2',
     },
     body: JSON.stringify({ uploadId }),
   });
@@ -715,7 +715,7 @@ async function uploadUrl() {
       headers: {
         'Content-Type': 'application/json',
         Accept: V2_ACCEPT,
-        'X-KVault-Client': 'app-v2',
+        'X-Seraph-Client': 'app-v2',
       },
       body: JSON.stringify({
         url: urlInput.value,

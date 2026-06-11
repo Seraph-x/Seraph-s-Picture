@@ -1,7 +1,7 @@
 ﻿const crypto = require('node:crypto');
 const { run, get } = require('../../db');
 
-const LEGACY_COOKIE_NAME = 'katelya_session';
+const LEGACY_COOKIE_NAMES = ['k_vault_session', 'katelya_session'];
 
 function parseCookies(cookieHeader = '') {
   const result = {};
@@ -85,7 +85,10 @@ class AuthService {
 
   getSessionTokenFromRequest(request) {
     const cookies = parseCookies(request.headers.get('cookie') || '');
-    return cookies[this.config.sessionCookieName] || cookies[LEGACY_COOKIE_NAME] || null;
+    for (const cookieName of [this.config.sessionCookieName, ...LEGACY_COOKIE_NAMES]) {
+      if (cookies[cookieName]) return cookies[cookieName];
+    }
+    return null;
   }
 
   createSessionCookie(token) {
@@ -94,10 +97,9 @@ class AuthService {
   }
 
   createClearSessionCookies() {
-    return [
-      `${this.config.sessionCookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
-      `${LEGACY_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
-    ];
+    return [...new Set([this.config.sessionCookieName, ...LEGACY_COOKIE_NAMES])].map((cookieName) => (
+      `${cookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
+    ));
   }
 
   checkAuthentication(request) {

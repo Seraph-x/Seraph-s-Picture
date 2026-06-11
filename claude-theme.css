@@ -213,7 +213,7 @@ textarea:focus,
 }
 
 .login-card .subtitle::before {
-  content: "K-Vault private workspace";
+  content: "Seraph's Pictures private workspace";
   font-size: 15px;
 }
 

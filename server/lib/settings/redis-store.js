@@ -27,7 +27,7 @@ function withTimeout(promise, timeoutMs, message) {
 class RedisSettingsStore {
   constructor(config) {
     this.redisUrl = config.settingsRedisUrl;
-    this.redisPrefix = config.settingsRedisPrefix || 'k-vault';
+    this.redisPrefix = config.settingsRedisPrefix || 'seraph-pictures';
     this.connectTimeoutMs = Math.max(1000, Number(config.settingsRedisConnectTimeoutMs || 5000));
     this.hashKey = `${this.redisPrefix}:app_settings`;
 

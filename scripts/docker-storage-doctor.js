@@ -218,7 +218,7 @@ function printSection(title, body) {
 }
 
 function main() {
-  process.stdout.write('K-Vault Docker Storage Doctor\n');
+  process.stdout.write('Seraph Pictures Docker Storage Doctor\n');
 
   const compose = checkDockerComposeReady();
   const status = compose.ok ? collectStatus() : { ok: false, message: 'skipped', detail: '' };

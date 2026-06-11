@@ -1,5 +1,5 @@
 const API_BASE = (import.meta.env.VITE_API_BASE || '').replace(/\/+$/, '');
-const V2_ACCEPT = 'application/vnd.kvault.v2+json, application/json;q=0.9, text/plain;q=0.5, */*;q=0.1';
+const V2_ACCEPT = 'application/vnd.seraph.v2+json, application/json;q=0.9, text/plain;q=0.5, */*;q=0.1';
 
 function buildUrl(path) {
   return `${API_BASE}${path}`;
@@ -30,7 +30,7 @@ function resolveErrorMessage(payload, fallback) {
 export async function apiFetch(path, options = {}) {
   const headers = new Headers(options.headers || {});
   if (!headers.has('Accept')) headers.set('Accept', V2_ACCEPT);
-  if (!headers.has('X-KVault-Client')) headers.set('X-KVault-Client', 'app-v2');
+  if (!headers.has('X-Seraph-Client')) headers.set('X-Seraph-Client', 'app-v2');
 
   const response = await fetch(buildUrl(path), {
     credentials: 'include',

@@ -211,6 +211,7 @@ function getFileLinkSecrets(env) {
     env?.FILE_URL_SECRET,
     env?.TG_FILE_URL_SECRET,
     env?.TG_Bot_Token,
+    'seraph-pictures-default-secret',
     'k-vault-default-secret',
     'tgbed-default-secret',
   ];
