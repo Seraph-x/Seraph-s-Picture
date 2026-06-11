@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/theme.css" />
     <script src="/theme.js?v=20260305"></script>
+    <script src="/i18n.js?v=20260611"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" />
     <style>
       :root {
@@ -744,14 +745,18 @@
             loading="eager"
             onerror="this.onerror=null;this.src='/favicon.ico';"
           />
-          <span>WebDAV 上传中心</span>
+          <span data-i18n="webdav.title">WebDAV 上传中心</span>
         </h1>
         <div class="header-actions">
-          <a class="action-link" href="./"><i class="fas fa-home"></i><span>首页</span></a>
-          <a class="action-link" href="/gallery.html"><i class="fas fa-images"></i><span>图片浏览</span></a>
-          <a class="action-link" href="/admin.html"><i class="fas fa-folder-tree"></i><span>管理后台</span></a>
-          <a class="action-link active" href="/webdav.html"><i class="fas fa-hard-drive"></i><span>WebDAV</span></a>
-          <button type="button" class="action-btn" data-theme-toggle aria-label="切换主题">
+          <a class="action-link" href="./"><i class="fas fa-home"></i><span data-i18n="nav.home">首页</span></a>
+          <a class="action-link" href="/gallery.html"><i class="fas fa-images"></i><span data-i18n="nav.gallery">图片浏览</span></a>
+          <a class="action-link" href="/admin.html"><i class="fas fa-folder-tree"></i><span data-i18n="nav.admin">管理后台</span></a>
+          <a class="action-link active" href="/webdav.html"><i class="fas fa-hard-drive"></i><span data-i18n="nav.webdav">WebDAV</span></a>
+          <button type="button" class="lang-toggle" data-i18n-toggle>
+            <i class="fas fa-globe lang-toggle-icon"></i>
+            <span data-lang-label>EN</span>
+          </button>
+          <button type="button" class="action-btn" data-theme-toggle data-i18n-aria-label="webdav.toggleTheme" aria-label="切换主题">
             <i class="fas fa-moon" data-theme-icon></i>
             <span data-theme-label>夜间</span>
           </button>
@@ -763,7 +768,7 @@
           <div class="toolbar-left">
             <div class="status-pill" id="statusPill">
               <span class="status-dot"></span>
-              <span id="statusText">正在检测 WebDAV 状态...</span>
+              <span id="statusText" data-i18n="webdav.checking">正在检测 WebDAV 状态...</span>
             </div>
             <div class="status-pill">
               <i class="fas fa-folder-tree"></i>
@@ -771,62 +776,62 @@
             </div>
           </div>
           <div class="toolbar-right">
-            <button id="copyAllBtn" type="button">复制全部链接</button>
-            <button id="clearResultBtn" type="button" class="btn-danger">清空记录</button>
+            <button id="copyAllBtn" type="button" data-i18n="webdav.copyAll">复制全部链接</button>
+            <button id="clearResultBtn" type="button" class="btn-danger" data-i18n="webdav.clearRecords">清空记录</button>
           </div>
         </article>
 
         <article class="card">
           <div class="card-header">
             <div>
-              <h2><i class="fas fa-circle-info"></i> WebDAV 状态</h2>
-              <p class="card-sub">用于确认 WebDAV 配置和连接情况。</p>
+              <h2><i class="fas fa-circle-info"></i> <span data-i18n="webdav.statusTitle">WebDAV 状态</span></h2>
+              <p class="card-sub" data-i18n="webdav.statusSub">用于确认 WebDAV 配置和连接情况。</p>
             </div>
-            <button id="refreshStatusBtn" type="button"><i class="fas fa-rotate"></i> 刷新状态</button>
+            <button id="refreshStatusBtn" type="button"><i class="fas fa-rotate"></i> <span data-i18n="webdav.refreshStatus">刷新状态</span></button>
           </div>
-          <p id="statusDetailText" class="status-line">等待检测</p>
+          <p id="statusDetailText" class="status-line" data-i18n="webdav.waiting">等待检测</p>
         </article>
 
         <article class="card">
           <div class="card-header">
             <div>
-              <h2><i class="fas fa-folder-open"></i> 上传目录</h2>
-              <p class="card-sub">可填写多级目录，例如：项目A/一月。</p>
+              <h2><i class="fas fa-folder-open"></i> <span data-i18n="webdav.uploadDir">上传目录</span></h2>
+              <p class="card-sub" data-i18n="webdav.uploadDirSub">可填写多级目录，例如：项目A/一月。</p>
             </div>
           </div>
-          <label class="input-label" for="folderPathInput">目录路径</label>
+          <label class="input-label" for="folderPathInput" data-i18n="webdav.dirPathLabel">目录路径</label>
           <div class="row">
-            <input id="folderPathInput" type="text" placeholder="留空则上传到根目录" />
+            <input id="folderPathInput" type="text" data-i18n-placeholder="webdav.dirPathPh" placeholder="留空则上传到根目录" />
           </div>
-          <p class="hint">后台可继续移动目录，已生成直链不会受影响。</p>
+          <p class="hint" data-i18n="webdav.dirHint">后台可继续移动目录，已生成直链不会受影响。</p>
         </article>
 
         <article class="card">
           <div class="card-header">
             <div>
-              <h2><i class="fas fa-cloud-upload-alt"></i> 文件上传</h2>
-              <p class="card-sub">支持批量上传到 WebDAV。</p>
+              <h2><i class="fas fa-cloud-upload-alt"></i> <span data-i18n="webdav.fileUpload">文件上传</span></h2>
+              <p class="card-sub" data-i18n="webdav.fileUploadSub">支持批量上传到 WebDAV。</p>
             </div>
           </div>
           <div class="upload-file-row">
-            <div class="file-picker" id="filePickerBox" role="button" tabindex="0" aria-label="选择或拖拽文件">
+            <div class="file-picker" id="filePickerBox" role="button" tabindex="0" data-i18n-aria-label="webdav.pickerAria" aria-label="选择或拖拽文件">
               <input id="fileInput" class="file-input-native" type="file" multiple />
               <button id="chooseFileBtn" type="button" class="file-choose-btn">
                 <i class="fas fa-folder-open"></i>
-                <span>选择文件</span>
+                <span data-i18n="webdav.chooseFile">选择文件</span>
               </button>
               <div class="file-picker-meta">
-                <div id="filePickerTitle" class="file-picker-title">未选择任何文件</div>
-                <div id="filePickerHint" class="file-picker-hint">支持多选、拖拽到此区域，上传后自动记录直链</div>
+                <div id="filePickerTitle" class="file-picker-title" data-i18n="webdav.noFile">未选择任何文件</div>
+                <div id="filePickerHint" class="file-picker-hint" data-i18n="webdav.pickerHint">支持多选、拖拽到此区域，上传后自动记录直链</div>
               </div>
               <span id="fileCountBadge" class="file-count-badge">0 个</span>
             </div>
-            <button id="uploadFilesBtn" type="button" class="btn-primary">开始上传</button>
+            <button id="uploadFilesBtn" type="button" class="btn-primary" data-i18n="webdav.startUpload">开始上传</button>
           </div>
           <div id="fileQueueWrap" class="file-queue-wrap" style="display:none;">
             <div class="file-queue-head">
-              <span class="file-queue-title"><i class="fas fa-list-ul"></i> 待上传队列</span>
-              <button id="clearQueueBtn" type="button" class="file-queue-clear">清空队列</button>
+              <span class="file-queue-title"><i class="fas fa-list-ul"></i> <span data-i18n="webdav.queueTitle">待上传队列</span></span>
+              <button id="clearQueueBtn" type="button" class="file-queue-clear" data-i18n="webdav.clearQueue">清空队列</button>
             </div>
             <ul id="fileQueueList" class="file-queue-list"></ul>
           </div>
@@ -835,24 +840,24 @@
         <article class="card">
           <div class="card-header">
             <div>
-              <h2><i class="fas fa-link"></i> URL 上传</h2>
-              <p class="card-sub">输入文件地址，服务器将自动拉取并上传。</p>
+              <h2><i class="fas fa-link"></i> <span data-i18n="webdav.urlUpload">URL 上传</span></h2>
+              <p class="card-sub" data-i18n="webdav.urlUploadSub">输入文件地址，服务器将自动拉取并上传。</p>
             </div>
           </div>
           <div class="row">
             <input id="urlInput" type="text" placeholder="https://example.com/file.zip" />
-            <button id="uploadUrlBtn" type="button" class="btn-primary">上传 URL</button>
+            <button id="uploadUrlBtn" type="button" class="btn-primary" data-i18n="webdav.uploadUrlBtn">上传 URL</button>
           </div>
         </article>
 
         <article class="card span-2">
           <div class="card-header">
-            <h2><i class="fas fa-list-check"></i> 上传结果</h2>
+            <h2><i class="fas fa-list-check"></i> <span data-i18n="webdav.resultsTitle">上传结果</span></h2>
             <div class="result-tools">
               <span id="resultCount" class="card-sub">0 条</span>
             </div>
           </div>
-          <div id="resultEmpty" class="result-empty">暂无上传结果，完成上传后将显示在这里。</div>
+          <div id="resultEmpty" class="result-empty" data-i18n="webdav.resultsEmpty">暂无上传结果，完成上传后将显示在这里。</div>
           <ul id="resultList" class="result-list"></ul>
         </article>
       </section>
@@ -861,6 +866,159 @@
     <script>
       (function () {
         "use strict";
+
+        if (window.I18n) {
+          I18n.register({
+            zh: {
+              "nav.home": "首页",
+              "nav.gallery": "图片浏览",
+              "nav.storage": "存储配置",
+              "nav.webdav": "WebDAV",
+              "nav.admin": "管理后台",
+              "webdav.title": "WebDAV 上传中心",
+              "webdav.checking": "正在检测 WebDAV 状态...",
+              "webdav.toggleTheme": "切换主题",
+              "webdav.copyAll": "复制全部链接",
+              "webdav.clearRecords": "清空记录",
+              "webdav.statusTitle": "WebDAV 状态",
+              "webdav.statusSub": "用于确认 WebDAV 配置和连接情况。",
+              "webdav.refreshStatus": "刷新状态",
+              "webdav.waiting": "等待检测",
+              "webdav.uploadDir": "上传目录",
+              "webdav.uploadDirSub": "可填写多级目录，例如：项目A/一月。",
+              "webdav.dirPathLabel": "目录路径",
+              "webdav.dirPathPh": "留空则上传到根目录",
+              "webdav.dirHint": "后台可继续移动目录，已生成直链不会受影响。",
+              "webdav.fileUpload": "文件上传",
+              "webdav.fileUploadSub": "支持批量上传到 WebDAV。",
+              "webdav.pickerAria": "选择或拖拽文件",
+              "webdav.chooseFile": "选择文件",
+              "webdav.noFile": "未选择任何文件",
+              "webdav.pickerHint": "支持多选、拖拽到此区域，上传后自动记录直链",
+              "webdav.startUpload": "开始上传",
+              "webdav.queueTitle": "待上传队列",
+              "webdav.clearQueue": "清空队列",
+              "webdav.urlUpload": "URL 上传",
+              "webdav.urlUploadSub": "输入文件地址，服务器将自动拉取并上传。",
+              "webdav.uploadUrlBtn": "上传 URL",
+              "webdav.resultsTitle": "上传结果",
+              "webdav.resultsEmpty": "暂无上传结果，完成上传后将显示在这里。",
+              "webdav.count": "{n} 个",
+              "webdav.countItems": "{n} 条",
+              "webdav.currentDir": "当前目录：{path}",
+              "webdav.rootDir": "根目录",
+              "webdav.unnamedFile": "未命名文件",
+              "webdav.queueMore": "还有 {n} 个文件未展开",
+              "webdav.fileWord": "文件",
+              "webdav.sizeHint": "大小：{size}，点击“开始上传”继续",
+              "webdav.selectedCount": "已选择 {n} 个文件",
+              "webdav.totalSizeHint": "总大小：{size}，首个文件：{name}",
+              "webdav.reqFailed": "请求失败（{status}）",
+              "webdav.connected": "WebDAV 已连接并启用，可正常上传。",
+              "webdav.notConfigured": "未配置",
+              "webdav.unavailable": "WebDAV 当前不可用：{detail}",
+              "webdav.pickFirst": "请先选择要上传的文件。",
+              "webdav.uploadingNth": "正在上传第 {i} / {total} 个文件...",
+              "webdav.fileUploadOk": "文件上传成功",
+              "webdav.fileUploadOkNoLink": "文件上传成功，但未返回直链。",
+              "webdav.allUploaded": "全部文件上传完成。",
+              "webdav.enterUrl": "请先输入 URL 地址。",
+              "webdav.fetchingUrl": "正在拉取远程地址并上传...",
+              "webdav.urlUploadOk": "URL 上传成功",
+              "webdav.urlUploadDone": "URL 上传完成。",
+              "webdav.unknownError": "未知错误",
+              "webdav.errorWithPrefix": "{prefix}：{message}",
+              "webdav.queueCleared": "已清空待上传队列。",
+              "webdav.droppedFiles": "已拖入 {n} 个文件，点击“开始上传”即可。",
+              "webdav.pickToUpload": "请选择要上传的文件。",
+              "webdav.selectedToUpload": "已选择 {n} 个文件，点击“开始上传”即可。",
+              "webdav.statusCheckFailed": "状态检测失败。",
+              "webdav.fileUploadFailed": "文件上传失败",
+              "webdav.urlUploadFailed": "URL 上传失败",
+              "webdav.recordsCleared": "已清空上传记录。",
+              "webdav.noLinksToCopy": "当前没有可复制的链接。",
+              "webdav.copiedLinks": "已复制 {n} 条链接。",
+              "webdav.copyFailed": "复制失败。",
+              "webdav.initFailed": "页面初始化失败。"
+            },
+            en: {
+              "nav.home": "Home",
+              "nav.gallery": "Gallery",
+              "nav.storage": "Storage",
+              "nav.webdav": "WebDAV",
+              "nav.admin": "Admin",
+              "webdav.title": "WebDAV Upload Center",
+              "webdav.checking": "Checking WebDAV status...",
+              "webdav.toggleTheme": "Toggle theme",
+              "webdav.copyAll": "Copy all links",
+              "webdav.clearRecords": "Clear records",
+              "webdav.statusTitle": "WebDAV Status",
+              "webdav.statusSub": "Confirm WebDAV configuration and connection.",
+              "webdav.refreshStatus": "Refresh status",
+              "webdav.waiting": "Awaiting check",
+              "webdav.uploadDir": "Upload directory",
+              "webdav.uploadDirSub": "You can enter nested directories, e.g. ProjectA/January.",
+              "webdav.dirPathLabel": "Directory path",
+              "webdav.dirPathPh": "Leave empty to upload to the root directory",
+              "webdav.dirHint": "You can keep moving directories in the admin panel; generated direct links are unaffected.",
+              "webdav.fileUpload": "File upload",
+              "webdav.fileUploadSub": "Supports batch upload to WebDAV.",
+              "webdav.pickerAria": "Choose or drag files",
+              "webdav.chooseFile": "Choose files",
+              "webdav.noFile": "No file selected",
+              "webdav.pickerHint": "Supports multi-select and drag-drop here; direct links are recorded after upload",
+              "webdav.startUpload": "Start upload",
+              "webdav.queueTitle": "Upload queue",
+              "webdav.clearQueue": "Clear queue",
+              "webdav.urlUpload": "URL upload",
+              "webdav.urlUploadSub": "Enter a file address and the server will fetch and upload it.",
+              "webdav.uploadUrlBtn": "Upload URL",
+              "webdav.resultsTitle": "Upload results",
+              "webdav.resultsEmpty": "No upload results yet; they will appear here once uploads complete.",
+              "webdav.count": "{n}",
+              "webdav.countItems": "{n}",
+              "webdav.currentDir": "Current directory: {path}",
+              "webdav.rootDir": "Root directory",
+              "webdav.unnamedFile": "Unnamed file",
+              "webdav.queueMore": "{n} more file(s) not shown",
+              "webdav.fileWord": "File",
+              "webdav.sizeHint": "Size: {size}. Click “Start upload” to continue",
+              "webdav.selectedCount": "{n} file(s) selected",
+              "webdav.totalSizeHint": "Total size: {size}. First file: {name}",
+              "webdav.reqFailed": "Request failed ({status})",
+              "webdav.connected": "WebDAV is connected and enabled; uploads are available.",
+              "webdav.notConfigured": "Not configured",
+              "webdav.unavailable": "WebDAV is currently unavailable: {detail}",
+              "webdav.pickFirst": "Please select files to upload first.",
+              "webdav.uploadingNth": "Uploading file {i} / {total}...",
+              "webdav.fileUploadOk": "File uploaded successfully",
+              "webdav.fileUploadOkNoLink": "File uploaded successfully, but no direct link was returned.",
+              "webdav.allUploaded": "All files uploaded.",
+              "webdav.enterUrl": "Please enter a URL first.",
+              "webdav.fetchingUrl": "Fetching the remote address and uploading...",
+              "webdav.urlUploadOk": "URL uploaded successfully",
+              "webdav.urlUploadDone": "URL upload complete.",
+              "webdav.unknownError": "Unknown error",
+              "webdav.errorWithPrefix": "{prefix}: {message}",
+              "webdav.queueCleared": "Upload queue cleared.",
+              "webdav.droppedFiles": "Dropped {n} file(s). Click “Start upload” to proceed.",
+              "webdav.pickToUpload": "Please select files to upload.",
+              "webdav.selectedToUpload": "{n} file(s) selected. Click “Start upload” to proceed.",
+              "webdav.statusCheckFailed": "Status check failed.",
+              "webdav.fileUploadFailed": "File upload failed",
+              "webdav.urlUploadFailed": "URL upload failed",
+              "webdav.recordsCleared": "Upload records cleared.",
+              "webdav.noLinksToCopy": "There are no links to copy.",
+              "webdav.copiedLinks": "Copied {n} link(s).",
+              "webdav.copyFailed": "Copy failed.",
+              "webdav.initFailed": "Page initialization failed."
+            }
+          });
+        }
+
+        var t = function (key, params) {
+          return window.I18n ? I18n.t(key, params) : key;
+        };
 
         var statusPill = document.getElementById("statusPill");
         var statusText = document.getElementById("statusText");
@@ -894,7 +1052,7 @@
 
         function updateFolderPreview() {
           var folderPath = normalizeFolderPath(folderPathInput.value);
-          folderPathPreview.textContent = "当前目录：" + (folderPath || "根目录");
+          folderPathPreview.textContent = t("webdav.currentDir", { path: folderPath || t("webdav.rootDir") });
           try {
             localStorage.setItem("webdavFolderPath", folderPath);
           } catch {
@@ -957,7 +1115,7 @@
             meta.className = "file-queue-meta";
             var name = document.createElement("div");
             name.className = "file-queue-name";
-            name.textContent = String(file.name || "未命名文件");
+            name.textContent = String(file.name || t("webdav.unnamedFile"));
             var size = document.createElement("div");
             size.className = "file-queue-size";
             size.textContent = formatFileSize(file.size || 0);
@@ -971,7 +1129,7 @@
           if (list.length > maxVisible) {
             var more = document.createElement("li");
             more.className = "file-queue-more";
-            more.textContent = "还有 " + (list.length - maxVisible) + " 个文件未展开";
+            more.textContent = t("webdav.queueMore", { n: list.length - maxVisible });
             fileQueueList.appendChild(more);
           }
         }
@@ -987,9 +1145,9 @@
           var count = picked.length;
           if (!count) {
             filePickerBox.classList.remove("has-files");
-            filePickerTitle.textContent = "未选择任何文件";
-            filePickerHint.textContent = "支持多选、拖拽到此区域，上传后自动记录直链";
-            fileCountBadge.textContent = "0 个";
+            filePickerTitle.textContent = t("webdav.noFile");
+            filePickerHint.textContent = t("webdav.pickerHint");
+            fileCountBadge.textContent = t("webdav.count", { n: 0 });
             renderFileQueue([]);
             return;
           }
@@ -997,17 +1155,17 @@
           var totalBytes = picked.reduce(function (sum, file) {
             return sum + Number((file && file.size) || 0);
           }, 0);
-          var firstName = (picked[0] && picked[0].name) ? picked[0].name : "文件";
+          var firstName = (picked[0] && picked[0].name) ? picked[0].name : t("webdav.fileWord");
           filePickerBox.classList.add("has-files");
-          fileCountBadge.textContent = count + " 个";
+          fileCountBadge.textContent = t("webdav.count", { n: count });
           if (count === 1) {
             filePickerTitle.textContent = firstName;
-            filePickerHint.textContent = "大小：" + formatFileSize(totalBytes) + "，点击“开始上传”继续";
+            filePickerHint.textContent = t("webdav.sizeHint", { size: formatFileSize(totalBytes) });
             renderFileQueue(picked);
             return;
           }
-          filePickerTitle.textContent = "已选择 " + count + " 个文件";
-          filePickerHint.textContent = "总大小：" + formatFileSize(totalBytes) + "，首个文件：" + firstName;
+          filePickerTitle.textContent = t("webdav.selectedCount", { n: count });
+          filePickerHint.textContent = t("webdav.totalSizeHint", { size: formatFileSize(totalBytes), name: firstName });
           renderFileQueue(picked);
         }
 
@@ -1047,7 +1205,7 @@
         }
 
         function renderResultState() {
-          resultCount.textContent = resultList.children.length + " 条";
+          resultCount.textContent = t("webdav.countItems", { n: resultList.children.length });
           resultEmpty.style.display = resultList.children.length > 0 ? "none" : "block";
         }
 
@@ -1061,7 +1219,7 @@
 
           var meta = document.createElement("div");
           meta.className = "result-meta";
-          meta.textContent = new Date().toLocaleString("zh-CN", { hour12: false }) + " · " + (normalizeFolderPath(folderPathInput.value) || "根目录");
+          meta.textContent = new Date().toLocaleString("zh-CN", { hour12: false }) + " · " + (normalizeFolderPath(folderPathInput.value) || t("webdav.rootDir"));
 
           item.appendChild(title);
           item.appendChild(meta);
@@ -1100,7 +1258,7 @@
           if (!response.ok) {
             var message = data && (data.error || data.message || data.errorDetail);
             if (!message) {
-              message = "请求失败（" + response.status + "）";
+              message = t("webdav.reqFailed", { status: response.status });
             }
             throw new Error(message);
           }
@@ -1116,22 +1274,22 @@
         }
 
         async function checkStatus() {
-          setStatus("正在检测 WebDAV 状态...", null);
+          setStatus(t("webdav.checking"), null);
           var data = await request("/api/status");
           var webdav = data.webdav || {};
           var ok = Boolean(webdav.connected && webdav.enabled);
           if (ok) {
-            setStatus("WebDAV 已连接并启用，可正常上传。", true);
+            setStatus(t("webdav.connected"), true);
           } else {
-            var detail = webdav.message || "未配置";
-            setStatus("WebDAV 当前不可用：" + detail, false);
+            var detail = webdav.message || t("webdav.notConfigured");
+            setStatus(t("webdav.unavailable", { detail: detail }), false);
           }
         }
 
         async function uploadFiles() {
           var files = getSelectedFiles();
           if (!files.length) {
-            setStatus("请先选择要上传的文件。", false);
+            setStatus(t("webdav.pickFirst"), false);
             return;
           }
 
@@ -1139,7 +1297,7 @@
           try {
             var folderPath = normalizeFolderPath(folderPathInput.value);
             for (var i = 0; i < files.length; i += 1) {
-              setStatus("正在上传第 " + (i + 1) + " / " + files.length + " 个文件...", null);
+              setStatus(t("webdav.uploadingNth", { i: i + 1, total: files.length }), null);
               var form = new FormData();
               form.append("file", files[i]);
               form.append("storageMode", "webdav");
@@ -1148,13 +1306,13 @@
               var first = Array.isArray(payload) ? payload[0] : payload;
               var src = first && first.src ? String(first.src) : "";
               if (src) {
-                pushResult("文件上传成功", "ok", toAbsoluteUrl(src));
+                pushResult(t("webdav.fileUploadOk"), "ok", toAbsoluteUrl(src));
               } else {
-                pushResult("文件上传成功，但未返回直链。", "ok");
+                pushResult(t("webdav.fileUploadOkNoLink"), "ok");
               }
             }
             clearSelectedFiles();
-            setStatus("全部文件上传完成。", true);
+            setStatus(t("webdav.allUploaded"), true);
           } finally {
             uploadFilesBtn.disabled = false;
           }
@@ -1163,14 +1321,14 @@
         async function uploadFromUrl() {
           var sourceUrl = String(urlInput.value || "").trim();
           if (!sourceUrl) {
-            setStatus("请先输入 URL 地址。", false);
+            setStatus(t("webdav.enterUrl"), false);
             return;
           }
 
           uploadUrlBtn.disabled = true;
           try {
             var folderPath = normalizeFolderPath(folderPathInput.value);
-            setStatus("正在拉取远程地址并上传...", null);
+            setStatus(t("webdav.fetchingUrl"), null);
             var payload = await request("/api/upload-from-url", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -1182,11 +1340,11 @@
             });
             var src = payload && (payload.src || payload.url || (payload.file && payload.file.src));
             if (src) {
-              pushResult("URL 上传成功", "ok", toAbsoluteUrl(String(src)));
+              pushResult(t("webdav.urlUploadOk"), "ok", toAbsoluteUrl(String(src)));
             } else {
-              pushResult("URL 上传完成。", "ok");
+              pushResult(t("webdav.urlUploadDone"), "ok");
             }
-            setStatus("URL 上传完成。", true);
+            setStatus(t("webdav.urlUploadDone"), true);
           } finally {
             uploadUrlBtn.disabled = false;
           }
@@ -1203,7 +1361,7 @@
         }
 
         function onError(prefix, error) {
-          var message = prefix + "：" + ((error && error.message) || "未知错误");
+          var message = t("webdav.errorWithPrefix", { prefix: prefix, message: (error && error.message) || t("webdav.unknownError") });
           pushResult(message, "error");
           setStatus(message, false);
         }
@@ -1213,7 +1371,7 @@
         clearQueueBtn.addEventListener("click", function (event) {
           event.preventDefault();
           clearSelectedFiles();
-          setStatus("已清空待上传队列。", null);
+          setStatus(t("webdav.queueCleared"), null);
         });
 
         chooseFileBtn.addEventListener("click", function (event) {
@@ -1257,7 +1415,7 @@
           var dropped = event.dataTransfer ? ensureArray(event.dataTransfer.files) : [];
           if (!dropped.length) return;
           syncFilesFromDrop(dropped);
-          setStatus("已拖入 " + dropped.length + " 个文件，点击“开始上传”即可。", null);
+          setStatus(t("webdav.droppedFiles", { n: dropped.length }), null);
         });
 
         fileInput.addEventListener("change", function () {
@@ -1265,27 +1423,27 @@
           var files = getSelectedFiles();
           updateFilePickerState(files);
           if (!files.length) {
-            setStatus("请选择要上传的文件。", null);
+            setStatus(t("webdav.pickToUpload"), null);
             return;
           }
-          setStatus("已选择 " + files.length + " 个文件，点击“开始上传”即可。", null);
+          setStatus(t("webdav.selectedToUpload", { n: files.length }), null);
         });
 
         refreshStatusBtn.addEventListener("click", function () {
           checkStatus().catch(function (error) {
-            setStatus(error.message || "状态检测失败。", false);
+            setStatus(error.message || t("webdav.statusCheckFailed"), false);
           });
         });
 
         uploadFilesBtn.addEventListener("click", function () {
           uploadFiles().catch(function (error) {
-            onError("文件上传失败", error);
+            onError(t("webdav.fileUploadFailed"), error);
           });
         });
 
         uploadUrlBtn.addEventListener("click", function () {
           uploadFromUrl().catch(function (error) {
-            onError("URL 上传失败", error);
+            onError(t("webdav.urlUploadFailed"), error);
           });
         });
 
@@ -1300,23 +1458,23 @@
           resultList.innerHTML = "";
           resultLinks = [];
           renderResultState();
-          setStatus("已清空上传记录。", null);
+          setStatus(t("webdav.recordsCleared"), null);
         });
 
         copyAllBtn.addEventListener("click", function () {
           var links = resultLinks.filter(Boolean);
           if (!links.length) {
-            setStatus("当前没有可复制的链接。", false);
+            setStatus(t("webdav.noLinksToCopy"), false);
             return;
           }
           var text = links.join("\n");
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text)
               .then(function () {
-                setStatus("已复制 " + links.length + " 条链接。", true);
+                setStatus(t("webdav.copiedLinks", { n: links.length }), true);
               })
               .catch(function (error) {
-                setStatus(error.message || "复制失败。", false);
+                setStatus(error.message || t("webdav.copyFailed"), false);
               });
             return;
           }
@@ -1331,7 +1489,7 @@
             copied = false;
           }
           textarea.remove();
-          setStatus(copied ? ("已复制 " + links.length + " 条链接。") : "复制失败。", copied);
+          setStatus(copied ? t("webdav.copiedLinks", { n: links.length }) : t("webdav.copyFailed"), copied);
         });
 
         (async function init() {
@@ -1350,8 +1508,17 @@
           if (!authenticated) return;
           await checkStatus();
         })().catch(function (error) {
-          setStatus(error.message || "页面初始化失败。", false);
+          setStatus(error.message || t("webdav.initFailed"), false);
         });
+
+        if (window.I18n) {
+          I18n.onChange(function () {
+            // Re-render JS-built chrome that does not auto-update via data-i18n.
+            updateFolderPreview();
+            updateFilePickerState(getSelectedFiles());
+            renderResultState();
+          });
+        }
       })();
     </script>
   </body>

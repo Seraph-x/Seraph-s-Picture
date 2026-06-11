@@ -2,15 +2,15 @@
   <div class="upload-prep-backdrop" role="presentation" @click.self="$emit('cancel')">
     <section class="upload-prep-dialog" role="dialog" aria-modal="true" aria-labelledby="upload-prep-title">
       <header class="upload-prep-header">
-        <span class="upload-prep-badge">Before upload</span>
-        <h2 id="upload-prep-title">Choose how to upload images</h2>
-        <p class="muted">Nothing uploads until you choose an upload mode.</p>
+        <span class="upload-prep-badge">{{ t('prep.badge') }}</span>
+        <h2 id="upload-prep-title">{{ t('prep.title') }}</h2>
+        <p class="muted">{{ t('prep.note') }}</p>
       </header>
 
       <div class="upload-prep-stats">
-        <span><strong>{{ fileCount }}</strong> files selected</span>
-        <span><strong>{{ imageCount }}</strong> optimizable images</span>
-        <span><strong>{{ formatSize(totalSize) }}</strong> total</span>
+        <span><strong>{{ fileCount }}</strong> {{ t('prep.filesSelected') }}</span>
+        <span><strong>{{ imageCount }}</strong> {{ t('prep.optimizableImages') }}</span>
+        <span><strong>{{ formatSize(totalSize) }}</strong> {{ t('prep.total') }}</span>
       </div>
 
       <div class="upload-mode-grid">
@@ -20,8 +20,8 @@
           type="button"
           @click="setOptimization(false)"
         >
-          <strong>Original upload</strong>
-          <span>Keep every file unchanged. Fastest and safest.</span>
+          <strong>{{ t('prep.originalTitle') }}</strong>
+          <span>{{ t('prep.originalDesc') }}</span>
         </button>
         <button
           class="upload-mode-card"
@@ -29,8 +29,8 @@
           type="button"
           @click="setOptimization(true)"
         >
-          <strong>Compress / convert images</strong>
-          <span>Use WebP, AVIF, JPEG, or PNG before uploading.</span>
+          <strong>{{ t('prep.compressTitle') }}</strong>
+          <span>{{ t('prep.compressDesc') }}</span>
         </button>
       </div>
 
@@ -48,14 +48,14 @@
           {{ file.name }}
         </span>
         <span v-if="fileCount > previewFiles.length" class="badge">
-          +{{ fileCount - previewFiles.length }} more
+          {{ t('prep.more', { n: fileCount - previewFiles.length }) }}
         </span>
       </div>
 
       <footer class="upload-prep-actions">
-        <button class="btn btn-ghost" type="button" @click="$emit('cancel')">Cancel</button>
-        <button class="btn btn-ghost" type="button" @click="$emit('upload-original')">Upload original</button>
-        <button class="btn" type="button" @click="$emit('upload-optimized')">Optimize & upload</button>
+        <button class="btn btn-ghost" type="button" @click="$emit('cancel')">{{ t('prep.cancel') }}</button>
+        <button class="btn btn-ghost" type="button" @click="$emit('upload-original')">{{ t('prep.uploadOriginal') }}</button>
+        <button class="btn" type="button" @click="$emit('upload-optimized')">{{ t('prep.optimizeUpload') }}</button>
       </footer>
     </section>
   </div>
@@ -64,6 +64,9 @@
 <script setup>
 import { computed } from 'vue';
 import ImageProcessingPanel from './ImageProcessingPanel.vue';
+import { useI18n } from '../i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
   batch: {

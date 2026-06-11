@@ -9,6 +9,7 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/theme.css">
   <script src="/theme.js?v=20260305"></script>
+  <script src="/i18n.js?v=20260611"></script>
   <!-- Import CSS -->
   <link rel="stylesheet" href="./admin-imgtc.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.15.3/lib/theme-chalk/index.css">
@@ -822,27 +823,27 @@
         <div class="header-content">
           <div class="admin-header-primary">
             <span class="home-btn" @click="goHome"><i class="fas fa-home"></i></span>
-            <span class="title" @click="refreshDashboard">管理后台</span>
-            <div class="search-card"><el-input v-model="search" size="mini" placeholder="输入关键字搜索"></el-input></div>
+            <span class="title" @click="refreshDashboard">{{ t('nav.admin') }}</span>
+            <div class="search-card"><el-input v-model="search" size="mini" :placeholder="t('admin.searchPlaceholder')"></el-input></div>
           </div>
           <div class="actions admin-header-tools">
             <el-dropdown @command="switchFileType" :hide-on-click="false">
               <span class="el-dropdown-link"><i :class="fileTypeIcon"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="all" :class="{ 'el-dropdown-menu__item--selected': fileType === 'all' }"><i class="fas fa-th-large"></i> 全部</el-dropdown-item>
-                <el-dropdown-item command="image" :class="{ 'el-dropdown-menu__item--selected': fileType === 'image' }"><i :class="fileConfig.image.icon"></i> 图片</el-dropdown-item>
-                <el-dropdown-item command="video" :class="{ 'el-dropdown-menu__item--selected': fileType === 'video' }"><i :class="fileConfig.video.icon"></i> 视频</el-dropdown-item>
-                <el-dropdown-item command="audio" :class="{ 'el-dropdown-menu__item--selected': fileType === 'audio' }"><i :class="fileConfig.audio.icon"></i> 音频</el-dropdown-item>
-                <el-dropdown-item command="document" :class="{ 'el-dropdown-menu__item--selected': fileType === 'document' }"><i :class="fileConfig.document.icon"></i> 文件</el-dropdown-item>
+                <el-dropdown-item command="all" :class="{ 'el-dropdown-menu__item--selected': fileType === 'all' }"><i class="fas fa-th-large"></i> {{ t('admin.typeAll') }}</el-dropdown-item>
+                <el-dropdown-item command="image" :class="{ 'el-dropdown-menu__item--selected': fileType === 'image' }"><i :class="fileConfig.image.icon"></i> {{ t('admin.typeImage') }}</el-dropdown-item>
+                <el-dropdown-item command="video" :class="{ 'el-dropdown-menu__item--selected': fileType === 'video' }"><i :class="fileConfig.video.icon"></i> {{ t('admin.typeVideo') }}</el-dropdown-item>
+                <el-dropdown-item command="audio" :class="{ 'el-dropdown-menu__item--selected': fileType === 'audio' }"><i :class="fileConfig.audio.icon"></i> {{ t('admin.typeAudio') }}</el-dropdown-item>
+                <el-dropdown-item command="document" :class="{ 'el-dropdown-menu__item--selected': fileType === 'document' }"><i :class="fileConfig.document.icon"></i> {{ t('admin.typeDocument') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dropdown @command="switchStorageFilter" :hide-on-click="false">
               <span class="el-dropdown-link"><i :class="storageFilterIcon"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="all" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'all' }"><i class="fas fa-database"></i> 全部存储</el-dropdown-item>
+                <el-dropdown-item command="all" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'all' }"><i class="fas fa-database"></i> {{ t('admin.storageAll') }}</el-dropdown-item>
                 <el-dropdown-item command="telegram" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'telegram' }"><i class="fab fa-telegram"></i> Telegram</el-dropdown-item>
-                <el-dropdown-item command="r2" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'r2' }"><i class="fas fa-cloud"></i> R2 存储</el-dropdown-item>
-                <el-dropdown-item command="s3" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 's3' }"><i class="fas fa-database"></i> S3 存储</el-dropdown-item>
+                <el-dropdown-item command="r2" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'r2' }"><i class="fas fa-cloud"></i> {{ t('admin.storageR2') }}</el-dropdown-item>
+                <el-dropdown-item command="s3" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 's3' }"><i class="fas fa-database"></i> {{ t('admin.storageS3') }}</el-dropdown-item>
                 <el-dropdown-item command="discord" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'discord' }"><i class="fab fa-discord"></i> Discord</el-dropdown-item>
                 <el-dropdown-item command="huggingface" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'huggingface' }"><i class="fas fa-robot"></i> HuggingFace</el-dropdown-item>
                 <el-dropdown-item command="webdav" :class="{ 'el-dropdown-menu__item--selected': storageFilter === 'webdav' }"><i class="fas fa-hard-drive"></i> WebDAV</el-dropdown-item>
@@ -852,41 +853,41 @@
             <el-dropdown @command="sort" :hide-on-click="false">
               <span class="el-dropdown-link"><i :class="sortIcon"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="dateDesc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'dateDesc' }"><i class="fas fa-sort-amount-down"></i> 按时间倒序</el-dropdown-item>
-                <el-dropdown-item command="nameAsc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'nameAsc' }"><i class="fas fa-sort-alpha-up"></i> 按名称升序</el-dropdown-item>
-                <el-dropdown-item command="sizeDesc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'sizeDesc' }"><i class="fas fa-sort-amount-down"></i> 按大小倒序</el-dropdown-item>
+                <el-dropdown-item command="dateDesc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'dateDesc' }"><i class="fas fa-sort-amount-down"></i> {{ t('admin.sortDateDesc') }}</el-dropdown-item>
+                <el-dropdown-item command="nameAsc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'nameAsc' }"><i class="fas fa-sort-alpha-up"></i> {{ t('admin.sortNameAsc') }}</el-dropdown-item>
+                <el-dropdown-item command="sizeDesc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'sizeDesc' }"><i class="fas fa-sort-amount-down"></i> {{ t('admin.sortSizeDesc') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dropdown @command="filter" :hide-on-click="false">
               <span class="el-dropdown-link"><i :class="filterIcon"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="all" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'all' }"><i class="fas fa-filter"></i> 全部</el-dropdown-item>
-                <el-dropdown-item command="favorites" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'favorites' }"><i class="fas fa-bookmark"></i> 收藏</el-dropdown-item>
-                <el-dropdown-item command="blocked" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'blocked' }"><i class="fas fa-lock"></i> 黑名单</el-dropdown-item>
-                <el-dropdown-item command="unblocked" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'unblocked' }"><i class="fas fa-unlock"></i> 白名单</el-dropdown-item>
+                <el-dropdown-item command="all" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'all' }"><i class="fas fa-filter"></i> {{ t('admin.filterAll') }}</el-dropdown-item>
+                <el-dropdown-item command="favorites" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'favorites' }"><i class="fas fa-bookmark"></i> {{ t('admin.filterFavorites') }}</el-dropdown-item>
+                <el-dropdown-item command="blocked" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'blocked' }"><i class="fas fa-lock"></i> {{ t('admin.filterBlocked') }}</el-dropdown-item>
+                <el-dropdown-item command="unblocked" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'unblocked' }"><i class="fas fa-unlock"></i> {{ t('admin.filterUnblocked') }}</el-dropdown-item>
                 <el-dropdown-item command="adult" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'adult' }"><i class="fas fa-user-secret"></i> NSFW</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dropdown @command="switchViewMode" :hide-on-click="false">
               <span class="el-dropdown-link"><i :class="viewModeIcon"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="grid" :class="{ 'el-dropdown-menu__item--selected': viewMode === 'grid' }"><i class="fas fa-th-large"></i> 平铺视图</el-dropdown-item>
-                <el-dropdown-item command="list" :class="{ 'el-dropdown-menu__item--selected': viewMode === 'list' }"><i class="fas fa-list"></i> 详细视图</el-dropdown-item>
+                <el-dropdown-item command="grid" :class="{ 'el-dropdown-menu__item--selected': viewMode === 'grid' }"><i class="fas fa-th-large"></i> {{ t('admin.viewGrid') }}</el-dropdown-item>
+                <el-dropdown-item command="list" :class="{ 'el-dropdown-menu__item--selected': viewMode === 'list' }"><i class="fas fa-list"></i> {{ t('admin.viewList') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dropdown @command="handleBatchOperation" :hide-on-click="false">
               <span class="el-dropdown-link"><i class="fas fa-tasks"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="selectAll"><i class="fas fa-check-double"></i> {{ isAllSelected ? '取消全选' : '全选当前页' }}</el-dropdown-item>
-                <el-dropdown-item command="selectAllLoaded"><i class="fas fa-check-square"></i> 全选已加载 ({{ tableData.length }})</el-dropdown-item>
-                <el-dropdown-item divided command="copy" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-link"></i> 批量复制</el-dropdown-item>
-                <el-dropdown-item command="copyMarkdown" :class="{ disabled: selectedFiles.length === 0 }"><i class="fab fa-markdown"></i> 复制Markdown</el-dropdown-item>
-                <el-dropdown-item command="copyHtml" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-code"></i> 复制HTML</el-dropdown-item>
-                <el-dropdown-item command="delete" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-trash-alt"></i> 批量删除</el-dropdown-item>
-                <el-dropdown-item command="download" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-download"></i> 批量下载</el-dropdown-item>
-                <el-dropdown-item command="moveFolder" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-folder-tree"></i> 移动到目录</el-dropdown-item>
-                <el-dropdown-item command="block" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-lock"></i> 加入黑名单</el-dropdown-item>
-                <el-dropdown-item command="unblock" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-unlock"></i> 加入白名单</el-dropdown-item>
+                <el-dropdown-item command="selectAll"><i class="fas fa-check-double"></i> {{ isAllSelected ? t('admin.batchUnselectAll') : t('admin.batchSelectAll') }}</el-dropdown-item>
+                <el-dropdown-item command="selectAllLoaded"><i class="fas fa-check-square"></i> {{ t('admin.batchSelectLoaded') }} ({{ tableData.length }})</el-dropdown-item>
+                <el-dropdown-item divided command="copy" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-link"></i> {{ t('admin.batchCopy') }}</el-dropdown-item>
+                <el-dropdown-item command="copyMarkdown" :class="{ disabled: selectedFiles.length === 0 }"><i class="fab fa-markdown"></i> {{ t('admin.batchCopyMarkdown') }}</el-dropdown-item>
+                <el-dropdown-item command="copyHtml" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-code"></i> {{ t('admin.batchCopyHtml') }}</el-dropdown-item>
+                <el-dropdown-item command="delete" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-trash-alt"></i> {{ t('admin.batchDelete') }}</el-dropdown-item>
+                <el-dropdown-item command="download" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-download"></i> {{ t('admin.batchDownload') }}</el-dropdown-item>
+                <el-dropdown-item command="moveFolder" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-folder-tree"></i> {{ t('admin.batchMoveFolder') }}</el-dropdown-item>
+                <el-dropdown-item command="block" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-lock"></i> {{ t('admin.batchBlock') }}</el-dropdown-item>
+                <el-dropdown-item command="unblock" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-unlock"></i> {{ t('admin.batchUnblock') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dropdown @command="handleWebsite">
@@ -902,27 +903,31 @@
             <el-dropdown @command="handleToolkit" :hide-on-click="false">
               <span class="el-dropdown-link"><i class="fas fa-toolbox"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="selectAllInPage"><i class="fas fa-check-square"></i> 全选当前页</el-dropdown-item>
-                <el-dropdown-item command="checkBrokenFiles"><i class="fas fa-wrench"></i> 检测失效文件</el-dropdown-item>
-                <el-dropdown-item command="openUploader"><i class="fas fa-cloud-upload-alt"></i> 打开上传中心</el-dropdown-item>
-                <el-dropdown-item command="exportLinks"><i class="fas fa-file-export"></i> 导出全部链接</el-dropdown-item>
-                <el-dropdown-item command="manageApiTokens"><i class="fas fa-key"></i> API Token 管理</el-dropdown-item>
-                <el-dropdown-item command="checkStatus" divided><i class="fas fa-heartbeat"></i> 检查连接状态</el-dropdown-item>
+                <el-dropdown-item command="selectAllInPage"><i class="fas fa-check-square"></i> {{ t('admin.toolkitSelectAllInPage') }}</el-dropdown-item>
+                <el-dropdown-item command="checkBrokenFiles"><i class="fas fa-wrench"></i> {{ t('admin.toolkitCheckBroken') }}</el-dropdown-item>
+                <el-dropdown-item command="openUploader"><i class="fas fa-cloud-upload-alt"></i> {{ t('admin.toolkitOpenUploader') }}</el-dropdown-item>
+                <el-dropdown-item command="exportLinks"><i class="fas fa-file-export"></i> {{ t('admin.toolkitExportLinks') }}</el-dropdown-item>
+                <el-dropdown-item command="manageApiTokens"><i class="fas fa-key"></i> {{ t('admin.toolkitManageTokens') }}</el-dropdown-item>
+                <el-dropdown-item command="checkStatus" divided><i class="fas fa-heartbeat"></i> {{ t('admin.toolkitCheckStatus') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
           <div class="admin-header-system">
+            <button type="button" class="lang-toggle" data-i18n-toggle>
+              <i class="fas fa-globe lang-toggle-icon"></i>
+              <span data-lang-label>EN</span>
+            </button>
             <el-dropdown @command="handleLoadSettings" :hide-on-click="false">
               <span class="el-dropdown-link"><i class="fas fa-cog"></i></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="normal" :class="{ 'el-dropdown-menu__item--selected': loadMode === 'normal' }"><i class="fas fa-eye"></i> 正常模式</el-dropdown-item>
-                <el-dropdown-item command="dataSaver" :class="{ 'el-dropdown-menu__item--selected': loadMode === 'dataSaver' }"><i class="fas fa-bolt"></i> 省流模式</el-dropdown-item>
-                <el-dropdown-item command="noImage" :class="{ 'el-dropdown-menu__item--selected': loadMode === 'noImage' }"><i class="fas fa-eye-slash"></i> 无图模式</el-dropdown-item>
-                <el-dropdown-item command="safeMode" divided :class="{ 'el-dropdown-menu__item--selected': safeMode }"><i class="fas fa-shield-alt"></i> {{ safeMode ? '✓' : '' }} 安全模式(NSFW)</el-dropdown-item>
+                <el-dropdown-item command="normal" :class="{ 'el-dropdown-menu__item--selected': loadMode === 'normal' }"><i class="fas fa-eye"></i> {{ t('admin.loadNormal') }}</el-dropdown-item>
+                <el-dropdown-item command="dataSaver" :class="{ 'el-dropdown-menu__item--selected': loadMode === 'dataSaver' }"><i class="fas fa-bolt"></i> {{ t('admin.loadDataSaver') }}</el-dropdown-item>
+                <el-dropdown-item command="noImage" :class="{ 'el-dropdown-menu__item--selected': loadMode === 'noImage' }"><i class="fas fa-eye-slash"></i> {{ t('admin.loadNoImage') }}</el-dropdown-item>
+                <el-dropdown-item command="safeMode" divided :class="{ 'el-dropdown-menu__item--selected': safeMode }"><i class="fas fa-shield-alt"></i> {{ safeMode ? '✓' : '' }} {{ t('admin.safeModeMenu') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-tooltip content="存储状态与配置" placement="bottom"><i class="fas fa-server" @click="showStorageConfigPanel"></i></el-tooltip>
-            <el-tooltip content="前端 UI 设计" placement="bottom"><i class="fas fa-sliders-h" @click="showUiDesignSettingsPanel"></i></el-tooltip>
+            <el-tooltip :content="t('admin.tooltipStorage')" placement="bottom"><i class="fas fa-server" @click="showStorageConfigPanel"></i></el-tooltip>
+            <el-tooltip :content="t('admin.tooltipUiDesign')" placement="bottom"><i class="fas fa-sliders-h" @click="showUiDesignSettingsPanel"></i></el-tooltip>
             <i class="fas fa-sign-out-alt" @click="handleLogout"></i>
           </div>
         </div>
@@ -932,19 +937,19 @@
           <aside class="folder-sidebar">
             <div class="folder-stats" role="status" aria-live="polite">
               <i class="fas fa-chart-line"></i>
-              <span>总记录: {{ totalCount || Number }}</span>
-              <small>已加载 {{ Number }}</small>
+              <span>{{ t('admin.totalRecords') }} {{ totalCount || Number }}</span>
+              <small>{{ t('admin.loadedCount') }} {{ Number }}</small>
             </div>
             <div class="folder-head">
-              <span class="folder-head-title"><i class="fas fa-folder-tree"></i><span>目录管理</span></span>
+              <span class="folder-head-title"><i class="fas fa-folder-tree"></i><span>{{ t('admin.folderManage') }}</span></span>
               <span class="folder-head-actions">
-                <el-button size="mini" circle icon="el-icon-refresh" title="刷新目录与文件" :disabled="folderMutating" :loading="folderLoading" @click="refreshFolderResources"></el-button>
-                <el-button size="mini" circle icon="el-icon-plus" title="新建目录" :disabled="folderMutating" :loading="folderMutatingAction === 'create'" @click="createFolder"></el-button>
-                <el-button size="mini" circle icon="el-icon-edit" title="重命名目录" :disabled="folderMutating || !folderPath" :loading="folderMutatingAction === 'rename'" @click="renameCurrentFolder"></el-button>
-                <el-button size="mini" circle icon="el-icon-delete" title="删除目录" :disabled="folderMutating || !folderPath" :loading="folderMutatingAction === 'delete'" @click="deleteCurrentFolder"></el-button>
+                <el-button size="mini" circle icon="el-icon-refresh" :title="t('admin.refreshFolders')" :disabled="folderMutating" :loading="folderLoading" @click="refreshFolderResources"></el-button>
+                <el-button size="mini" circle icon="el-icon-plus" :title="t('admin.createFolderTitle')" :disabled="folderMutating" :loading="folderMutatingAction === 'create'" @click="createFolder"></el-button>
+                <el-button size="mini" circle icon="el-icon-edit" :title="t('admin.renameFolderTitle')" :disabled="folderMutating || !folderPath" :loading="folderMutatingAction === 'rename'" @click="renameCurrentFolder"></el-button>
+                <el-button size="mini" circle icon="el-icon-delete" :title="t('admin.deleteFolderTitle')" :disabled="folderMutating || !folderPath" :loading="folderMutatingAction === 'delete'" @click="deleteCurrentFolder"></el-button>
               </span>
             </div>
-            <div class="folder-current">当前位置：/{{ folderPath || '' }}</div>
+            <div class="folder-current">{{ t('admin.currentLocation') }}/{{ folderPath || '' }}</div>
             <div class="folder-tree">
               <button
                 v-for="folder in folderTreeNodes"
@@ -968,7 +973,7 @@
           <section class="disk-content" :class="{ 'is-list-view': viewMode === 'list' }">
             <div class="folder-breadcrumb">
               <i class="fas fa-location-arrow"></i>
-              <span class="folder-crumb" @click="selectFolder('')">根目录</span>
+              <span class="folder-crumb" @click="selectFolder('')">{{ t('admin.rootDir') }}</span>
               <template v-for="item in folderBreadcrumbs">
                 <i :key="'sep-' + item.path" class="el-icon-arrow-right"></i>
                 <span :key="'crumb-' + item.path" class="folder-crumb" @click="selectFolder(item.path)">{{ item.name }}</span>
@@ -988,16 +993,16 @@
                 <div class="image-overlay">
                   <div class="overlay-buttons">
                     <el-dropdown @command="(cmd) => handleQuickCopy(cmd, item.name)" trigger="click" size="mini">
-                      <el-button size="mini" type="primary" @click.stop>复制 <i class="el-icon-arrow-down"></i></el-button>
+                      <el-button size="mini" type="primary" @click.stop>{{ t('admin.copy') }} <i class="el-icon-arrow-down"></i></el-button>
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="url">直链 URL</el-dropdown-item>
+                        <el-dropdown-item command="url">{{ t('admin.directUrl') }}</el-dropdown-item>
                         <el-dropdown-item command="markdown">Markdown</el-dropdown-item>
                         <el-dropdown-item command="html">HTML</el-dropdown-item>
                         <el-dropdown-item command="bbcode">BBCode</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
-                    <el-button size="mini" type="info" @click.stop="handleEditName(item)">编辑</el-button>
-                    <el-button size="mini" type="danger" @click.stop="handleDelete(index, item.name)">删除</el-button>
+                    <el-button size="mini" type="info" @click.stop="handleEditName(item)">{{ t('admin.edit') }}</el-button>
+                    <el-button size="mini" type="danger" @click.stop="handleDelete(index, item.name)">{{ t('admin.delete') }}</el-button>
                   </div>
               </div>
               <div class="card-footer">
@@ -1040,7 +1045,7 @@
                     <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
                     <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i class="fas fa-edit"></i></button>
                     <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
-                    <button class="control-btn" @click.stop="openPreview(item)" title="预览"><i class="fas fa-eye"></i></button>
+                    <button class="control-btn" @click.stop="openPreview(item)" :title="t('admin.preview')"><i class="fas fa-eye"></i></button>
                     <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i class="fas fa-link"></i></button>
                     <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i class="fas fa-trash-alt"></i></button>
                   </div>
@@ -1078,14 +1083,14 @@
                     :src="'/file/' + item.name"
                     controls
                     preload="metadata">
-                    当前浏览器不支持音频播放
+                    {{ t('admin.audioNotSupported') }}
                   </audio>
                   <!-- 控制按钮区域 -->
                   <div class="audio-controls">
                     <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
                     <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i class="fas fa-edit"></i></button>
                     <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
-                    <button class="control-btn" @click.stop="openPreview(item)" title="预览"><i class="fas fa-eye"></i></button>
+                    <button class="control-btn" @click.stop="openPreview(item)" :title="t('admin.preview')"><i class="fas fa-eye"></i></button>
                     <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i class="fas fa-copy"></i></button>
                     <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i class="fas fa-trash-alt"></i></button>
                   </div>
@@ -1123,7 +1128,7 @@
                     <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
                     <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i class="fas fa-edit"></i></button>
                     <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
-                    <button class="control-btn" @click.stop="openPreview(item)" title="预览"><i class="fas fa-eye"></i></button>
+                    <button class="control-btn" @click.stop="openPreview(item)" :title="t('admin.preview')"><i class="fas fa-eye"></i></button>
                     <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i class="fas fa-copy"></i></button>
                     <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i class="fas fa-trash-alt"></i></button>
                   </div>
@@ -1132,9 +1137,9 @@
             </template>
                 </template>
                 <div v-if="paginatedTableData.length === 0" class="empty-tip">
-                  当前目录下没有符合条件的文件。
+                  {{ t('admin.emptyTip') }}
                   <div>
-                    <el-button size="mini" type="primary" @click="resetViewConditions">清空筛选并返回根目录</el-button>
+                    <el-button size="mini" type="primary" @click="resetViewConditions">{{ t('admin.resetFilters') }}</el-button>
                   </div>
                 </div>
               </div>
@@ -1142,12 +1147,12 @@
             <template v-else>
               <div class="list-view-card">
                 <el-table :data="paginatedTableData" border stripe row-key="name" style="width: 100%">
-                  <el-table-column label="选择" width="76" align="center">
+                  <el-table-column :label="t('admin.colSelect')" width="76" align="center">
                     <template slot-scope="scope">
                       <el-checkbox :value="scope.row.selected" @change="toggleSelectByName(scope.row.name)"></el-checkbox>
                     </template>
                   </el-table-column>
-                  <el-table-column label="文件名" min-width="280" show-overflow-tooltip>
+                  <el-table-column :label="t('admin.colFileName')" min-width="280" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <span class="row-drag-handle" draggable="true" @dragstart="handleFileDragStart(scope.row, $event)" @dragend="handleFileDragEnd">
                         <i class="fas fa-grip-lines"></i>
@@ -1157,44 +1162,44 @@
                       </span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="目录" width="180" show-overflow-tooltip>
+                  <el-table-column :label="t('admin.colFolder')" width="180" show-overflow-tooltip>
                     <template slot-scope="scope">
-                      {{ scope.row.metadata.folderPath || '根目录' }}
+                      {{ scope.row.metadata.folderPath || t('admin.rootDir') }}
                     </template>
                   </el-table-column>
-                  <el-table-column label="类型" width="92" align="center">
+                  <el-table-column :label="t('admin.colType')" width="92" align="center">
                     <template slot-scope="scope">
                       {{ getFileType(scope.row.name) }}
                     </template>
                   </el-table-column>
-                  <el-table-column label="大小" width="116" align="right">
+                  <el-table-column :label="t('admin.colSize')" width="116" align="right">
                     <template slot-scope="scope">
                       {{ formatFileSize(scope.row.metadata.fileSize || 0) }}
                     </template>
                   </el-table-column>
-                  <el-table-column label="存储" width="126" align="center">
+                  <el-table-column :label="t('admin.colStorage')" width="126" align="center">
                     <template slot-scope="scope">
                       {{ getStorageLabel(scope.row.name) }}
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作" width="236" fixed="right">
+                  <el-table-column :label="t('admin.colActions')" width="236" fixed="right">
                     <template slot-scope="scope">
                       <div class="list-actions">
                         <el-button type="text" size="mini" @click="toggleLike(0, scope.row.name)">
-                          {{ scope.row.metadata.liked ? '取消收藏' : '收藏' }}
+                          {{ scope.row.metadata.liked ? t('admin.unfavorite') : t('admin.favorite') }}
                         </el-button>
-                        <el-button type="text" size="mini" @click="handleCopy(0, scope.row.name)">复制</el-button>
-                        <el-button type="text" size="mini" @click="handleEditName(scope.row)">重命名</el-button>
-                        <el-button type="text" size="mini" @click="openPreview(scope.row)">预览</el-button>
-                        <el-button type="text" size="mini" style="color:#f56c6c" @click="handleDelete(0, scope.row.name)">删除</el-button>
+                        <el-button type="text" size="mini" @click="handleCopy(0, scope.row.name)">{{ t('admin.copy') }}</el-button>
+                        <el-button type="text" size="mini" @click="handleEditName(scope.row)">{{ t('admin.rename') }}</el-button>
+                        <el-button type="text" size="mini" @click="openPreview(scope.row)">{{ t('admin.preview') }}</el-button>
+                        <el-button type="text" size="mini" style="color:#f56c6c" @click="handleDelete(0, scope.row.name)">{{ t('admin.delete') }}</el-button>
                       </div>
                     </template>
                   </el-table-column>
                 </el-table>
                 <div v-if="paginatedTableData.length === 0" class="empty-tip">
-                  当前目录下没有符合条件的文件。
+                  {{ t('admin.emptyTip') }}
                   <div>
-                    <el-button size="mini" type="primary" @click="resetViewConditions">清空筛选并返回根目录</el-button>
+                    <el-button size="mini" type="primary" @click="resetViewConditions">{{ t('admin.resetFilters') }}</el-button>
                   </div>
                 </div>
               </div>
@@ -1207,7 +1212,7 @@
             </div>
             <div v-if="nextCursor" class="load-more-container">
               <el-button :loading="isLoadingMore" :disabled="isLoadingMore" @click="loadMore">
-                {{ isLoadingMore ? '加载中...' : ('加载更多 (' + Number + '/' + (totalCount || Number) + ')') }}
+                {{ isLoadingMore ? t('admin.loading') : t('admin.loadMoreN', { loaded: Number, total: (totalCount || Number) }) }}
               </el-button>
             </div>
           </section>
@@ -1215,20 +1220,20 @@
       </el-main>
     </el-container>
     <el-dialog
-      title="API Token 管理"
+      :title="t('admin.tokenDialogTitle')"
       :visible.sync="tokenDialogVisible"
       width="860px"
       custom-class="token-manager-dialog">
       <div class="token-toolbar">
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="openCreateTokenDialog">新建 Token</el-button>
-        <el-button size="mini" icon="el-icon-refresh" :loading="tokenLoading" @click="loadApiTokens">刷新</el-button>
+        <el-button size="mini" type="primary" icon="el-icon-plus" @click="openCreateTokenDialog">{{ t('admin.tokenNew') }}</el-button>
+        <el-button size="mini" icon="el-icon-refresh" :loading="tokenLoading" @click="loadApiTokens">{{ t('admin.refresh') }}</el-button>
       </div>
       <div v-if="tokenLoading" class="token-loading">
-        <i class="el-icon-loading"></i> 正在加载 Token...
+        <i class="el-icon-loading"></i> {{ t('admin.tokenLoading') }}
       </div>
       <div v-else-if="apiTokens.length === 0" class="token-empty">
         <i class="fas fa-key"></i>
-        <p>暂无 API Token，可创建后用于脚本、curl 或 ShareX 上传。</p>
+        <p>{{ t('admin.tokenEmpty') }}</p>
       </div>
       <el-table
         v-else
@@ -1237,8 +1242,8 @@
         border
         size="mini"
         row-key="id">
-        <el-table-column prop="name" label="名称" min-width="170"></el-table-column>
-        <el-table-column label="权限" min-width="190">
+        <el-table-column prop="name" :label="t('admin.colName')" min-width="170"></el-table-column>
+        <el-table-column :label="t('admin.colScopes')" min-width="190">
           <template slot-scope="scope">
             <el-tag
               v-for="scopeName in scope.row.scopes"
@@ -1250,24 +1255,24 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" min-width="140">
+        <el-table-column :label="t('admin.colCreatedAt')" min-width="140">
           <template slot-scope="scope">
             <div>{{ formatDateTime(scope.row.createdAt) }}</div>
             <small class="token-time-hint">{{ formatRelativeTime(scope.row.createdAt) }}</small>
           </template>
         </el-table-column>
-        <el-table-column label="最后使用" min-width="140">
+        <el-table-column :label="t('admin.colLastUsed')" min-width="140">
           <template slot-scope="scope">
             <span v-if="scope.row.lastUsedAt">{{ formatRelativeTime(scope.row.lastUsedAt) }}</span>
-            <span v-else class="token-time-hint">从未使用</span>
+            <span v-else class="token-time-hint">{{ t('admin.neverUsed') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Token 预览" min-width="122">
+        <el-table-column :label="t('admin.colTokenPreview')" min-width="122">
           <template slot-scope="scope">
             <code>{{ scope.row.tokenPreview }}</code>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="176" align="center">
+        <el-table-column :label="t('admin.colStatus')" width="176" align="center">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.enabled"
@@ -1277,18 +1282,18 @@
               @change="toggleApiTokenEnabled(scope.row)">
             </el-switch>
             <span class="token-status-text" :class="{ 'is-enabled': scope.row.enabled }">
-              {{ scope.row.enabled ? '启用' : '禁用' }}
+              {{ scope.row.enabled ? t('admin.enabled') : t('admin.disabled') }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="86" align="center">
+        <el-table-column :label="t('admin.colActions')" width="86" align="center">
           <template slot-scope="scope">
             <el-button
               type="text"
               style="color:#f56c6c"
               :disabled="Boolean(tokenMutatingMap[scope.row.id])"
               @click="removeApiToken(scope.row)">
-              删除
+              {{ t('admin.delete') }}
             </el-button>
           </template>
         </el-table-column>
@@ -1296,57 +1301,57 @@
     </el-dialog>
 
     <el-dialog
-      title="创建 API Token"
+      :title="t('admin.createTokenTitle')"
       :visible.sync="createTokenDialogVisible"
       width="560px"
       append-to-body
       custom-class="token-create-dialog">
       <el-form label-position="top" size="small">
-        <el-form-item label="Token 名称">
-          <el-input v-model="tokenForm.name" maxlength="64" placeholder="例如：ShareX 截图上传 / CI 备份脚本"></el-input>
+        <el-form-item :label="t('admin.tokenNameLabel')">
+          <el-input v-model="tokenForm.name" maxlength="64" :placeholder="t('admin.tokenNamePlaceholder')"></el-input>
         </el-form-item>
-        <el-form-item label="权限">
+        <el-form-item :label="t('admin.colScopes')">
           <el-checkbox-group v-model="tokenForm.scopes" class="token-scope-group">
-            <el-checkbox label="upload"><i class="fas fa-upload"></i> 上传文件</el-checkbox>
-            <el-checkbox label="read"><i class="fas fa-eye"></i> 读取/列表/下载</el-checkbox>
-            <el-checkbox label="delete"><i class="fas fa-trash-alt"></i> 删除文件/粘贴</el-checkbox>
-            <el-checkbox label="paste"><i class="fas fa-file-alt"></i> 创建文本粘贴</el-checkbox>
+            <el-checkbox label="upload"><i class="fas fa-upload"></i> {{ t('admin.scopeUpload') }}</el-checkbox>
+            <el-checkbox label="read"><i class="fas fa-eye"></i> {{ t('admin.scopeRead') }}</el-checkbox>
+            <el-checkbox label="delete"><i class="fas fa-trash-alt"></i> {{ t('admin.scopeDelete') }}</el-checkbox>
+            <el-checkbox label="paste"><i class="fas fa-file-alt"></i> {{ t('admin.scopePaste') }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="过期时间">
-          <el-select v-model="tokenForm.expiryPreset" placeholder="请选择过期策略" style="width:100%;">
-            <el-option label="永不过期" value="never"></el-option>
-            <el-option label="7 天后过期" value="7d"></el-option>
-            <el-option label="30 天后过期" value="30d"></el-option>
-            <el-option label="90 天后过期" value="90d"></el-option>
-            <el-option label="自定义时间" value="custom"></el-option>
+        <el-form-item :label="t('admin.expiryLabel')">
+          <el-select v-model="tokenForm.expiryPreset" :placeholder="t('admin.expiryPlaceholder')" style="width:100%;">
+            <el-option :label="t('admin.expiryNever')" value="never"></el-option>
+            <el-option :label="t('admin.expiry7d')" value="7d"></el-option>
+            <el-option :label="t('admin.expiry30d')" value="30d"></el-option>
+            <el-option :label="t('admin.expiry90d')" value="90d"></el-option>
+            <el-option :label="t('admin.expiryCustom')" value="custom"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="tokenForm.expiryPreset === 'custom'" label="自定义过期时间">
+        <el-form-item v-if="tokenForm.expiryPreset === 'custom'" :label="t('admin.customExpiryLabel')">
           <el-date-picker
             v-model="tokenForm.customExpiresAt"
             type="datetime"
             style="width:100%;"
             value-format="timestamp"
-            placeholder="选择日期和时间">
+            :placeholder="t('admin.customExpiryPlaceholder')">
           </el-date-picker>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="createTokenDialogVisible = false">取消</el-button>
-        <el-button size="small" type="primary" :loading="tokenCreateLoading" @click="createApiToken">创建</el-button>
+        <el-button size="small" @click="createTokenDialogVisible = false">{{ t('admin.cancel') }}</el-button>
+        <el-button size="small" type="primary" :loading="tokenCreateLoading" @click="createApiToken">{{ t('admin.create') }}</el-button>
       </span>
     </el-dialog>
 
     <el-dialog
-      title="Token 已创建"
+      :title="t('admin.tokenCreatedTitle')"
       :visible.sync="createdTokenDialogVisible"
       width="620px"
       append-to-body
       custom-class="token-created-dialog">
       <div class="token-once-warning">
         <i class="fas fa-exclamation-triangle"></i>
-        完整 Token 仅在此处展示一次，请立即复制并妥善保存。
+        {{ t('admin.tokenOnceWarning') }}
       </div>
       <el-input
         type="textarea"
@@ -1356,7 +1361,7 @@
       </el-input>
       <div class="token-created-actions">
         <el-button size="small" type="primary" @click="copyCreatedTokenValue">
-          {{ createdTokenCopied ? '已复制 ✓' : '复制 Token' }}
+          {{ createdTokenCopied ? t('admin.tokenCopied') : t('admin.copyToken') }}
         </el-button>
       </div>
     </el-dialog>
@@ -1381,8 +1386,8 @@
       <div class="preview-toolbar" @click.stop>
         <span class="preview-filename">{{ previewData.fileName }}</span>
         <div class="preview-btns">
-          <el-button size="small" type="primary" @click="copyPreviewLink"><i class="fas fa-copy"></i> 复制直链</el-button>
-          <el-button size="small" @click="downloadPreviewFile"><i class="fas fa-download"></i> 下载</el-button>
+          <el-button size="small" type="primary" @click="copyPreviewLink"><i class="fas fa-copy"></i> {{ t('admin.copyDirectLink') }}</el-button>
+          <el-button size="small" @click="downloadPreviewFile"><i class="fas fa-download"></i> {{ t('admin.download') }}</el-button>
         </div>
       </div>
     </div>
@@ -1394,15 +1399,15 @@
            @mousedown.stop="startBatchDrag"
            :class="{ 'is-dragging': batchDragState.dragging }"
            :style="batchToolbarStyle">
-        <span class="batch-count">已选 {{ selectedFiles.length }} 项</span>
+        <span class="batch-count">{{ t('admin.selectedN', { n: selectedFiles.length }) }}</span>
         <el-button-group size="mini" class="batch-actions">
-          <el-button class="batch-btn batch-btn-copy" icon="el-icon-document-copy" @click="handleBatchCopy">复制链接</el-button>
-          <el-button class="batch-btn batch-btn-move" icon="el-icon-folder-opened" @click="moveSelectedToFolder">移动目录</el-button>
-          <el-button class="batch-btn batch-btn-delete" icon="el-icon-delete" @click="handleBatchDelete">删除</el-button>
-          <el-button class="batch-btn batch-btn-download" icon="el-icon-download" @click="handleBatchDownload">下载</el-button>
+          <el-button class="batch-btn batch-btn-copy" icon="el-icon-document-copy" @click="handleBatchCopy">{{ t('admin.copyLink') }}</el-button>
+          <el-button class="batch-btn batch-btn-move" icon="el-icon-folder-opened" @click="moveSelectedToFolder">{{ t('admin.moveFolder') }}</el-button>
+          <el-button class="batch-btn batch-btn-delete" icon="el-icon-delete" @click="handleBatchDelete">{{ t('admin.delete') }}</el-button>
+          <el-button class="batch-btn batch-btn-download" icon="el-icon-download" @click="handleBatchDownload">{{ t('admin.download') }}</el-button>
         </el-button-group>
-        <el-button class="batch-btn batch-btn-cancel" icon="el-icon-close" @click="clearSelection">取消选择</el-button>
-        <span class="batch-shortcuts">快捷键：Ctrl/Cmd + C 复制 · M 移动 · D 下载 · Del 删除 · Esc 取消</span>
+        <el-button class="batch-btn batch-btn-cancel" icon="el-icon-close" @click="clearSelection">{{ t('admin.cancelSelect') }}</el-button>
+        <span class="batch-shortcuts">{{ t('admin.shortcuts') }}</span>
       </div>
     </transition>
   </div>
@@ -1410,39 +1415,661 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script> <!-- Vue -->
 <script src="https://cdn.jsdelivr.net/npm/element-ui@2.15.3/lib/index.js"></script> <!-- ElementUI -->
 <script>
+  if (window.I18n) {
+    I18n.register({
+      zh: {
+        'nav.home': '首页',
+        'nav.gallery': '图片浏览',
+        'nav.storage': '存储配置',
+        'nav.webdav': 'WebDAV',
+        'nav.admin': '管理后台',
+        'admin.searchPlaceholder': '输入关键字搜索',
+        'admin.typeAll': '全部',
+        'admin.typeImage': '图片',
+        'admin.typeVideo': '视频',
+        'admin.typeAudio': '音频',
+        'admin.typeDocument': '文件',
+        'admin.storageAll': '全部存储',
+        'admin.storageR2': 'R2 存储',
+        'admin.storageS3': 'S3 存储',
+        'admin.sortDateDesc': '按时间倒序',
+        'admin.sortNameAsc': '按名称升序',
+        'admin.sortSizeDesc': '按大小倒序',
+        'admin.filterAll': '全部',
+        'admin.filterFavorites': '收藏',
+        'admin.filterBlocked': '黑名单',
+        'admin.filterUnblocked': '白名单',
+        'admin.viewGrid': '平铺视图',
+        'admin.viewList': '详细视图',
+        'admin.batchSelectAll': '全选当前页',
+        'admin.batchUnselectAll': '取消全选',
+        'admin.batchSelectLoaded': '全选已加载',
+        'admin.batchCopy': '批量复制',
+        'admin.batchCopyMarkdown': '复制Markdown',
+        'admin.batchCopyHtml': '复制HTML',
+        'admin.batchDelete': '批量删除',
+        'admin.batchDownload': '批量下载',
+        'admin.batchMoveFolder': '移动到目录',
+        'admin.batchBlock': '加入黑名单',
+        'admin.batchUnblock': '加入白名单',
+        'admin.toolkitSelectAllInPage': '全选当前页',
+        'admin.toolkitCheckBroken': '检测失效文件',
+        'admin.toolkitOpenUploader': '打开上传中心',
+        'admin.toolkitExportLinks': '导出全部链接',
+        'admin.toolkitManageTokens': 'API Token 管理',
+        'admin.toolkitCheckStatus': '检查连接状态',
+        'admin.loadNormal': '正常模式',
+        'admin.loadDataSaver': '省流模式',
+        'admin.loadNoImage': '无图模式',
+        'admin.safeModeMenu': '安全模式(NSFW)',
+        'admin.tooltipStorage': '存储状态与配置',
+        'admin.tooltipUiDesign': '前端 UI 设计',
+        'admin.totalRecords': '总记录:',
+        'admin.loadedCount': '已加载',
+        'admin.folderManage': '目录管理',
+        'admin.refreshFolders': '刷新目录与文件',
+        'admin.createFolderTitle': '新建目录',
+        'admin.renameFolderTitle': '重命名目录',
+        'admin.deleteFolderTitle': '删除目录',
+        'admin.currentLocation': '当前位置：',
+        'admin.rootDir': '根目录',
+        'admin.allFiles': '全部文件',
+        'admin.unnamedFolder': '未命名目录',
+        'admin.copy': '复制',
+        'admin.directUrl': '直链 URL',
+        'admin.edit': '编辑',
+        'admin.delete': '删除',
+        'admin.preview': '预览',
+        'admin.audioNotSupported': '当前浏览器不支持音频播放',
+        'admin.emptyTip': '当前目录下没有符合条件的文件。',
+        'admin.resetFilters': '清空筛选并返回根目录',
+        'admin.colSelect': '选择',
+        'admin.colFileName': '文件名',
+        'admin.colFolder': '目录',
+        'admin.colType': '类型',
+        'admin.colSize': '大小',
+        'admin.colStorage': '存储',
+        'admin.colActions': '操作',
+        'admin.unfavorite': '取消收藏',
+        'admin.favorite': '收藏',
+        'admin.rename': '重命名',
+        'admin.loading': '加载中...',
+        'admin.loadMoreN': '加载更多 ({loaded}/{total})',
+        'admin.tokenDialogTitle': 'API Token 管理',
+        'admin.tokenNew': '新建 Token',
+        'admin.refresh': '刷新',
+        'admin.tokenLoading': '正在加载 Token...',
+        'admin.tokenEmpty': '暂无 API Token，可创建后用于脚本、curl 或 ShareX 上传。',
+        'admin.colName': '名称',
+        'admin.colScopes': '权限',
+        'admin.colCreatedAt': '创建时间',
+        'admin.colLastUsed': '最后使用',
+        'admin.neverUsed': '从未使用',
+        'admin.colTokenPreview': 'Token 预览',
+        'admin.colStatus': '状态',
+        'admin.enabled': '启用',
+        'admin.disabled': '禁用',
+        'admin.createTokenTitle': '创建 API Token',
+        'admin.tokenNameLabel': 'Token 名称',
+        'admin.tokenNamePlaceholder': '例如：ShareX 截图上传 / CI 备份脚本',
+        'admin.scopeUpload': '上传文件',
+        'admin.scopeRead': '读取/列表/下载',
+        'admin.scopeDelete': '删除文件/粘贴',
+        'admin.scopePaste': '创建文本粘贴',
+        'admin.expiryLabel': '过期时间',
+        'admin.expiryPlaceholder': '请选择过期策略',
+        'admin.expiryNever': '永不过期',
+        'admin.expiry7d': '7 天后过期',
+        'admin.expiry30d': '30 天后过期',
+        'admin.expiry90d': '90 天后过期',
+        'admin.expiryCustom': '自定义时间',
+        'admin.customExpiryLabel': '自定义过期时间',
+        'admin.customExpiryPlaceholder': '选择日期和时间',
+        'admin.cancel': '取消',
+        'admin.create': '创建',
+        'admin.tokenCreatedTitle': 'Token 已创建',
+        'admin.tokenOnceWarning': '完整 Token 仅在此处展示一次，请立即复制并妥善保存。',
+        'admin.tokenCopied': '已复制 ✓',
+        'admin.copyToken': '复制 Token',
+        'admin.copyDirectLink': '复制直链',
+        'admin.download': '下载',
+        'admin.selectedN': '已选 {n} 项',
+        'admin.copyLink': '复制链接',
+        'admin.moveFolder': '移动目录',
+        'admin.cancelSelect': '取消选择',
+        'admin.shortcuts': '快捷键：Ctrl/Cmd + C 复制 · M 移动 · D 下载 · Del 删除 · Esc 取消',
+        'admin.statusChecking': '检查中...',
+        'admin.statusUnknown': '未知',
+        'admin.never': '从未',
+        'admin.justNow': '刚刚',
+        'admin.minutesAgo': '{n} 分钟前',
+        'admin.hoursAgo': '{n} 小时前',
+        'admin.daysAgo': '{n} 天前',
+        'admin.loadTokenListFailed': '加载 Token 列表失败。',
+        'admin.loadTokenFailed': '加载 API Token 失败。',
+        'admin.enterTokenName': '请输入 Token 名称。',
+        'admin.selectAtLeastOneScope': '请至少选择一个权限。',
+        'admin.selectValidExpiry': '请选择有效的未来过期时间。',
+        'admin.createTokenFailed': '创建 Token 失败。',
+        'admin.updateTokenStatusFailed': '更新 Token 状态失败。',
+        'admin.tokenEnabledMsg': 'Token 已启用。',
+        'admin.tokenDisabledMsg': 'Token 已禁用。',
+        'admin.confirmDeleteToken': '确认删除 Token「{name}」吗？',
+        'admin.deleteConfirmTitle': '删除确认',
+        'admin.deleteTokenFailed': '删除 Token 失败。',
+        'admin.tokenDeletedMsg': 'Token 已删除。',
+        'admin.folderListLoadFailed': '目录列表加载失败',
+        'admin.folderFilesRefreshed': '目录与文件已刷新',
+        'admin.refreshFailedRetry': '刷新失败，请稍后重试',
+        'admin.newFolderSeed': '新目录',
+        'admin.createFolderPrompt': '请输入目录路径（例如：项目A/一月）',
+        'admin.confirmCreate': '创建',
+        'admin.folderPathEmpty': '目录路径不能为空',
+        'admin.folderExistsSwitched': '目录已存在，已切换到该目录',
+        'admin.folderCreateFailed': '目录创建失败',
+        'admin.folderCreateSuccess': '目录创建成功',
+        'admin.renameFolderPrompt': '请输入新的目录名称',
+        'admin.confirmSave': '保存',
+        'admin.folderNameEmpty': '目录名称不能为空',
+        'admin.renameFailed': '重命名失败',
+        'admin.folderRenameSuccess': '目录重命名成功',
+        'admin.folderRenameFailed': '目录重命名失败',
+        'admin.deleteFolderConfirm': '确认删除该目录标记并将目录内文件移回根目录？文件直链不会失效。',
+        'admin.confirmDelete': '删除',
+        'admin.deleteFolderFailed': '删除目录失败',
+        'admin.folderDeleteSuccess': '目录删除成功',
+        'admin.folderDeleteFailed': '目录删除失败',
+        'admin.selectFilesFirst': '请先选择文件',
+        'admin.moveFilesPrompt': '请输入目标目录路径（留空表示根目录）',
+        'admin.moveFilesTitle': '移动文件',
+        'admin.confirmMove': '移动',
+        'admin.filesAlreadyInFolder': '所选文件已在当前目录',
+        'admin.moveFailed': '移动失败',
+        'admin.movedNToFolder': '已移动 {n} 个文件到 {folder}',
+        'admin.moveFilesFailed': '移动文件失败',
+        'admin.resetFiltersDone': '已恢复默认筛选',
+        'admin.dragMoveN': '移动 {n} 个文件',
+        'admin.dragMoveFile': '移动文件',
+        'admin.dragMoveFailed': '拖拽移动失败',
+        'admin.directLinkCopied': '直链已复制',
+        'admin.logoutSuccess': '已退出登录',
+        'admin.logoutFailed': '退出失败，请重试',
+        'admin.authCheckFailed': '认证检查失败，请刷新页面',
+        'admin.uploadOverSize': '文件超过{size}MB: \n{names}',
+        'admin.noValidFiles': '没有符合条件的文件',
+        'admin.storageR2Bucket': 'R2 存储桶',
+        'admin.storageTgChannel': 'Telegram 频道',
+        'admin.uploadConfirmMsg': '确定要上传这 {count} 个文件到 <b>{target}</b> 的目录 <b>{folder}</b> 吗?',
+        'admin.uploadConfirmTitle': '上传确认',
+        'admin.startUpload': '开始上传',
+        'admin.uploadingTo': '正在上传到 {target}...',
+        'admin.uploadFailed': '上传失败',
+        'admin.noFilePathReturned': '未返回文件路径',
+        'admin.uploadSuccessN': '<i class="fas fa-check-circle" style="color:#67c23a;margin-right:8px;"></i>成功上传 <b>{count}</b> 个文件到 <b>{target}</b>',
+        'admin.uploadFailedList': '上传失败: {list}',
+        'admin.uploadCanceled': '已取消上传',
+        'admin.toggleLikeFailed': '更新收藏状态失败，请稍后重试',
+        'admin.favoriteSuccess': '收藏成功',
+        'admin.unfavoriteSuccess': '取消收藏',
+        'admin.syncServerFailed': '同步服务器失败，请检查网络连接',
+        'admin.storageR2Kv': 'R2 存储和 KV 记录',
+        'admin.storageKv': 'KV 记录',
+        'admin.deleteFileConfirm': '此操作将永久删除该文件的 {storage}, 是否继续?',
+        'admin.tip': '提示',
+        'admin.confirm': '确定',
+        'admin.deleteFailed': '删除失败',
+        'admin.deleteSuccess': '删除成功！',
+        'admin.deleteFailedWith': '删除失败: {msg}',
+        'admin.canceledDelete': '已取消删除',
+        'admin.copyLinkSuccess': '复制文件链接成功~',
+        'admin.copyLinkManual': '自动复制失败，请手动复制链接：{link}',
+        'admin.formatLinkCopied': '{format} 格式链接已复制~',
+        'admin.copyFailed': '复制失败',
+        'admin.batchDeleteMsgBase': '此操作将永久删除这 {n} 个文件',
+        'admin.batchDeleteMixed': ' (其中 {r2} 个 R2 文件将完全删除, {tg} 个 Telegram 文件仅删除 KV 记录)',
+        'admin.batchDeleteR2': ' (将从 R2 存储和 KV 中完全删除)',
+        'admin.batchDeleteSuffix': ', 是否继续?',
+        'admin.batchDeleteSuccessN': '成功删除 {n} 个文件!',
+        'admin.batchDeleteResult': '删除完成: {ok} 成功, {fail} 失败',
+        'admin.batchDeleteFailed': '批量删除失败，请检查网络连接',
+        'admin.canceledBatchDelete': '已取消批量删除',
+        'admin.batchCopyLinkSuccess': '批量复制链接成功~',
+        'admin.markdownLinkCopied': 'Markdown格式链接已复制~',
+        'admin.htmlLinkCopied': 'HTML格式链接已复制~',
+        'admin.downloadingN': '正在下载 {n} 个文件',
+        'admin.invalidOperationType': '无效的操作类型',
+        'admin.blacklist': '黑名单',
+        'admin.whitelist': '白名单',
+        'admin.batchBlockConfirm': '确定要将这 {n} 个文件加入{type}吗?',
+        'admin.batchBlockSuccess': '批量加入{type}成功',
+        'admin.operationFailedNetwork': '操作失败，请检查网络连接',
+        'admin.selectedPageN': '已选中当前页 {n} 项',
+        'admin.unselectedAll': '已取消选择',
+        'admin.selectedAllN': '已选中全部 {n} 项',
+        'admin.checkingStatus': '正在检查连接状态...',
+        'admin.kvStorage': 'KV 存储',
+        'admin.s3Storage': 'S3 存储',
+        'admin.authLabel': '身份验证:',
+        'admin.systemStatusTitle': '系统连接状态',
+        'admin.checkStatusFailed': '检查状态失败: {msg}',
+        'admin.readingStorageStatus': '正在读取存储状态...',
+        'admin.openConfigPanel': '打开配置界面',
+        'admin.openDiagPanel': '打开诊断界面',
+        'admin.storageStatusTitle': '存储状态与配置',
+        'admin.close': '关闭',
+        'admin.readStorageFailed': '读取存储状态失败: {msg}',
+        'admin.generatingLinks': '正在生成链接列表...',
+        'admin.exportedNLinks': '已导出 {n} 个链接',
+        'admin.switchedTypeMode': '已切换为{type}模式, 共{count}个文件',
+        'admin.checkingBroken': '正在检测失效文件...',
+        'admin.brokenDetectedN': '检测到 {n} 个失效文件，已自动选中。<br>您可以使用批量删除功能移除它们。',
+        'admin.noBrokenFiles': '未检测到失效文件',
+        'admin.quickLinkInternalOnly': '快捷入口仅支持站内跳转',
+        'admin.editNameTitle': '修改文件名',
+        'admin.fileNameEmpty': '文件名不能为空',
+        'admin.fileNameTooLong': '文件名不能超过64个字符',
+        'admin.editNameSuccess': '文件名修改成功',
+        'admin.editNameFailed': '文件名修改失败',
+        'admin.editNameError': '修改文件名时出错，请检查网络连接',
+        'admin.safeModeOn': '安全模式已开启',
+        'admin.safeModeOff': '安全模式已关闭',
+        'admin.switchedLoadMode': '已切换为{mode}',
+        'admin.uploadingBg': '正在上传背景图...',
+        'admin.bgUploadSuccess': '背景图上传成功。',
+        'admin.bgUploadFailed': '上传失败：{msg}',
+        'admin.uiNotSupported': '当前版本暂不支持前端 UI 设置。',
+        'admin.uiRequestFailed': '请求失败 ({status})',
+        'admin.uiVerifyFailed': '保存后回读校验失败，请检查 KV 绑定与 Functions 日志。',
+        'admin.uiReadFailedLocal': '读取服务端配置失败，已使用本地缓存：{error}',
+        'admin.uiTitle': '前端 UI 设计',
+        'admin.uiSubtitle': '当前改动实时预览，点击保存后同步到所有设备。',
+        'admin.uiBgSectionTitle': '背景图设置（全站）',
+        'admin.uiBgUrlPlaceholder': '请输入图片链接（https://example.com/background.jpg）',
+        'admin.uiUploadImage': '上传图片',
+        'admin.uiClear': '清除',
+        'admin.uiBgTip': '将应用到首页、图片浏览、后台、WebDAV 及其他所有可见页面。',
+        'admin.uiLoginSectionTitle': '登录页背景图',
+        'admin.uiLoginFollowGlobal': '与全站一致',
+        'admin.uiLoginCustom': '仅登录页单独设置',
+        'admin.uiLoginUrlPlaceholder': '请输入登录页背景图链接',
+        'admin.uiOpacitySectionTitle': '界面透明度',
+        'admin.uiCardOpacity': '卡片透明度',
+        'admin.uiCardBlur': '模糊强度',
+        'admin.uiEffectSectionTitle': '动态背景特效',
+        'admin.uiEffectNone': '无特效',
+        'admin.uiEffectMath': '数学符号',
+        'admin.uiEffectParticle': '粒子网格',
+        'admin.uiEffectTexture': '纸纹叠加',
+        'admin.uiEffectIntensity': '特效强度',
+        'admin.uiOptimizeMobile': '移动端自动优化特效性能',
+        'admin.uiOptimizeTip': '移动端会自动降低特效密度，减少 CPU 占用。',
+        'admin.uiResetDefaults': '恢复默认',
+        'admin.uiPreviewHint': '预览中：当前改动仅在本地生效，保存后全站同步。',
+        'admin.uiSaveSettings': '保存设置',
+        'admin.uiSaving': '保存中...',
+        'admin.uiSaved': '✓ 已保存',
+        'admin.uiSavedSyncedBinding': '已保存并同步到服务端{binding}。',
+        'admin.uiSavedSyncedMsg': '前端 UI 设置已保存并同步{binding}',
+        'admin.uiSavedLocal': '已本地保存',
+        'admin.uiServerUnavailable': '服务端不可用，已保存到本地缓存。',
+        'admin.uiSavedLocalSyncFailed': '已本地保存，服务端同步失败：{error}',
+        'admin.uiSavedLocalSyncFailedShort': '已本地保存，服务端同步失败。',
+        'admin.uiSaveFailedRetry': '保存失败，请重试。',
+        'admin.uiSaveFailed': '保存失败：{msg}',
+        'admin.uiResetPreviewHint': '已恢复默认预览，点击保存后全站生效。',
+        'admin.uiKvBinding': '（KV: {binding}）',
+        'admin.filterValidNoMatch': '检测到筛选条件无匹配，已自动恢复默认视图',
+        'admin.syncDataError': '同步数据时出错，请检查网络连接',
+        'admin.refreshListFailed': '刷新文件列表失败，请检查网络连接',
+        'admin.loadMoreSupplementN': '已补充 {n} 条数据，可继续翻页',
+        'admin.loadMoreRestN': '已加载剩余 {n} 条',
+        'admin.loadMoreFailed': '加载更多失败，请稍后重试'
+      },
+      en: {
+        'nav.home': 'Home',
+        'nav.gallery': 'Gallery',
+        'nav.storage': 'Storage',
+        'nav.webdav': 'WebDAV',
+        'nav.admin': 'Admin',
+        'admin.searchPlaceholder': 'Search by keyword',
+        'admin.typeAll': 'All',
+        'admin.typeImage': 'Images',
+        'admin.typeVideo': 'Videos',
+        'admin.typeAudio': 'Audio',
+        'admin.typeDocument': 'Files',
+        'admin.storageAll': 'All Storage',
+        'admin.storageR2': 'R2 Storage',
+        'admin.storageS3': 'S3 Storage',
+        'admin.sortDateDesc': 'Newest First',
+        'admin.sortNameAsc': 'Name Ascending',
+        'admin.sortSizeDesc': 'Largest First',
+        'admin.filterAll': 'All',
+        'admin.filterFavorites': 'Favorites',
+        'admin.filterBlocked': 'Blacklist',
+        'admin.filterUnblocked': 'Whitelist',
+        'admin.viewGrid': 'Grid View',
+        'admin.viewList': 'List View',
+        'admin.batchSelectAll': 'Select Current Page',
+        'admin.batchUnselectAll': 'Deselect All',
+        'admin.batchSelectLoaded': 'Select Loaded',
+        'admin.batchCopy': 'Batch Copy',
+        'admin.batchCopyMarkdown': 'Copy Markdown',
+        'admin.batchCopyHtml': 'Copy HTML',
+        'admin.batchDelete': 'Batch Delete',
+        'admin.batchDownload': 'Batch Download',
+        'admin.batchMoveFolder': 'Move to Folder',
+        'admin.batchBlock': 'Add to Blacklist',
+        'admin.batchUnblock': 'Add to Whitelist',
+        'admin.toolkitSelectAllInPage': 'Select Current Page',
+        'admin.toolkitCheckBroken': 'Check Broken Files',
+        'admin.toolkitOpenUploader': 'Open Upload Center',
+        'admin.toolkitExportLinks': 'Export All Links',
+        'admin.toolkitManageTokens': 'API Token Management',
+        'admin.toolkitCheckStatus': 'Check Connection Status',
+        'admin.loadNormal': 'Normal Mode',
+        'admin.loadDataSaver': 'Data Saver Mode',
+        'admin.loadNoImage': 'No-Image Mode',
+        'admin.safeModeMenu': 'Safe Mode (NSFW)',
+        'admin.tooltipStorage': 'Storage Status & Config',
+        'admin.tooltipUiDesign': 'Frontend UI Design',
+        'admin.totalRecords': 'Total:',
+        'admin.loadedCount': 'Loaded',
+        'admin.folderManage': 'Folder Management',
+        'admin.refreshFolders': 'Refresh folders and files',
+        'admin.createFolderTitle': 'New Folder',
+        'admin.renameFolderTitle': 'Rename Folder',
+        'admin.deleteFolderTitle': 'Delete Folder',
+        'admin.currentLocation': 'Current location: ',
+        'admin.rootDir': 'Root',
+        'admin.allFiles': 'All Files',
+        'admin.unnamedFolder': 'Unnamed Folder',
+        'admin.copy': 'Copy',
+        'admin.directUrl': 'Direct URL',
+        'admin.edit': 'Edit',
+        'admin.delete': 'Delete',
+        'admin.preview': 'Preview',
+        'admin.audioNotSupported': 'Your browser does not support audio playback',
+        'admin.emptyTip': 'No matching files in this folder.',
+        'admin.resetFilters': 'Clear filters and return to root',
+        'admin.colSelect': 'Select',
+        'admin.colFileName': 'File Name',
+        'admin.colFolder': 'Folder',
+        'admin.colType': 'Type',
+        'admin.colSize': 'Size',
+        'admin.colStorage': 'Storage',
+        'admin.colActions': 'Actions',
+        'admin.unfavorite': 'Unfavorite',
+        'admin.favorite': 'Favorite',
+        'admin.rename': 'Rename',
+        'admin.loading': 'Loading...',
+        'admin.loadMoreN': 'Load More ({loaded}/{total})',
+        'admin.tokenDialogTitle': 'API Token Management',
+        'admin.tokenNew': 'New Token',
+        'admin.refresh': 'Refresh',
+        'admin.tokenLoading': 'Loading tokens...',
+        'admin.tokenEmpty': 'No API tokens yet. Create one for scripts, curl, or ShareX uploads.',
+        'admin.colName': 'Name',
+        'admin.colScopes': 'Scopes',
+        'admin.colCreatedAt': 'Created',
+        'admin.colLastUsed': 'Last Used',
+        'admin.neverUsed': 'Never used',
+        'admin.colTokenPreview': 'Token Preview',
+        'admin.colStatus': 'Status',
+        'admin.enabled': 'Enabled',
+        'admin.disabled': 'Disabled',
+        'admin.createTokenTitle': 'Create API Token',
+        'admin.tokenNameLabel': 'Token Name',
+        'admin.tokenNamePlaceholder': 'e.g. ShareX screenshot upload / CI backup script',
+        'admin.scopeUpload': 'Upload files',
+        'admin.scopeRead': 'Read / List / Download',
+        'admin.scopeDelete': 'Delete files / paste',
+        'admin.scopePaste': 'Create text paste',
+        'admin.expiryLabel': 'Expiration',
+        'admin.expiryPlaceholder': 'Select an expiration policy',
+        'admin.expiryNever': 'Never expires',
+        'admin.expiry7d': 'Expires in 7 days',
+        'admin.expiry30d': 'Expires in 30 days',
+        'admin.expiry90d': 'Expires in 90 days',
+        'admin.expiryCustom': 'Custom time',
+        'admin.customExpiryLabel': 'Custom Expiration',
+        'admin.customExpiryPlaceholder': 'Select date and time',
+        'admin.cancel': 'Cancel',
+        'admin.create': 'Create',
+        'admin.tokenCreatedTitle': 'Token Created',
+        'admin.tokenOnceWarning': 'The full token is shown only once. Copy and store it now.',
+        'admin.tokenCopied': 'Copied ✓',
+        'admin.copyToken': 'Copy Token',
+        'admin.copyDirectLink': 'Copy Direct Link',
+        'admin.download': 'Download',
+        'admin.selectedN': '{n} selected',
+        'admin.copyLink': 'Copy Links',
+        'admin.moveFolder': 'Move Folder',
+        'admin.cancelSelect': 'Cancel Selection',
+        'admin.shortcuts': 'Shortcuts: Ctrl/Cmd + C copy · M move · D download · Del delete · Esc cancel',
+        'admin.statusChecking': 'Checking...',
+        'admin.statusUnknown': 'Unknown',
+        'admin.never': 'Never',
+        'admin.justNow': 'Just now',
+        'admin.minutesAgo': '{n} min ago',
+        'admin.hoursAgo': '{n} hr ago',
+        'admin.daysAgo': '{n} days ago',
+        'admin.loadTokenListFailed': 'Failed to load token list.',
+        'admin.loadTokenFailed': 'Failed to load API tokens.',
+        'admin.enterTokenName': 'Please enter a token name.',
+        'admin.selectAtLeastOneScope': 'Please select at least one scope.',
+        'admin.selectValidExpiry': 'Please select a valid future expiration time.',
+        'admin.createTokenFailed': 'Failed to create token.',
+        'admin.updateTokenStatusFailed': 'Failed to update token status.',
+        'admin.tokenEnabledMsg': 'Token enabled.',
+        'admin.tokenDisabledMsg': 'Token disabled.',
+        'admin.confirmDeleteToken': 'Delete token "{name}"?',
+        'admin.deleteConfirmTitle': 'Delete Confirmation',
+        'admin.deleteTokenFailed': 'Failed to delete token.',
+        'admin.tokenDeletedMsg': 'Token deleted.',
+        'admin.folderListLoadFailed': 'Failed to load folder list',
+        'admin.folderFilesRefreshed': 'Folders and files refreshed',
+        'admin.refreshFailedRetry': 'Refresh failed, please try again later',
+        'admin.newFolderSeed': 'New Folder',
+        'admin.createFolderPrompt': 'Enter folder path (e.g. ProjectA/January)',
+        'admin.confirmCreate': 'Create',
+        'admin.folderPathEmpty': 'Folder path cannot be empty',
+        'admin.folderExistsSwitched': 'Folder already exists, switched to it',
+        'admin.folderCreateFailed': 'Failed to create folder',
+        'admin.folderCreateSuccess': 'Folder created successfully',
+        'admin.renameFolderPrompt': 'Enter the new folder name',
+        'admin.confirmSave': 'Save',
+        'admin.folderNameEmpty': 'Folder name cannot be empty',
+        'admin.renameFailed': 'Rename failed',
+        'admin.folderRenameSuccess': 'Folder renamed successfully',
+        'admin.folderRenameFailed': 'Failed to rename folder',
+        'admin.deleteFolderConfirm': 'Delete this folder marker and move its files back to root? Direct links remain valid.',
+        'admin.confirmDelete': 'Delete',
+        'admin.deleteFolderFailed': 'Failed to delete folder',
+        'admin.folderDeleteSuccess': 'Folder deleted successfully',
+        'admin.folderDeleteFailed': 'Failed to delete folder',
+        'admin.selectFilesFirst': 'Please select files first',
+        'admin.moveFilesPrompt': 'Enter target folder path (leave empty for root)',
+        'admin.moveFilesTitle': 'Move Files',
+        'admin.confirmMove': 'Move',
+        'admin.filesAlreadyInFolder': 'Selected files are already in this folder',
+        'admin.moveFailed': 'Move failed',
+        'admin.movedNToFolder': 'Moved {n} files to {folder}',
+        'admin.moveFilesFailed': 'Failed to move files',
+        'admin.resetFiltersDone': 'Default filters restored',
+        'admin.dragMoveN': 'Move {n} files',
+        'admin.dragMoveFile': 'Move file',
+        'admin.dragMoveFailed': 'Drag-and-drop move failed',
+        'admin.directLinkCopied': 'Direct link copied',
+        'admin.logoutSuccess': 'Logged out',
+        'admin.logoutFailed': 'Logout failed, please try again',
+        'admin.authCheckFailed': 'Authentication check failed, please refresh',
+        'admin.uploadOverSize': 'Files exceed {size}MB: \n{names}',
+        'admin.noValidFiles': 'No eligible files',
+        'admin.storageR2Bucket': 'R2 Bucket',
+        'admin.storageTgChannel': 'Telegram Channel',
+        'admin.uploadConfirmMsg': 'Upload these {count} files to the <b>{folder}</b> folder of <b>{target}</b>?',
+        'admin.uploadConfirmTitle': 'Upload Confirmation',
+        'admin.startUpload': 'Start Upload',
+        'admin.uploadingTo': 'Uploading to {target}...',
+        'admin.uploadFailed': 'Upload failed',
+        'admin.noFilePathReturned': 'No file path returned',
+        'admin.uploadSuccessN': '<i class="fas fa-check-circle" style="color:#67c23a;margin-right:8px;"></i>Successfully uploaded <b>{count}</b> files to <b>{target}</b>',
+        'admin.uploadFailedList': 'Upload failed: {list}',
+        'admin.uploadCanceled': 'Upload canceled',
+        'admin.toggleLikeFailed': 'Failed to update favorite status, please try again',
+        'admin.favoriteSuccess': 'Added to favorites',
+        'admin.unfavoriteSuccess': 'Removed from favorites',
+        'admin.syncServerFailed': 'Failed to sync with server, please check your connection',
+        'admin.storageR2Kv': 'R2 storage and KV record',
+        'admin.storageKv': 'KV record',
+        'admin.deleteFileConfirm': 'This will permanently delete the file\'s {storage}. Continue?',
+        'admin.tip': 'Notice',
+        'admin.confirm': 'Confirm',
+        'admin.deleteFailed': 'Delete failed',
+        'admin.deleteSuccess': 'Deleted successfully!',
+        'admin.deleteFailedWith': 'Delete failed: {msg}',
+        'admin.canceledDelete': 'Deletion canceled',
+        'admin.copyLinkSuccess': 'File link copied~',
+        'admin.copyLinkManual': 'Auto-copy failed, please copy manually: {link}',
+        'admin.formatLinkCopied': '{format} link copied~',
+        'admin.copyFailed': 'Copy failed',
+        'admin.batchDeleteMsgBase': 'This will permanently delete these {n} files',
+        'admin.batchDeleteMixed': ' ({r2} R2 files will be fully deleted, {tg} Telegram files will only have KV records removed)',
+        'admin.batchDeleteR2': ' (will be fully deleted from R2 storage and KV)',
+        'admin.batchDeleteSuffix': '. Continue?',
+        'admin.batchDeleteSuccessN': 'Successfully deleted {n} files!',
+        'admin.batchDeleteResult': 'Delete complete: {ok} succeeded, {fail} failed',
+        'admin.batchDeleteFailed': 'Batch delete failed, please check your connection',
+        'admin.canceledBatchDelete': 'Batch delete canceled',
+        'admin.batchCopyLinkSuccess': 'Links copied in batch~',
+        'admin.markdownLinkCopied': 'Markdown links copied~',
+        'admin.htmlLinkCopied': 'HTML links copied~',
+        'admin.downloadingN': 'Downloading {n} files',
+        'admin.invalidOperationType': 'Invalid operation type',
+        'admin.blacklist': 'blacklist',
+        'admin.whitelist': 'whitelist',
+        'admin.batchBlockConfirm': 'Add these {n} files to the {type}?',
+        'admin.batchBlockSuccess': 'Added to {type} successfully',
+        'admin.operationFailedNetwork': 'Operation failed, please check your connection',
+        'admin.selectedPageN': 'Selected {n} items on current page',
+        'admin.unselectedAll': 'Selection cleared',
+        'admin.selectedAllN': 'Selected all {n} items',
+        'admin.checkingStatus': 'Checking connection status...',
+        'admin.kvStorage': 'KV Storage',
+        'admin.s3Storage': 'S3 Storage',
+        'admin.authLabel': 'Authentication:',
+        'admin.systemStatusTitle': 'System Connection Status',
+        'admin.checkStatusFailed': 'Status check failed: {msg}',
+        'admin.readingStorageStatus': 'Reading storage status...',
+        'admin.openConfigPanel': 'Open Config Panel',
+        'admin.openDiagPanel': 'Open Diagnostics',
+        'admin.storageStatusTitle': 'Storage Status & Config',
+        'admin.close': 'Close',
+        'admin.readStorageFailed': 'Failed to read storage status: {msg}',
+        'admin.generatingLinks': 'Generating link list...',
+        'admin.exportedNLinks': 'Exported {n} links',
+        'admin.switchedTypeMode': 'Switched to {type} mode, {count} files total',
+        'admin.checkingBroken': 'Checking broken files...',
+        'admin.brokenDetectedN': 'Detected {n} broken files, auto-selected.<br>You can use batch delete to remove them.',
+        'admin.noBrokenFiles': 'No broken files detected',
+        'admin.quickLinkInternalOnly': 'Quick links only support internal navigation',
+        'admin.editNameTitle': 'Edit File Name',
+        'admin.fileNameEmpty': 'File name cannot be empty',
+        'admin.fileNameTooLong': 'File name cannot exceed 64 characters',
+        'admin.editNameSuccess': 'File name updated successfully',
+        'admin.editNameFailed': 'Failed to update file name',
+        'admin.editNameError': 'Error updating file name, please check your connection',
+        'admin.safeModeOn': 'Safe mode enabled',
+        'admin.safeModeOff': 'Safe mode disabled',
+        'admin.switchedLoadMode': 'Switched to {mode}',
+        'admin.uploadingBg': 'Uploading background image...',
+        'admin.bgUploadSuccess': 'Background image uploaded successfully.',
+        'admin.bgUploadFailed': 'Upload failed: {msg}',
+        'admin.uiNotSupported': 'Frontend UI settings are not supported in this version.',
+        'admin.uiRequestFailed': 'Request failed ({status})',
+        'admin.uiVerifyFailed': 'Read-back verification failed after saving. Check the KV binding and Functions logs.',
+        'admin.uiReadFailedLocal': 'Failed to read server config, using local cache: {error}',
+        'admin.uiTitle': 'Frontend UI Design',
+        'admin.uiSubtitle': 'Changes preview in real time and sync to all devices once saved.',
+        'admin.uiBgSectionTitle': 'Background Image (Site-wide)',
+        'admin.uiBgUrlPlaceholder': 'Enter image URL (https://example.com/background.jpg)',
+        'admin.uiUploadImage': 'Upload Image',
+        'admin.uiClear': 'Clear',
+        'admin.uiBgTip': 'Applies to home, gallery, admin, WebDAV, and all other visible pages.',
+        'admin.uiLoginSectionTitle': 'Login Page Background',
+        'admin.uiLoginFollowGlobal': 'Same as site-wide',
+        'admin.uiLoginCustom': 'Login page only',
+        'admin.uiLoginUrlPlaceholder': 'Enter login page background image URL',
+        'admin.uiOpacitySectionTitle': 'Interface Opacity',
+        'admin.uiCardOpacity': 'Card Opacity',
+        'admin.uiCardBlur': 'Blur Intensity',
+        'admin.uiEffectSectionTitle': 'Dynamic Background Effects',
+        'admin.uiEffectNone': 'None',
+        'admin.uiEffectMath': 'Math Symbols',
+        'admin.uiEffectParticle': 'Particle Mesh',
+        'admin.uiEffectTexture': 'Paper Texture',
+        'admin.uiEffectIntensity': 'Effect Intensity',
+        'admin.uiOptimizeMobile': 'Auto-optimize effect performance on mobile',
+        'admin.uiOptimizeTip': 'Mobile devices automatically reduce effect density to save CPU.',
+        'admin.uiResetDefaults': 'Restore Defaults',
+        'admin.uiPreviewHint': 'Previewing: changes apply locally only and sync site-wide after saving.',
+        'admin.uiSaveSettings': 'Save Settings',
+        'admin.uiSaving': 'Saving...',
+        'admin.uiSaved': '✓ Saved',
+        'admin.uiSavedSyncedBinding': 'Saved and synced to server{binding}.',
+        'admin.uiSavedSyncedMsg': 'Frontend UI settings saved and synced{binding}',
+        'admin.uiSavedLocal': 'Saved locally',
+        'admin.uiServerUnavailable': 'Server unavailable, saved to local cache.',
+        'admin.uiSavedLocalSyncFailed': 'Saved locally, server sync failed: {error}',
+        'admin.uiSavedLocalSyncFailedShort': 'Saved locally, server sync failed.',
+        'admin.uiSaveFailedRetry': 'Save failed, please try again.',
+        'admin.uiSaveFailed': 'Save failed: {msg}',
+        'admin.uiResetPreviewHint': 'Default preview restored. Save to apply site-wide.',
+        'admin.uiKvBinding': ' (KV: {binding})',
+        'admin.filterValidNoMatch': 'No matches for the current filters; default view restored',
+        'admin.syncDataError': 'Error syncing data, please check your connection',
+        'admin.refreshListFailed': 'Failed to refresh file list, please check your connection',
+        'admin.loadMoreSupplementN': 'Added {n} more records, you can keep paging',
+        'admin.loadMoreRestN': 'Loaded remaining {n} records',
+        'admin.loadMoreFailed': 'Failed to load more, please try again later'
+      }
+    });
+  }
+
   new Vue({
     el: '#app',
     data: {
+      lang: (window.I18n && I18n.getLang()) || 'zh',
       baseURL: document.location.origin,
       Number: 0,
       totalCount: 0,
       fileConfig: {
         all: {
-          name: '全部',
+          name: (window.I18n ? I18n.t('admin.typeAll') : '全部'),
           exts: [],  // 空数组表示匹配所有
           icon: 'fas fa-th-large',
           count: 0
         },
         image: {
-          name: '图片',
+          name: (window.I18n ? I18n.t('admin.typeImage') : '图片'),
           exts: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'ico', 'svg', 'heic', 'heif', 'avif'],
           icon: 'fas fa-image',
           count: 0
         },
         video: {
-          name: '视频',
+          name: (window.I18n ? I18n.t('admin.typeVideo') : '视频'),
           exts: ['mp4', 'webm', 'ogg', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'm4v', '3gp', 'ts'],
           icon: 'fas fa-video',
           count: 0
         },
         audio: {
-          name: '音频',
+          name: (window.I18n ? I18n.t('admin.typeAudio') : '音频'),
           exts: ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma', 'ape', 'opus'],
           icon: 'fas fa-music',
           count: 0
         },
         document: {
-          name: '文件',
+          name: (window.I18n ? I18n.t('admin.typeDocument') : '文件'),
           exts: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'md', 'zip', 'rar', '7z', 'tar', 'gz', 'exe', 'apk', 'dmg', 'iso', 'msi', 'deb', 'rpm', 'json', 'xml', 'csv', 'sql', 'html', 'css', 'js', 'py', 'java', 'go', 'rs', 'cpp', 'c', 'h'],
           icon: 'fas fa-folder-open',
           count: 0
@@ -1486,15 +2113,15 @@
       loadMode: 'normal', // normal | dataSaver | noImage
       safeMode: true, // NSFW 安全模式
       systemStatus: {
-        telegram: { connected: false, message: '检查中...' },
-        kv: { connected: false, message: '检查中...' },
-        r2: { connected: false, message: '检查中...', enabled: false },
-        s3: { connected: false, message: '检查中...', enabled: false },
-        discord: { connected: false, message: '检查中...', enabled: false },
-        huggingface: { connected: false, message: '检查中...', enabled: false },
-        webdav: { connected: false, message: '检查中...', enabled: false },
-        github: { connected: false, message: '检查中...', enabled: false },
-        auth: { enabled: false, message: '检查中...' }
+        telegram: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...') },
+        kv: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...') },
+        r2: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...'), enabled: false },
+        s3: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...'), enabled: false },
+        discord: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...'), enabled: false },
+        huggingface: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...'), enabled: false },
+        webdav: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...'), enabled: false },
+        github: { connected: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...'), enabled: false },
+        auth: { enabled: false, message: (window.I18n ? I18n.t('admin.statusChecking') : '检查中...') }
       },
       batchToolbarPosition: {
         left: null,
@@ -1507,8 +2134,8 @@
       },
       previewData: null,  // 模态框预览数据
       quickWebsites: [
-        { name: '上传中心', url: '/', icon: 'fas fa-cloud-upload-alt' },
-        { name: '图片浏览', url: '/gallery.html', icon: 'fas fa-images' },
+        { name: (window.I18n ? I18n.t('admin.toolkitOpenUploader') : '打开上传中心'), url: '/', icon: 'fas fa-cloud-upload-alt' },
+        { name: (window.I18n ? I18n.t('nav.gallery') : '图片浏览'), url: '/gallery.html', icon: 'fas fa-images' },
       ],
       tokenDialogVisible: false,
       tokenLoading: false,
@@ -1627,7 +2254,7 @@
       folderTreeNodes() {
         const list = [{
           path: '',
-          name: '全部文件',
+          name: this.t('admin.allFiles'),
           depth: 0,
           fileCount: this.folderPath ? '-' : this.Number,
         }];
@@ -1636,7 +2263,7 @@
           const depth = Number.isFinite(folder.depth) ? folder.depth : (path ? path.split('/').length : 0);
           return {
             path,
-            name: folder.name || (path.split('/').pop() || path || '未命名目录'),
+            name: folder.name || (path.split('/').pop() || path || this.t('admin.unnamedFolder')),
             depth,
             fileCount: Number(folder.fileCount || 0),
           };
@@ -1700,6 +2327,10 @@
       folderPath(newValue) { localStorage.setItem('adminFolderPath', this.normalizeFolderPath(newValue)); }
     },
     methods: {
+      t(key, params) {
+        void this.lang;
+        return window.I18n ? I18n.t(key, params) : key;
+      },
       normalizeFolderPath(value = '') {
         const raw = String(value || '').replace(/\\/g, '/').trim();
         const output = [];
@@ -1734,15 +2365,15 @@
       },
       formatRelativeTime(timestamp) {
         const value = Number(timestamp || 0);
-        if (!Number.isFinite(value) || value <= 0) return '从未';
+        if (!Number.isFinite(value) || value <= 0) return this.t('admin.never');
         const diff = Date.now() - value;
         const minute = 60 * 1000;
         const hour = 60 * minute;
         const day = 24 * hour;
-        if (diff < minute) return '刚刚';
-        if (diff < hour) return `${Math.floor(diff / minute)} 分钟前`;
-        if (diff < day) return `${Math.floor(diff / hour)} 小时前`;
-        if (diff < day * 30) return `${Math.floor(diff / day)} 天前`;
+        if (diff < minute) return this.t('admin.justNow');
+        if (diff < hour) return this.t('admin.minutesAgo', { n: Math.floor(diff / minute) });
+        if (diff < day) return this.t('admin.hoursAgo', { n: Math.floor(diff / hour) });
+        if (diff < day * 30) return this.t('admin.daysAgo', { n: Math.floor(diff / day) });
         return this.formatDateTime(value);
       },
       openApiTokenDialog() {
@@ -1778,11 +2409,11 @@
           });
           const payload = await response.json();
           if (!response.ok || !payload?.success) {
-            throw new Error(payload?.error?.message || payload?.message || '加载 Token 列表失败。');
+            throw new Error(payload?.error?.message || payload?.message || this.t('admin.loadTokenListFailed'));
           }
           this.apiTokens = Array.isArray(payload.tokens) ? payload.tokens : [];
         } catch (error) {
-          this.$message.error(error.message || '加载 API Token 失败。');
+          this.$message.error(error.message || this.t('admin.loadTokenFailed'));
         } finally {
           this.tokenLoading = false;
         }
@@ -1791,16 +2422,16 @@
         const name = String(this.tokenForm.name || '').trim();
         const scopes = Array.isArray(this.tokenForm.scopes) ? this.tokenForm.scopes : [];
         if (!name) {
-          this.$message.warning('请输入 Token 名称。');
+          this.$message.warning(this.t('admin.enterTokenName'));
           return;
         }
         if (scopes.length === 0) {
-          this.$message.warning('请至少选择一个权限。');
+          this.$message.warning(this.t('admin.selectAtLeastOneScope'));
           return;
         }
         const expiresAt = this.resolveTokenExpiresAt();
         if (String(this.tokenForm.expiryPreset) === 'custom' && !expiresAt) {
-          this.$message.warning('请选择有效的未来过期时间。');
+          this.$message.warning(this.t('admin.selectValidExpiry'));
           return;
         }
         this.tokenCreateLoading = true;
@@ -1817,7 +2448,7 @@
           });
           const payload = await response.json();
           if (!response.ok || !payload?.success) {
-            throw new Error(payload?.error?.message || payload?.message || '创建 Token 失败。');
+            throw new Error(payload?.error?.message || payload?.message || this.t('admin.createTokenFailed'));
           }
           this.createTokenDialogVisible = false;
           this.createdTokenValue = String(payload.token || '');
@@ -1825,7 +2456,7 @@
           this.createdTokenDialogVisible = true;
           await this.loadApiTokens();
         } catch (error) {
-          this.$message.error(error.message || '创建 Token 失败。');
+          this.$message.error(error.message || this.t('admin.createTokenFailed'));
         } finally {
           this.tokenCreateLoading = false;
         }
@@ -1859,12 +2490,12 @@
           });
           const payload = await response.json();
           if (!response.ok || !payload?.success) {
-            throw new Error(payload?.error?.message || payload?.message || '更新 Token 状态失败。');
+            throw new Error(payload?.error?.message || payload?.message || this.t('admin.updateTokenStatusFailed'));
           }
-          this.$message.success(nextEnabled ? 'Token 已启用。' : 'Token 已禁用。');
+          this.$message.success(nextEnabled ? this.t('admin.tokenEnabledMsg') : this.t('admin.tokenDisabledMsg'));
         } catch (error) {
           token.enabled = !nextEnabled;
-          this.$message.error(error.message || '更新 Token 状态失败。');
+          this.$message.error(error.message || this.t('admin.updateTokenStatusFailed'));
         } finally {
           this.$delete(this.tokenMutatingMap, tokenId);
         }
@@ -1873,10 +2504,10 @@
         const tokenId = token?.id;
         if (!tokenId) return;
         try {
-          await this.$confirm(`确认删除 Token「${token.name}」吗？`, '删除确认', {
+          await this.$confirm(this.t('admin.confirmDeleteToken', { name: token.name }), this.t('admin.deleteConfirmTitle'), {
             type: 'warning',
-            confirmButtonText: '删除',
-            cancelButtonText: '取消',
+            confirmButtonText: this.t('admin.confirmDelete'),
+            cancelButtonText: this.t('admin.cancel'),
           });
         } catch {
           return;
@@ -1890,12 +2521,12 @@
           });
           const payload = await response.json();
           if (!response.ok || !payload?.success) {
-            throw new Error(payload?.error?.message || payload?.message || '删除 Token 失败。');
+            throw new Error(payload?.error?.message || payload?.message || this.t('admin.deleteTokenFailed'));
           }
           this.apiTokens = this.apiTokens.filter((item) => item.id !== tokenId);
-          this.$message.success('Token 已删除。');
+          this.$message.success(this.t('admin.tokenDeletedMsg'));
         } catch (error) {
-          this.$message.error(error.message || '删除 Token 失败。');
+          this.$message.error(error.message || this.t('admin.deleteTokenFailed'));
         } finally {
           this.$delete(this.tokenMutatingMap, tokenId);
         }
@@ -2153,7 +2784,7 @@
           this.folders = Array.isArray(data?.folders) ? data.folders : [];
         } catch (error) {
           this.folders = [];
-          this.$message.error('目录列表加载失败');
+          this.$message.error(this.t('admin.folderListLoadFailed'));
         } finally {
           this.folderLoading = false;
         }
@@ -2163,23 +2794,23 @@
           this.clearFolderCache();
           await Promise.all([this.fetchFolders(), this.refreshFileList({ force: true })]);
           if (showMessage) {
-            this.$message.success('目录与文件已刷新');
+            this.$message.success(this.t('admin.folderFilesRefreshed'));
           }
         } catch (error) {
           if (showMessage) {
-            this.$message.error(error?.message || '刷新失败，请稍后重试');
+            this.$message.error(error?.message || this.t('admin.refreshFailedRetry'));
           }
         }
       },
       async createFolder() {
         if (this.folderMutating) return;
-        const seed = this.folderPath ? `${this.folderPath}/新目录` : '新目录';
+        const seed = this.folderPath ? `${this.folderPath}/${this.t('admin.newFolderSeed')}` : this.t('admin.newFolderSeed');
         try {
-          const prompt = await this.$prompt('请输入目录路径（例如：项目A/一月）', '新建目录', {
+          const prompt = await this.$prompt(this.t('admin.createFolderPrompt'), this.t('admin.createFolderTitle'), {
             inputValue: seed,
-            confirmButtonText: '创建',
-            cancelButtonText: '取消',
-            inputValidator: (value) => !!this.normalizeFolderPath(value) || '目录路径不能为空',
+            confirmButtonText: this.t('admin.confirmCreate'),
+            cancelButtonText: this.t('admin.cancel'),
+            inputValidator: (value) => !!this.normalizeFolderPath(value) || this.t('admin.folderPathEmpty'),
           });
           const path = this.normalizeFolderPath(prompt.value);
           if (!path) return;
@@ -2187,7 +2818,7 @@
           const existed = (this.folders || []).some((folder) => this.normalizeFolderPath(folder.path || folder.folderPath || '') === path);
           if (existed) {
             await this.selectFolder(path);
-            this.$message.info('目录已存在，已切换到该目录');
+            this.$message.info(this.t('admin.folderExistsSwitched'));
             return;
           }
 
@@ -2210,22 +2841,22 @@
               body: JSON.stringify({ path }),
             }).then((r) => r.json());
 
-            if (!response?.success) throw new Error(response?.error || '目录创建失败');
+            if (!response?.success) throw new Error(response?.error || this.t('admin.folderCreateFailed'));
 
-            this.$message.success('目录创建成功');
+            this.$message.success(this.t('admin.folderCreateSuccess'));
             this.clearFolderCache();
             await Promise.all([this.fetchFolders(), this.refreshFileList()]);
           } catch (error) {
             this.folders = previousFolders;
             this.folderPath = previousFolderPath;
             await this.refreshFileList();
-            this.$message.error(error.message || '目录创建失败');
+            this.$message.error(error.message || this.t('admin.folderCreateFailed'));
           } finally {
             this.folderMutating = false;
             this.folderMutatingAction = '';
           }
         } catch (error) {
-          if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || '目录创建失败');
+          if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || this.t('admin.folderCreateFailed'));
         }
       },
       async renameCurrentFolder() {
@@ -2234,11 +2865,11 @@
         const oldName = parts[parts.length - 1] || '';
         const prefix = parts.slice(0, -1).join('/');
         try {
-          const prompt = await this.$prompt('请输入新的目录名称', '重命名目录', {
+          const prompt = await this.$prompt(this.t('admin.renameFolderPrompt'), this.t('admin.renameFolderTitle'), {
             inputValue: oldName,
-            confirmButtonText: '保存',
-            cancelButtonText: '取消',
-            inputValidator: (value) => !!String(value || '').trim() || '目录名称不能为空',
+            confirmButtonText: this.t('admin.confirmSave'),
+            cancelButtonText: this.t('admin.cancel'),
+            inputValidator: (value) => !!String(value || '').trim() || this.t('admin.folderNameEmpty'),
           });
           const newName = String(prompt.value || '').trim();
           const targetPath = this.normalizeFolderPath(prefix ? `${prefix}/${newName}` : newName);
@@ -2259,30 +2890,30 @@
               body: JSON.stringify({ sourcePath, targetPath }),
             }).then((r) => r.json());
 
-            if (!res?.success) throw new Error(res?.error || '重命名失败');
-            this.$message.success('目录重命名成功');
+            if (!res?.success) throw new Error(res?.error || this.t('admin.renameFailed'));
+            this.$message.success(this.t('admin.folderRenameSuccess'));
             this.clearFolderCache();
             await Promise.all([this.fetchFolders(), this.refreshFileList()]);
           } catch (error) {
             this.folders = previousFolders;
             this.folderPath = sourcePath;
             await this.refreshFileList();
-            this.$message.error(error.message || '目录重命名失败');
+            this.$message.error(error.message || this.t('admin.folderRenameFailed'));
           } finally {
             this.folderMutating = false;
             this.folderMutatingAction = '';
           }
         } catch (error) {
-          if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || '目录重命名失败');
+          if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || this.t('admin.folderRenameFailed'));
         }
       },
       async deleteCurrentFolder() {
         if (!this.folderPath || this.folderMutating) return;
         try {
-          await this.$confirm('确认删除该目录标记并将目录内文件移回根目录？文件直链不会失效。', '删除目录', {
+          await this.$confirm(this.t('admin.deleteFolderConfirm'), this.t('admin.deleteFolderTitle'), {
             type: 'warning',
-            confirmButtonText: '删除',
-            cancelButtonText: '取消',
+            confirmButtonText: this.t('admin.confirmDelete'),
+            cancelButtonText: this.t('admin.cancel'),
           });
           const target = this.folderPath;
           const parent = target.split('/').slice(0, -1).join('/');
@@ -2304,35 +2935,35 @@
               credentials: 'include',
             }).then((r) => r.json());
 
-            if (!response?.success) throw new Error(response?.error || '删除目录失败');
+            if (!response?.success) throw new Error(response?.error || this.t('admin.deleteFolderFailed'));
             this.clearFolderCache();
             await Promise.all([this.fetchFolders(), this.refreshFileList()]);
-            this.$message.success('目录删除成功');
+            this.$message.success(this.t('admin.folderDeleteSuccess'));
           } catch (error) {
             this.folders = previousFolders;
             this.folderPath = previousFolderPath;
             await this.refreshFileList();
-            this.$message.error(error.message || '目录删除失败');
+            this.$message.error(error.message || this.t('admin.folderDeleteFailed'));
           } finally {
             this.folderMutating = false;
             this.folderMutatingAction = '';
           }
         } catch (error) {
-          if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || '目录删除失败');
+          if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || this.t('admin.folderDeleteFailed'));
         }
       },
       async moveSelectedToFolder() {
         if (this.selectedFiles.length === 0) {
-          this.$message.warning('请先选择文件');
+          this.$message.warning(this.t('admin.selectFilesFirst'));
           return;
         }
         let previousRows = null;
         let previousFolders = null;
         try {
-          const prompt = await this.$prompt('请输入目标目录路径（留空表示根目录）', '移动文件', {
+          const prompt = await this.$prompt(this.t('admin.moveFilesPrompt'), this.t('admin.moveFilesTitle'), {
             inputValue: this.folderPath || '',
-            confirmButtonText: '移动',
-            cancelButtonText: '取消',
+            confirmButtonText: this.t('admin.confirmMove'),
+            cancelButtonText: this.t('admin.cancel'),
           });
           const targetFolderPath = this.normalizeFolderPath(prompt.value || '');
           const ids = this.selectedFiles.map((item) => item.name);
@@ -2342,7 +2973,7 @@
             return current !== targetFolderPath;
           });
           if (!hasEffectiveMove) {
-            this.$message.info('所选文件已在当前目录');
+            this.$message.info(this.t('admin.filesAlreadyInFolder'));
             return;
           }
 
@@ -2403,8 +3034,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ids, targetFolderPath }),
           }).then((r) => r.json());
-          if (!result.success) throw new Error(result.error || '移动失败');
-          this.$message.success(`已移动 ${result.moved || 0} 个文件到 ${targetFolderPath || '根目录'}`);
+          if (!result.success) throw new Error(result.error || this.t('admin.moveFailed'));
+          this.$message.success(this.t('admin.movedNToFolder', { n: result.moved || 0, folder: targetFolderPath || this.t('admin.rootDir') }));
           this.clearFolderCache();
           await this.fetchFolders();
         } catch (error) {
@@ -2416,7 +3047,7 @@
               this.folders = previousFolders;
             }
             this.updateStats();
-            this.$message.error(error.message || '移动文件失败');
+            this.$message.error(error.message || this.t('admin.moveFilesFailed'));
           }
         }
       },
@@ -2428,7 +3059,7 @@
         this.folderPath = '';
         this.currentPage = 1;
         this.refreshFileList({ syncFolders: true });
-        this.$message.success('已恢复默认筛选');
+        this.$message.success(this.t('admin.resetFiltersDone'));
       },
       resolveDraggedIds(item) {
         if (!item || !item.name) return [];
@@ -2453,7 +3084,7 @@
           event.dataTransfer.setData('application/x-kvault-files', JSON.stringify(ids));
           event.dataTransfer.setData('text/plain', ids.join(','));
           const dragGhost = document.createElement('div');
-          dragGhost.textContent = ids.length > 1 ? `移动 ${ids.length} 个文件` : (item?.metadata?.fileName || item?.name || '移动文件');
+          dragGhost.textContent = ids.length > 1 ? this.t('admin.dragMoveN', { n: ids.length }) : (item?.metadata?.fileName || item?.name || this.t('admin.dragMoveFile'));
           dragGhost.style.cssText = 'position:fixed;top:-9999px;left:-9999px;padding:8px 12px;border-radius:999px;background:rgba(19,29,48,0.92);color:#fff;font-size:12px;pointer-events:none;z-index:9999;';
           document.body.appendChild(dragGhost);
           event.dataTransfer.setDragImage(dragGhost, 18, 16);
@@ -2604,16 +3235,16 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ids, targetFolderPath }),
           }).then((r) => r.json());
-          if (!result.success) throw new Error(result.error || '拖拽移动失败');
-          const folderLabel = targetFolderPath || '根目录';
-          this.$message.success(`已移动 ${result.moved || 0} 个文件到 ${folderLabel}`);
+          if (!result.success) throw new Error(result.error || this.t('admin.dragMoveFailed'));
+          const folderLabel = targetFolderPath || this.t('admin.rootDir');
+          this.$message.success(this.t('admin.movedNToFolder', { n: result.moved || 0, folder: folderLabel }));
           this.clearFolderCache();
           await this.fetchFolders();
         } catch (error) {
           this.tableData = previousRows;
           this.folders = previousFolders;
           this.updateStats();
-          this.$message.error(error.message || '拖拽移动失败');
+          this.$message.error(error.message || this.t('admin.dragMoveFailed'));
         } finally {
           this.handleFileDragEnd();
         }
@@ -2769,11 +3400,11 @@
         const link = this.previewData.url;
         const fallback = () => {
           this.copyToClipboardFallback(link);
-          this.$message.success('直链已复制');
+          this.$message.success(this.t('admin.directLinkCopied'));
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(link)
-            .then(() => this.$message.success('直链已复制'))
+            .then(() => this.$message.success(this.t('admin.directLinkCopied')))
             .catch(() => fallback());
         } else {
           fallback();
@@ -2805,13 +3436,13 @@
             });
           } catch (e) { /* 忽略错误 */ }
           
-          this.$message.success('已退出登录');
+          this.$message.success(this.t('admin.logoutSuccess'));
           // 跳转到登录页，禁止返回
           setTimeout(() => {
             window.location.replace('/login.html');
           }, 500);
         } catch (e) {
-          this.$message.error('退出失败，请重试');
+          this.$message.error(this.t('admin.logoutFailed'));
         }
       },
       handlePageChange(page) {
@@ -3021,25 +3652,25 @@
           (file.size <= config.maxSize ? valid : invalid).push(file);
         });
         // 显示错误信息
-        if(invalid.length) { this.$message.error(`文件超过${config.maxSize/1024/1024}MB: \n${invalid.map(f => f.name).join('\n')}`); }
-        if(!valid.length) { this.$message.info('没有符合条件的文件'); event.target.value = ''; return; }
+        if(invalid.length) { this.$message.error(this.t('admin.uploadOverSize', { size: config.maxSize/1024/1024, names: invalid.map(f => f.name).join('\n') })); }
+        if(!valid.length) { this.$message.info(this.t('admin.noValidFiles')); event.target.value = ''; return; }
 
         try {
-          const storageTarget = this.systemStatus.r2.connected && this.systemStatus.r2.enabled 
-            ? 'R2 存储桶' 
-            : 'Telegram 频道';
-          const folderText = this.folderPath ? ` / ${this.folderPath}` : ' / 根目录';
+          const storageTarget = this.systemStatus.r2.connected && this.systemStatus.r2.enabled
+            ? this.t('admin.storageR2Bucket')
+            : this.t('admin.storageTgChannel');
+          const folderText = this.folderPath ? ` / ${this.folderPath}` : ` / ${this.t('admin.rootDir')}`;
           await this.$confirm(
-            `确定要上传这 ${valid.length} 个文件到 <b>${storageTarget}</b> 的目录 <b>${folderText}</b> 吗?`, 
-            '上传确认', 
+            this.t('admin.uploadConfirmMsg', { count: valid.length, target: storageTarget, folder: folderText }),
+            this.t('admin.uploadConfirmTitle'),
             {
               type: 'info',
               dangerouslyUseHTMLString: true,
-              confirmButtonText: '开始上传',
-              cancelButtonText: '取消'
+              confirmButtonText: this.t('admin.startUpload'),
+              cancelButtonText: this.t('admin.cancel')
             }
           );
-          const loading = this.$message({ message: `正在上传到 ${storageTarget}...`, duration: 0 });
+          const loading = this.$message({ message: this.t('admin.uploadingTo', { target: storageTarget }), duration: 0 });
           let [successCount, failed] = [0, []];
           // 并发上传处理函数
           const upload = async file => {
@@ -4188,6 +4819,7 @@
       }
     },
     async mounted() {
+      if (window.I18n) { I18n.onChange((lang) => { this.lang = lang; }); }
       // 先检查认证状态
       try {
         const authResponse = await fetch('/api/auth/check', { method: 'GET', credentials: 'include' });

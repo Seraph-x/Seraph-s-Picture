@@ -5,33 +5,33 @@
         <span class="brand-dot"></span>
         <div>
           <h1>Seraph's Pictures</h1>
-          <p>Private media workspace</p>
+          <p>{{ t('shell.tagline') }}</p>
         </div>
       </div>
       <nav class="nav-row">
-        <router-link class="nav-link" to="/">Upload</router-link>
-        <router-link class="nav-link" to="/drive">Drive</router-link>
-        <router-link class="nav-link" to="/storage">Storage</router-link>
-        <router-link class="nav-link" to="/status">Status</router-link>
-        <a class="nav-link" href="/">Legacy</a>
+        <router-link class="nav-link" to="/">{{ t('nav.upload') }}</router-link>
+        <router-link class="nav-link" to="/drive">{{ t('nav.drive') }}</router-link>
+        <router-link class="nav-link" to="/storage">{{ t('nav.storage') }}</router-link>
+        <router-link class="nav-link" to="/status">{{ t('nav.status') }}</router-link>
+        <a class="nav-link" href="/">{{ t('nav.legacy') }}</a>
       </nav>
       <div class="toolbar">
+        <button class="btn btn-ghost" type="button" @click="toggleLocale">{{ nextLabel }}</button>
         <router-link
           v-if="authStore.authRequired && !authStore.authenticated"
           class="btn btn-ghost"
           to="/login"
         >
-          Login
+          {{ t('shell.login') }}
         </router-link>
-        <button v-if="authStore.authenticated" class="btn btn-ghost" @click="handleLogout">Logout</button>
+        <button v-if="authStore.authenticated" class="btn btn-ghost" @click="handleLogout">{{ t('shell.logout') }}</button>
       </div>
     </header>
 
     <section v-if="authStore.guestMode" class="guest-note card">
-      <strong>Guest mode enabled.</strong>
+      <strong>{{ t('shell.guestEnabled') }}</strong>
       <span>
-        Max file size: {{ formatSize(authStore.guestUpload.maxFileSize) }},
-        daily limit: {{ authStore.guestUpload.dailyLimit }} uploads.
+        {{ t('shell.guestInfo', { size: formatSize(authStore.guestUpload.maxFileSize), limit: authStore.guestUpload.dailyLimit }) }}
       </span>
     </section>
 
@@ -44,9 +44,11 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { useI18n } from '../i18n';
 
 const authStore = useAuthStore();
 const router = useRouter();
+const { t, toggleLocale, nextLabel } = useI18n();
 
 function formatSize(bytes = 0) {
   if (!bytes) return '0 B';

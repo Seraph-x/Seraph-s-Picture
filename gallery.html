@@ -9,6 +9,7 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/theme.css">
   <script src="/theme.js?v=20260305"></script>
+  <script src="/i18n.js?v=20260611"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.15.3/lib/theme-chalk/index.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <style>
@@ -825,18 +826,22 @@
     <div class="header">
       <div class="header-title">
         <i class="fas fa-images"></i>
-        <span>图片浏览器</span>
+        <span>{{ t('gallery.title') }}</span>
       </div>
       <div class="header-search">
-        <input type="text" v-model="searchQuery" placeholder="搜索文件名..." @input="handleSearch">
+        <input type="text" v-model="searchQuery" :placeholder="t('gallery.searchPlaceholder')" @input="handleSearch">
       </div>
       <div class="header-actions">
-        <a href="./" class="nav-btn"><i class="fas fa-cloud-upload-alt"></i> 上传</a>
-        <a href="/admin.html" class="nav-btn"><i class="fas fa-th-large"></i> 管理</a>
-        <a href="./" class="nav-btn"><i class="fas fa-home"></i> 首页</a>
-        <button type="button" class="nav-btn gallery-theme-toggle" data-theme-toggle aria-label="切换主题">
+        <a href="./" class="nav-btn"><i class="fas fa-cloud-upload-alt"></i> {{ t('gallery.upload') }}</a>
+        <a href="/admin.html" class="nav-btn"><i class="fas fa-th-large"></i> {{ t('nav.admin') }}</a>
+        <a href="./" class="nav-btn"><i class="fas fa-home"></i> {{ t('nav.home') }}</a>
+        <button type="button" class="lang-toggle" data-i18n-toggle>
+          <i class="fas fa-globe lang-toggle-icon"></i>
+          <span data-lang-label>EN</span>
+        </button>
+        <button type="button" class="nav-btn gallery-theme-toggle" data-theme-toggle :aria-label="t('gallery.toggleTheme')">
           <i class="fas fa-moon" data-theme-icon></i>
-          <span data-theme-label>夜间</span>
+          <span data-theme-label>{{ t('gallery.themeNight') }}</span>
         </button>
       </div>
     </div>
@@ -844,19 +849,19 @@
     <!-- 工具栏 -->
     <div class="toolbar">
       <div class="toolbar-left">
-        <span class="stat-badge"><i class="fas fa-images"></i> 总数<strong>{{ totalCount }}</strong></span>
-        <span class="stat-badge"><i class="fas fa-check-square"></i> 已选<strong>{{ selectedCount }}</strong></span>
+        <span class="stat-badge"><i class="fas fa-images"></i> {{ t('gallery.total') }}<strong>{{ totalCount }}</strong></span>
+        <span class="stat-badge"><i class="fas fa-check-square"></i> {{ t('gallery.selected') }}<strong>{{ selectedCount }}</strong></span>
         <button class="nav-btn" @click="selectAll">
           <i :class="isAllSelected ? 'fas fa-square' : 'fas fa-check-square'"></i>
-          {{ isAllSelected ? '取消全选' : '全选' }}
+          {{ isAllSelected ? t('gallery.deselectAll') : t('gallery.selectAll') }}
         </button>
         <button class="nav-btn" @click="loadMore" v-if="hasMore" :disabled="loading">
           <i class="fas fa-sync" :class="{ 'fa-spin': loading }"></i>
-          加载更多
+          {{ t('gallery.loadMore') }}
         </button>
       </div>
       <div class="toolbar-right">
-        <span style="font-size: 0.85em; color: #666;">链接格式:</span>
+        <span style="font-size: 0.85em; color: #666;">{{ t('gallery.linkFormat') }}</span>
         <div class="format-selector">
           <button class="format-btn" :class="{ active: linkFormat === 'url' }" @click="linkFormat = 'url'">URL</button>
           <button class="format-btn" :class="{ active: linkFormat === 'markdown' }" @click="linkFormat = 'markdown'">MD</button>
@@ -885,16 +890,16 @@
         <div class="image-card-overlay">
           <div class="image-card-name">{{ img.metadata?.fileName || img.name }}</div>
           <div class="image-card-actions">
-            <button class="card-btn" @click.stop="copyLink(img)" title="复制链接">
+            <button class="card-btn" @click.stop="copyLink(img)" :title="t('gallery.copyLink')">
               <i class="fas fa-copy"></i>
             </button>
-            <button class="card-btn" @click.stop="previewImage(img)" title="预览">
+            <button class="card-btn" @click.stop="previewImage(img)" :title="t('gallery.preview')">
               <i class="fas fa-expand"></i>
             </button>
-            <button class="card-btn" @click.stop="downloadImage(img)" title="下载">
+            <button class="card-btn" @click.stop="downloadImage(img)" :title="t('gallery.download')">
               <i class="fas fa-download"></i>
             </button>
-            <button class="card-btn delete" @click.stop="deleteImage(img, index)" title="删除">
+            <button class="card-btn delete" @click.stop="deleteImage(img, index)" :title="t('gallery.delete')">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -905,16 +910,16 @@
     <!-- 加载状态 -->
     <div class="loading-state" v-if="loading && images.length === 0">
       <div class="loading-spinner"></div>
-      <div>加载中...</div>
+      <div>{{ t('gallery.loading') }}</div>
     </div>
 
     <!-- 空状态 -->
     <div class="empty-state" v-if="!loading && filteredImages.length === 0">
       <i class="fas fa-inbox"></i>
-      <div style="font-size: 1.2em; margin-bottom: 8px;">没有找到图片</div>
-      <div>{{ searchQuery ? '尝试其他搜索词' : '上传一些图片开始使用' }}</div>
+      <div style="font-size: 1.2em; margin-bottom: 8px;">{{ t('gallery.emptyTitle') }}</div>
+      <div>{{ searchQuery ? t('gallery.emptyTrySearch') : t('gallery.emptyUpload') }}</div>
       <a href="./" class="nav-btn" style="margin-top: 20px; display: inline-flex;">
-        <i class="fas fa-cloud-upload-alt"></i> 去上传
+        <i class="fas fa-cloud-upload-alt"></i> {{ t('gallery.goUpload') }}
       </a>
     </div>
 
@@ -941,18 +946,18 @@
 
     <!-- 批量操作栏 -->
     <div class="batch-bar" v-if="selectedCount > 0">
-      <div class="batch-bar-count">已选择 <strong>{{ selectedCount }}</strong> 个文件</div>
+      <div class="batch-bar-count">{{ t('gallery.batchSelectedPrefix') }}<strong>{{ selectedCount }}</strong>{{ t('gallery.batchSelectedSuffix') }}</div>
       <button class="batch-btn primary" @click="batchCopy">
-        <i class="fas fa-copy"></i> 复制链接
+        <i class="fas fa-copy"></i> {{ t('gallery.copyLink') }}
       </button>
       <button class="batch-btn success" @click="batchDownload">
-        <i class="fas fa-download"></i> 下载
+        <i class="fas fa-download"></i> {{ t('gallery.download') }}
       </button>
       <button class="batch-btn danger" @click="batchDelete">
-        <i class="fas fa-trash"></i> 删除
+        <i class="fas fa-trash"></i> {{ t('gallery.delete') }}
       </button>
       <button class="batch-btn default" @click="clearSelection">
-        <i class="fas fa-times"></i> 取消
+        <i class="fas fa-times"></i> {{ t('gallery.cancel') }}
       </button>
     </div>
 
@@ -975,7 +980,7 @@
       <div class="preview-info" @click.stop>
         <span class="preview-link">{{ previewData.url }}</span>
         <button class="batch-btn primary" @click="copyPreviewLink">
-          <i class="fas fa-copy"></i> 复制
+          <i class="fas fa-copy"></i> {{ t('gallery.copy') }}
         </button>
       </div>
     </div>
@@ -995,9 +1000,96 @@
     // 统一媒体预览服务基础 URL
     const PREVIEW_SERVICE_BASE = 'https://www.katelya.eu.org';
 
+    // 双语词典（图片浏览器）
+    if (window.I18n) {
+      I18n.register({
+        zh: {
+          'nav.home': '首页',
+          'nav.admin': '管理后台',
+          'gallery.title': '图片浏览器',
+          'gallery.searchPlaceholder': '搜索文件名...',
+          'gallery.upload': '上传',
+          'gallery.toggleTheme': '切换主题',
+          'gallery.themeNight': '夜间',
+          'gallery.total': '总数',
+          'gallery.selected': '已选',
+          'gallery.selectAll': '全选',
+          'gallery.deselectAll': '取消全选',
+          'gallery.loadMore': '加载更多',
+          'gallery.linkFormat': '链接格式:',
+          'gallery.copyLink': '复制链接',
+          'gallery.preview': '预览',
+          'gallery.download': '下载',
+          'gallery.delete': '删除',
+          'gallery.loading': '加载中...',
+          'gallery.emptyTitle': '没有找到图片',
+          'gallery.emptyTrySearch': '尝试其他搜索词',
+          'gallery.emptyUpload': '上传一些图片开始使用',
+          'gallery.goUpload': '去上传',
+          'gallery.batchSelectedPrefix': '已选择 ',
+          'gallery.batchSelectedSuffix': ' 个文件',
+          'gallery.cancel': '取消',
+          'gallery.copy': '复制',
+          'gallery.loadFailedNetwork': '加载失败，请检查网络',
+          'gallery.loadFailed': '加载失败',
+          'gallery.loadedImages': '加载了 {n} 张图片',
+          'gallery.linkCopied': '链接已复制',
+          'gallery.copiedLinks': '已复制 {n} 个链接',
+          'gallery.startDownload': '开始下载 {n} 个文件',
+          'gallery.confirmBatchDelete': '确定要删除这 {n} 个文件吗？',
+          'gallery.deletedFiles': '成功删除 {n} 个文件',
+          'gallery.confirmDelete': '确定要删除这个文件吗？',
+          'gallery.deleteSuccess': '删除成功',
+          'gallery.deleteFailed': '删除失败',
+          'gallery.imageLoadFailed': '加载失败'
+        },
+        en: {
+          'nav.home': 'Home',
+          'nav.admin': 'Admin',
+          'gallery.title': 'Image Browser',
+          'gallery.searchPlaceholder': 'Search file name...',
+          'gallery.upload': 'Upload',
+          'gallery.toggleTheme': 'Toggle theme',
+          'gallery.themeNight': 'Night',
+          'gallery.total': 'Total',
+          'gallery.selected': 'Selected',
+          'gallery.selectAll': 'Select all',
+          'gallery.deselectAll': 'Deselect all',
+          'gallery.loadMore': 'Load more',
+          'gallery.linkFormat': 'Link format:',
+          'gallery.copyLink': 'Copy link',
+          'gallery.preview': 'Preview',
+          'gallery.download': 'Download',
+          'gallery.delete': 'Delete',
+          'gallery.loading': 'Loading...',
+          'gallery.emptyTitle': 'No images found',
+          'gallery.emptyTrySearch': 'Try a different search term',
+          'gallery.emptyUpload': 'Upload some images to get started',
+          'gallery.goUpload': 'Go upload',
+          'gallery.batchSelectedPrefix': 'Selected ',
+          'gallery.batchSelectedSuffix': ' file(s)',
+          'gallery.cancel': 'Cancel',
+          'gallery.copy': 'Copy',
+          'gallery.loadFailedNetwork': 'Load failed, please check your network',
+          'gallery.loadFailed': 'Load failed',
+          'gallery.loadedImages': 'Loaded {n} image(s)',
+          'gallery.linkCopied': 'Link copied',
+          'gallery.copiedLinks': 'Copied {n} link(s)',
+          'gallery.startDownload': 'Downloading {n} file(s)',
+          'gallery.confirmBatchDelete': 'Delete these {n} file(s)?',
+          'gallery.deletedFiles': 'Deleted {n} file(s)',
+          'gallery.confirmDelete': 'Delete this file?',
+          'gallery.deleteSuccess': 'Deleted successfully',
+          'gallery.deleteFailed': 'Delete failed',
+          'gallery.imageLoadFailed': 'Load failed'
+        }
+      });
+    }
+
     new Vue({
       el: '#app',
       data: {
+        lang: (window.I18n && I18n.getLang()) || 'zh',
         baseURL: document.location.origin,
         images: [],
         loading: true,
@@ -1079,6 +1171,11 @@
         }
       },
       methods: {
+        t(key, params) {
+          void this.lang; // reactive dependency so templates re-render on language switch
+          return window.I18n ? I18n.t(key, params) : key;
+        },
+
         async loadImages() {
           this.loading = true;
           try {
@@ -1111,7 +1208,7 @@
             this.nextCursor = result.list_complete ? null : result.cursor;
             this.hasMore = !result.list_complete;
           } catch (error) {
-            this.showToast('加载失败，请检查网络', 'error');
+            this.showToast(this.t('gallery.loadFailedNetwork'), 'error');
           }
           this.loading = false;
         },
@@ -1143,9 +1240,9 @@
             this.images = [...this.images, ...newImages];
             this.nextCursor = result.list_complete ? null : result.cursor;
             this.hasMore = !result.list_complete;
-            this.showToast(`加载了 ${newImages.length} 张图片`, 'success');
+            this.showToast(this.t('gallery.loadedImages', { n: newImages.length }), 'success');
           } catch (error) {
-            this.showToast('加载失败', 'error');
+            this.showToast(this.t('gallery.loadFailed'), 'error');
           }
           this.loading = false;
         },
@@ -1184,19 +1281,19 @@
         copyLink(img) {
           const link = this.formatLink(img);
           this.copyToClipboard(link);
-          this.showToast('链接已复制', 'success');
+          this.showToast(this.t('gallery.linkCopied'), 'success');
         },
 
         batchCopy() {
           const selected = this.images.filter(img => img.selected);
           const links = selected.map(img => this.formatLink(img)).join('\n');
           this.copyToClipboard(links);
-          this.showToast(`已复制 ${selected.length} 个链接`, 'success');
+          this.showToast(this.t('gallery.copiedLinks', { n: selected.length }), 'success');
         },
 
         batchDownload() {
           const selected = this.images.filter(img => img.selected);
-          this.showToast(`开始下载 ${selected.length} 个文件`, 'info');
+          this.showToast(this.t('gallery.startDownload', { n: selected.length }), 'info');
           selected.forEach((img, i) => {
             setTimeout(() => {
               this.downloadImage(img);
@@ -1206,7 +1303,7 @@
 
         async batchDelete() {
           const selected = this.images.filter(img => img.selected);
-          if (!confirm(`确定要删除这 ${selected.length} 个文件吗？`)) return;
+          if (!confirm(this.t('gallery.confirmBatchDelete', { n: selected.length }))) return;
           
           let successCount = 0;
           for (const img of selected) {
@@ -1222,7 +1319,7 @@
               }
             } catch (e) {}
           }
-          this.showToast(`成功删除 ${successCount} 个文件`, 'success');
+          this.showToast(this.t('gallery.deletedFiles', { n: successCount }), 'success');
         },
 
         previewImage(img) {
@@ -1281,7 +1378,7 @@
         copyPreviewLink() {
           if (this.previewData) {
             this.copyToClipboard(this.previewData.url);
-            this.showToast('链接已复制', 'success');
+            this.showToast(this.t('gallery.linkCopied'), 'success');
           }
         },
 
@@ -1293,7 +1390,7 @@
         },
 
         async deleteImage(img, index) {
-          if (!confirm('确定要删除这个文件吗？')) return;
+          if (!confirm(this.t('gallery.confirmDelete'))) return;
           try {
             const response = await fetch(`/api/manage/delete/${img.name}`, {
               method: 'DELETE',
@@ -1302,17 +1399,18 @@
             if (response.ok) {
               const realIndex = this.images.findIndex(i => i.name === img.name);
               if (realIndex > -1) this.images.splice(realIndex, 1);
-              this.showToast('删除成功', 'success');
+              this.showToast(this.t('gallery.deleteSuccess'), 'success');
             } else {
               throw new Error('删除失败');
             }
           } catch (error) {
-            this.showToast('删除失败', 'error');
+            this.showToast(this.t('gallery.deleteFailed'), 'error');
           }
         },
 
         handleImageError(event, img) {
-          event.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23f0f0f0" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%23999" font-size="12">加载失败</text></svg>';
+          const msg = this.t('gallery.imageLoadFailed');
+          event.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="#f0f0f0" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="#999" font-size="12">' + msg + '</text></svg>');
         },
 
         copyToClipboard(text) {
@@ -1362,6 +1460,7 @@
         }
       },
       async mounted() {
+        if (window.I18n) { I18n.onChange((lang) => { this.lang = lang; }); }
         // 先检查认证
         const isAuth = await this.checkAuth();
         if (!isAuth) return;

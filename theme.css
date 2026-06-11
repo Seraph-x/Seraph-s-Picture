@@ -537,3 +537,64 @@ body.login-page .bg-overlay {
     height: 100vh;
   }
 }
+
+/* ===== Language toggle (shared) ===== */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 52px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--claude-border, rgba(255, 255, 255, 0.18));
+  background: var(--claude-panel-soft, rgba(255, 255, 255, 0.12));
+  color: var(--claude-text-strong, #fff);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.lang-toggle:hover {
+  border-color: var(--claude-accent, #d97757);
+  background: var(--claude-accent, #d97757);
+  color: #fff;
+}
+
+.lang-toggle:active {
+  transform: scale(0.96);
+}
+
+.lang-toggle .lang-toggle-icon {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* Floating placement (e.g. login page without a header).
+   Sits to the left of the theme toggle (which is fixed at top/right 18px). */
+.lang-toggle.lang-toggle-floating {
+  position: fixed;
+  top: 18px;
+  right: calc(18px + 52px + 10px);
+  z-index: 9999;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 480px) {
+  .lang-toggle {
+    height: 32px;
+    min-width: 48px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .lang-toggle.lang-toggle-floating {
+    right: calc(14px + 46px + 8px);
+    top: 14px;
+  }
+}

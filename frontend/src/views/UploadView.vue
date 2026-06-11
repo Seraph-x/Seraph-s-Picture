@@ -1,7 +1,7 @@
 <template>
   <section class="card panel">
     <div class="panel-head">
-      <h2>Upload Center</h2>
+      <h2>{{ t('uv.title') }}</h2>
       <div class="storage-group">
         <button
           v-for="mode in modes"
@@ -26,27 +26,27 @@
       @click="openPicker"
     >
       <input ref="picker" type="file" multiple hidden @change="handleFilePick" />
-      <p class="dropzone-title">Drag files here or click to upload</p>
-      <p class="muted">Current target: {{ currentStorageLabel }} · {{ formatFolderPath(targetFolderPath) }}</p>
+      <p class="dropzone-title">{{ t('uv.dropTitle') }}</p>
+      <p class="muted">{{ t('uv.currentTarget') }} {{ currentStorageLabel }} · {{ formatFolderPath(targetFolderPath) }}</p>
     </div>
 
     <section class="target-directory card-lite">
       <div class="target-directory-head">
         <div>
-          <h3>Target Directory</h3>
-          <p class="muted">Choose an existing folder or type a path before the upload starts.</p>
+          <h3>{{ t('uv.targetDir') }}</h3>
+          <p class="muted">{{ t('uv.targetDirDesc') }}</p>
         </div>
         <div class="target-directory-actions">
           <button class="btn btn-ghost" type="button" :disabled="folderLoading" @click="reloadFolderTree">
-            {{ folderLoading ? 'Refreshing...' : 'Refresh folders' }}
+            {{ folderLoading ? t('uv.refreshing') : t('uv.refreshFolders') }}
           </button>
-          <button class="btn btn-ghost" type="button" @click="setTargetFolder('')">Use root</button>
+          <button class="btn btn-ghost" type="button" @click="setTargetFolder('')">{{ t('uv.useRoot') }}</button>
         </div>
       </div>
 
       <div class="target-directory-grid">
         <label class="target-directory-field">
-          <span>Folder browser</span>
+          <span>{{ t('uv.folderBrowser') }}</span>
           <select
             v-model="targetFolderPathModel"
             :disabled="folderLoading || !folderBrowserAvailable"
@@ -62,7 +62,7 @@
         </label>
 
         <label class="target-directory-field">
-          <span>Manual path</span>
+          <span>{{ t('uv.manualPath') }}</span>
           <input
             v-model.trim="targetFolderPathModel"
             placeholder="assets/images/2026"
@@ -72,7 +72,7 @@
 
       <div class="target-directory-meta">
         <span class="badge" :class="targetFolderExists ? 'badge-ok' : ''">{{ targetFolderBadge }}</span>
-        <span class="muted">Current folder: {{ formatFolderPath(targetFolderPath) }}</span>
+        <span class="muted">{{ t('uv.currentFolder') }} {{ formatFolderPath(targetFolderPath) }}</span>
       </div>
 
       <p class="muted">{{ folderHint }}</p>
@@ -89,7 +89,7 @@
 
     <section class="image-upload-behavior card-lite">
       <div>
-        <h3>Image Upload Behavior</h3>
+        <h3>{{ t('uv.imgBehavior') }}</h3>
         <p class="muted">{{ imageUploadDecisionSummary }}</p>
       </div>
       <div class="format-segments">
@@ -109,12 +109,12 @@
     <form class="url-row" @submit.prevent="uploadUrl">
       <input v-model.trim="urlInput" placeholder="https://example.com/file.png" />
       <button class="btn" :disabled="urlUploading || !urlInput">
-        {{ urlUploading ? 'Uploading...' : 'Upload URL' }}
+        {{ urlUploading ? t('uv.uploading') : t('uv.uploadUrl') }}
       </button>
     </form>
 
     <div v-if="queue.length" class="list-wrap">
-      <h3>Queue</h3>
+      <h3>{{ t('uv.queue') }}</h3>
       <ul class="list">
         <li v-for="item in queue" :key="item.id" class="list-item">
           <div class="list-title">
@@ -127,7 +127,7 @@
             <span class="progress-fill" :style="{ width: `${item.progress}%` }"></span>
           </div>
           <div class="list-meta">
-            <span>{{ item.status }}</span>
+            <span>{{ statusLabel(item.status) }}</span>
             <span v-if="item.error" class="error">{{ item.error }}</span>
           </div>
         </li>
@@ -135,7 +135,7 @@
     </div>
 
     <div v-if="results.length" class="list-wrap">
-      <h3>Uploaded</h3>
+      <h3>{{ t('uv.uploaded') }}</h3>
       <ul class="list">
         <li v-for="item in results" :key="item.id" class="result-item">
           <div>
@@ -143,8 +143,8 @@
             <p class="muted">{{ item.link }}</p>
           </div>
           <div class="result-actions">
-            <button class="btn btn-ghost" @click="copy(item.link)">Copy</button>
-            <a class="btn btn-ghost" :href="item.link" target="_blank" rel="noopener">Open</a>
+            <button class="btn btn-ghost" @click="copy(item.link)">{{ t('uv.copy') }}</button>
+            <a class="btn btn-ghost" :href="item.link" target="_blank" rel="noopener">{{ t('uv.open') }}</a>
           </div>
         </li>
       </ul>
@@ -177,7 +177,9 @@ import UploadPreparationDialog from '../components/UploadPreparationDialog.vue';
 import { useImageProcessing } from '../composables/useImageProcessing';
 import { STORAGE_TYPES, getStorageLabel, getUploadLimit, storageEnabledFromStatus } from '../config/storage-definitions';
 import { isImageProcessable } from '../utils/image-processing';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const picker = ref(null);
 const dragActive = ref(false);
 const queue = ref([]);
@@ -213,20 +215,20 @@ const {
   prepareQueuedImage,
 } = useImageProcessing({ formatSize });
 
-const imageUploadDecisionOptions = [
-  { value: 'original', label: 'Original' },
-  { value: 'optimized', label: 'Optimized' },
-  { value: 'ask', label: 'Ask' },
-];
+const imageUploadDecisionOptions = computed(() => [
+  { value: 'original', label: t('uv.optOriginal') },
+  { value: 'optimized', label: t('uv.optOptimized') },
+  { value: 'ask', label: t('uv.optAsk') },
+]);
 
 const imageUploadDecisionSummary = computed(() => {
   if (imageUploadDecision.value === 'optimized') {
-    return 'Supported images are processed with the current compression settings before upload.';
+    return t('uv.decOptimized');
   }
   if (imageUploadDecision.value === 'ask') {
-    return 'Show the chooser when selected files include processable images.';
+    return t('uv.decAsk');
   }
-  return 'Upload selected images unchanged, matching the original direct-upload flow.';
+  return t('uv.decOriginal');
 });
 
 const modes = computed(() => {
@@ -239,8 +241,8 @@ const modes = computed(() => {
       label: item.label,
       available,
       hint: available
-        ? 'Ready'
-        : (configured ? (detail.message || 'Configured but unavailable') : 'Not configured'),
+        ? t('uv.hintReady')
+        : (configured ? (detail.message || t('uv.hintConfiguredUnavailable')) : t('uv.hintNotConfigured')),
     };
   });
 });
@@ -260,7 +262,7 @@ const targetFolderPathModel = computed({
 const folderBrowserAvailable = computed(() => folderTree.value.some((node) => normalizeFolderPath(node.path) !== ''));
 
 const folderOptions = computed(() => {
-  const options = [{ value: '', label: 'Root /' }];
+  const options = [{ value: '', label: t('uv.rootSlash') }];
   const seen = new Set(['']);
 
   const nodes = [...folderTree.value]
@@ -284,7 +286,7 @@ const folderOptions = computed(() => {
   if (targetFolderPath.value && !seen.has(targetFolderPath.value)) {
     options.splice(1, 0, {
       value: targetFolderPath.value,
-      label: `/${targetFolderPath.value} (custom)`,
+      label: `/${targetFolderPath.value} ${t('uv.customSuffix')}`,
     });
   }
 
@@ -297,16 +299,16 @@ const targetFolderExists = computed(() => {
 });
 
 const targetFolderBadge = computed(() => {
-  if (!targetFolderPath.value) return 'Root directory';
-  return targetFolderExists.value ? 'Existing folder' : 'Custom path';
+  if (!targetFolderPath.value) return t('uv.badgeRoot');
+  return targetFolderExists.value ? t('uv.badgeExisting') : t('uv.badgeCustom');
 });
 
 const folderHint = computed(() => {
-  if (folderLoading.value) return 'Refreshing folder tree for the selected storage.';
+  if (folderLoading.value) return t('uv.hintRefreshing');
   if (folderLoadNotice.value) return folderLoadNotice.value;
-  if (!targetFolderPath.value) return 'Leave the path empty to upload directly into the storage root.';
-  if (targetFolderExists.value) return 'This folder already exists in the current storage tree.';
-  return 'This path is not in the current folder list yet. It will be normalized and used as entered.';
+  if (!targetFolderPath.value) return t('uv.hintEmptyPath');
+  if (targetFolderExists.value) return t('uv.hintExists');
+  return t('uv.hintNewPath');
 });
 
 onMounted(async () => {
@@ -415,7 +417,7 @@ async function processQueue() {
       const selected = modes.value.find((mode) => mode.value === item.storageMode);
       if (!selected?.available) {
         item.status = 'error';
-        item.error = 'Selected storage is unavailable. Open Storage/Status to configure it.';
+        item.error = t('uv.errStorageUnavailable');
         continue;
       }
       item.error = '';
@@ -438,7 +440,7 @@ async function processQueue() {
         });
       } catch (err) {
         item.status = 'error';
-        item.error = humanizeError(err.message || 'Upload failed');
+        item.error = humanizeError(err.message || t('uv.errUploadFailed'));
       }
     }
   } finally {
@@ -454,12 +456,12 @@ function validateUploadSize(item) {
   const limit = getItemUploadLimit(item);
   const maxBytes = Number(limit.maxBytes || 0);
   if (maxBytes > 0 && item.file.size > maxBytes) {
-    throw new Error(limit.message || `${item.storageLabel} upload limit is ${formatSize(maxBytes)}.`);
+    throw new Error(limit.message || t('uv.errLimit', { label: item.storageLabel, size: formatSize(maxBytes) }));
   }
 
   const directThreshold = Number(limit.directThreshold || DEFAULT_CHUNK_SIZE);
   if (item.file.size > directThreshold && limit.supportsChunkUpload === false) {
-    throw new Error(limit.message || `${item.storageLabel} does not support browser chunk upload for files above ${formatSize(directThreshold)}.`);
+    throw new Error(limit.message || t('uv.errNoChunk', { label: item.storageLabel, size: formatSize(directThreshold) }));
   }
 }
 
@@ -490,7 +492,7 @@ function normalizeFolderPath(value) {
 
 function formatFolderPath(path) {
   const normalized = normalizeFolderPath(path);
-  return normalized ? `/${normalized}` : 'Root /';
+  return normalized ? `/${normalized}` : t('uv.rootSlash');
 }
 
 function setTargetFolder(path) {
@@ -513,17 +515,17 @@ async function loadFolderTree() {
 
     folderTree.value = Array.isArray(nodes) ? nodes : [];
     if (folderTree.value.length <= 1) {
-      folderLoadNotice.value = 'No saved folders were found for the selected storage yet. Root remains available.';
+      folderLoadNotice.value = t('uv.noticeNoFolders');
     }
   } catch (err) {
     if (requestId !== folderTreeRequestId) return;
 
     folderTree.value = [];
     if (err?.status === 401 || err?.status === 403) {
-      folderLoadNotice.value = 'Folder browser is unavailable in the current session. Manual path entry still works.';
+      folderLoadNotice.value = t('uv.noticeBrowserUnavailable');
       return;
     }
-    folderLoadError.value = err.message || 'Failed to load folders for the selected storage.';
+    folderLoadError.value = err.message || t('uv.errLoadFolders');
   } finally {
     if (requestId === folderTreeRequestId) {
       folderLoading.value = false;
@@ -571,21 +573,21 @@ function humanizeError(message) {
   const normalized = text.toLowerCase();
 
   if (normalized.includes('auth_failed') || normalized.includes('unauthorized') || normalized.includes('forbidden')) {
-    return `Authentication failed: ${text}`;
+    return `${t('uv.errAuth')}: ${text}`;
   }
   if (normalized.includes('rate') || normalized.includes('too many requests') || normalized.includes('flood')) {
-    return `Rate limited: ${text}`;
+    return `${t('uv.errRate')}: ${text}`;
   }
   if (normalized.includes('quota') || normalized.includes('limit exceeded') || normalized.includes('too large') || normalized.includes('413')) {
-    return `File size or quota exceeded: ${text}`;
+    return `${t('uv.errQuota')}: ${text}`;
   }
   if (normalized.includes('network') || normalized.includes('timeout') || normalized.includes('fetch failed')) {
-    return `Network or upstream issue: ${text}`;
+    return `${t('uv.errNetwork')}: ${text}`;
   }
   if (normalized.includes('not configured')) {
-    return `Storage is not configured: ${text}`;
+    return `${t('uv.errNotConfigured')}: ${text}`;
   }
-  return text || 'Upload failed';
+  return text || t('uv.errUploadFailed');
 }
 
 function directUpload(item) {
@@ -625,13 +627,13 @@ function directUpload(item) {
           reject(new Error(`Backend returned non-JSON response: ${truncate(rawText) || '<empty body>'}`));
           return;
         }
-        reject(new Error('Upload response missing src'));
+        reject(new Error(t('uv.errMissingSrc')));
         return;
       }
       resolve(toAbsoluteUrl(src));
     };
 
-    xhr.onerror = () => reject(new Error('Network error'));
+    xhr.onerror = () => reject(new Error(t('uv.errNetworkShort')));
     xhr.send(formData);
   });
 }
@@ -692,7 +694,7 @@ async function chunkUpload(item) {
   });
 
   if (!done?.src) {
-    throw new Error('Chunk upload complete response missing src');
+    throw new Error(t('uv.errMissingSrc'));
   }
 
   return toAbsoluteUrl(done.src);
@@ -702,7 +704,7 @@ async function uploadUrl() {
   if (!urlInput.value || urlUploading.value) return;
   const selected = modes.value.find((mode) => mode.value === selectedStorage.value);
   if (!selected?.available) {
-    error.value = 'Selected storage is unavailable. Open Storage/Status to configure it.';
+    error.value = t('uv.errStorageUnavailable');
     return;
   }
 
@@ -726,7 +728,7 @@ async function uploadUrl() {
 
     const src = Array.isArray(body) ? body[0]?.src : body?.src;
     if (!src) {
-      throw new Error('Upload response missing src');
+      throw new Error(t('uv.errMissingSrc'));
     }
 
     results.value.unshift({
@@ -737,7 +739,7 @@ async function uploadUrl() {
 
     urlInput.value = '';
   } catch (err) {
-    error.value = humanizeError(err.message || 'URL upload failed');
+    error.value = humanizeError(err.message || t('uv.errUrlUploadFailed'));
   } finally {
     urlUploading.value = false;
   }
@@ -753,6 +755,16 @@ function formatSize(bytes = 0) {
     index += 1;
   }
   return `${value.toFixed(index === 0 ? 0 : 2)} ${units[index]}`;
+}
+
+function statusLabel(status) {
+  const map = {
+    pending: t('uv.stPending'),
+    uploading: t('uv.stUploading'),
+    success: t('uv.stSuccess'),
+    error: t('uv.stError'),
+  };
+  return map[status] || status;
 }
 
 async function copy(text) {

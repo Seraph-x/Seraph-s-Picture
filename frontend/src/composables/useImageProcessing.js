@@ -6,6 +6,7 @@ import {
   getImageProcessingFormat,
   processImageFile,
 } from '../utils/image-processing';
+import { t } from '../i18n';
 
 const IMAGE_UPLOAD_DECISION_KEY = 'kvault:image-upload-decision';
 const IMAGE_UPLOAD_DECISIONS = new Set(['original', 'optimized', 'ask']);
@@ -26,17 +27,17 @@ export function useImageProcessing({ formatSize }) {
 
   const imageProcessingSummary = computed(() => {
     if (!imageProcessing.value.enabled) {
-      return 'Original files are uploaded unless you switch the image behavior to optimized.';
+      return t('uip.summaryDisabled');
     }
 
     const parts = [activeImageFormat.value.label];
     if (activeImageFormat.value.supportsQuality) {
-      parts.push(`${imageProcessing.value.quality}% quality`);
+      parts.push(t('uip.qualityPart', { q: imageProcessing.value.quality }));
     }
     if (Number(imageProcessing.value.maxDimension) > 0) {
-      parts.push(`max ${imageProcessing.value.maxDimension}px`);
+      parts.push(t('uip.maxPart', { px: imageProcessing.value.maxDimension }));
     }
-    return `Enabled for supported images: ${parts.join(', ')}.`;
+    return t('uip.summaryEnabled', { parts: parts.join(', ') });
   });
 
   async function refreshImageProcessingSupport() {
@@ -84,7 +85,7 @@ export function useImageProcessing({ formatSize }) {
     if (!options.enabled) return;
 
     item.status = 'optimizing';
-    item.optimizationNote = 'Preparing optimized image...';
+    item.optimizationNote = t('uip.preparing');
 
     try {
       const result = await processImageFile(item.file, options, imageProcessingSupport.value);
@@ -93,7 +94,7 @@ export function useImageProcessing({ formatSize }) {
       }
       item.optimizationNote = formatOptimizationResult(result, formatSize);
     } catch (err) {
-      item.optimizationNote = `Image optimization skipped: ${err.message || 'browser could not process this image'}.`;
+      item.optimizationNote = t('uip.skipped', { reason: err.message || t('uip.cannotProcess') });
     }
   }
 
@@ -124,16 +125,20 @@ function formatOptimizationResult(result, formatSize) {
   if (result.changed) {
     const saved = Math.max(0, result.originalSize - result.outputSize);
     const percent = result.originalSize > 0 ? Math.round((saved / result.originalSize) * 100) : 0;
-    return `Optimized: ${formatSize(result.originalSize)} -> ${formatSize(result.outputSize)} (${percent}% smaller).`;
+    return t('uip.optimized', {
+      from: formatSize(result.originalSize),
+      to: formatSize(result.outputSize),
+      percent,
+    });
   }
 
   const reasonMap = {
-    'animated-or-vector': 'animated GIF or vector image',
-    'not-image': 'not an image',
-    'unsupported-format': 'browser cannot encode the selected format',
-    'larger-output': 'optimized file would be larger',
-    'no-change': 'selected PNG settings would not change the file',
+    'animated-or-vector': t('uip.reasonAnimated'),
+    'not-image': t('uip.reasonNotImage'),
+    'unsupported-format': t('uip.reasonUnsupported'),
+    'larger-output': t('uip.reasonLarger'),
+    'no-change': t('uip.reasonNoChange'),
   };
-  const reason = reasonMap[result.reason] || 'not needed';
-  return `Image optimization skipped: ${reason}.`;
+  const reason = reasonMap[result.reason] || t('uip.reasonNotNeeded');
+  return t('uip.skipped', { reason });
 }

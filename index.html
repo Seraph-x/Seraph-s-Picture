@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/theme.css">
   <script src="/theme.js?v=20260305"></script>
+  <script src="/i18n.js?v=20260611"></script>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/element-ui@2.15.3/lib/theme-chalk/index.css"
@@ -2127,20 +2128,24 @@
           <span>Seraph's Pictures</span>
         </div>
         <div class="nav-links">
-          <a href="./" class="nav-link is-active" aria-current="page"><i class="fas fa-home"></i> 首页</a>
+          <a href="./" class="nav-link is-active" aria-current="page"><i class="fas fa-home"></i> {{ t('nav.home') }}</a>
           <a href="/gallery.html" v-if="!isGuest"
-            ><i class="fas fa-images"></i> 图片浏览</a
+            ><i class="fas fa-images"></i> {{ t('nav.gallery') }}</a
           >
           <a href="/app/storage" v-if="!isGuest"
-            ><i class="fas fa-server"></i> 存储配置</a
+            ><i class="fas fa-server"></i> {{ t('nav.storage') }}</a
           >
           <a href="/webdav.html" v-if="!isGuest"
-            ><i class="fas fa-hard-drive"></i> WebDAV</a
+            ><i class="fas fa-hard-drive"></i> {{ t('nav.webdav') }}</a
           >
           <a href="/admin.html" v-if="!isGuest"
-            ><i class="fas fa-cog"></i> 管理后台</a
+            ><i class="fas fa-cog"></i> {{ t('nav.admin') }}</a
           >
         </div>
+        <button type="button" class="lang-toggle" data-i18n-toggle>
+          <i class="fas fa-globe lang-toggle-icon"></i>
+          <span data-lang-label>EN</span>
+        </button>
         <button type="button" class="theme-toggle-btn header-theme-toggle theme-icon-only" data-theme-toggle aria-label="切换主题">
           <i class="fas fa-moon" data-theme-icon></i>
         </button>
@@ -2150,8 +2155,8 @@
       <div class="guest-notice" v-if="!authChecking && isGuest && guestUploadConfig">
         <i class="fas fa-user-clock"></i>
         <span
-          >访客模式 - 单文件最大 {{ formatSize(guestUploadConfig.maxFileSize)
-          }}，每日上限 {{ guestUploadConfig.maxDailyUploads }} 次</span
+          >{{ t('guest.notice1') }} {{ formatSize(guestUploadConfig.maxFileSize)
+          }}{{ t('guest.notice2') }} {{ guestUploadConfig.maxDailyUploads }} {{ t('guest.notice3') }}</span
         >
       </div>
 
@@ -2162,12 +2167,12 @@
           <div class="card-header">
             <div class="card-title">
               <i class="fas fa-upload"></i>
-              <span>上传文件</span>
+              <span>{{ t('home.uploadTitle') }}</span>
             </div>
             <span
               v-if="!authChecking && isGuest && guestUploadConfig"
               style="color: var(--warning-text-color); font-size: 0.85em"
-              >访客模式 - 单文件最大 {{
+              >{{ t('guest.notice1') }} {{
               formatSize(guestUploadConfig.maxFileSize) }}</span
             >
             <span v-else style="color: var(--text-muted); font-size: 0.85em">
@@ -2185,10 +2190,10 @@
             :class="{ dragover: isDragging }"
           >
             <i class="fas fa-cloud-upload-alt upload-icon"></i>
-            <div class="upload-text">点击或拖拽文件到此区域上传</div>
+            <div class="upload-text">{{ t('home.uploadZoneText') }}</div>
             <div class="upload-hint" v-if="!authChecking && isGuest && guestUploadConfig">
-              访客模式：单文件最大 {{ formatSize(guestUploadConfig.maxFileSize)
-              }}，不支持分片上传
+              {{ t('home.guestHint1') }} {{ formatSize(guestUploadConfig.maxFileSize)
+              }}{{ t('home.guestHint2') }}
             </div>
             <div class="upload-hint" v-else>
               Supports images, videos, audio, and documents. Current limit:
@@ -2205,7 +2210,7 @@
 
           <!-- 存储位置切换 -->
           <div class="storage-switcher">
-            <span class="storage-label">存储位置：</span>
+            <span class="storage-label">{{ t('home.storageLabel') }}</span>
             <div class="storage-options">
               <button
                 class="storage-btn"
@@ -2221,10 +2226,10 @@
                 :class="{ active: storageMode === 'r2', disabled: !r2Available }"
                 @click="setStorageMode('r2')"
                 :disabled="!r2Available"
-                :title="!r2Available ? '未配置 - 请在环境变量中配置 R2 存储桶' : 'Cloudflare R2 存储'"
+                :title="!r2Available ? t('home.r2NotConfigured') : t('home.r2Configured')"
               >
                 <i class="fas fa-cloud"></i>
-                <span>R2 存储</span>
+                <span>{{ t('home.r2') }}</span>
               </button>
               <button
                 class="storage-btn"
@@ -2232,7 +2237,7 @@
                 :class="{ active: storageMode === 's3', disabled: !s3Available }"
                 @click="setStorageMode('s3')"
                 :disabled="!s3Available"
-                :title="!s3Available ? '未配置 - 请在环境变量中配置 S3 相关参数' : 'S3 兼容存储'"
+                :title="!s3Available ? t('home.s3NotConfigured') : t('home.s3Configured')"
               >
                 <i class="fas fa-database"></i>
                 <span>S3 API</span>
@@ -2243,7 +2248,7 @@
                 :class="{ active: storageMode === 'discord', disabled: !discordAvailable }"
                 @click="setStorageMode('discord')"
                 :disabled="!discordAvailable"
-                :title="!discordAvailable ? '未配置 - 请在环境变量中配置 Discord 相关参数' : 'Discord 存储'"
+                :title="!discordAvailable ? t('home.discordNotConfigured') : t('home.discordConfigured')"
               >
                 <i class="fab fa-discord"></i>
                 <span>Discord</span>
@@ -2254,7 +2259,7 @@
                 :class="{ active: storageMode === 'huggingface', disabled: !huggingfaceAvailable }"
                 @click="setStorageMode('huggingface')"
                 :disabled="!huggingfaceAvailable"
-                :title="!huggingfaceAvailable ? '未配置 - 请在环境变量中配置 HuggingFace 相关参数' : 'HuggingFace 存储'"
+                :title="!huggingfaceAvailable ? t('home.hfNotConfigured') : t('home.hfConfigured')"
               >
                 <i class="fas fa-robot"></i>
                 <span>HuggingFace</span>
@@ -2265,7 +2270,7 @@
                 :class="{ active: storageMode === 'github', disabled: !githubAvailable }"
                 @click="setStorageMode('github')"
                 :disabled="!githubAvailable"
-                :title="!githubAvailable ? '未配置 - 请在环境变量中配置 GitHub 相关参数' : 'GitHub 存储'"
+                :title="!githubAvailable ? t('home.ghNotConfigured') : t('home.ghConfigured')"
               >
                 <i class="fab fa-github"></i>
                 <span>GitHub</span>
@@ -2278,27 +2283,27 @@
             <div class="folder-target-head">
               <span class="folder-target-title">
                 <i class="fas fa-folder-tree"></i>
-                <span>上传目录</span>
+                <span>{{ t('home.uploadDir') }}</span>
               </span>
               <span class="folder-target-badge">
                 <i class="fas fa-map-marker-alt"></i>
-                {{ folderPath || '根目录' }}
+                {{ folderPath || t('home.rootDir') }}
               </span>
             </div>
             <div class="folder-target-row">
               <input
                 type="text"
                 v-model="folderPath"
-                placeholder="留空则上传到根目录，例如：项目A/一月"
+                :placeholder="t('home.folderPh')"
                 @input="handleFolderPathInput"
                 @blur="folderPath = normalizeFolderPath(folderPath)"
               />
               <button class="folder-reset-btn" type="button" @click="clearFolderPath">
-                根目录
+                {{ t('home.rootDir') }}
               </button>
             </div>
             <div class="folder-target-tip">
-              上传前可先指定目标目录，上传完成后依然可以在后台继续移动文件。
+              {{ t('home.folderTip') }}
             </div>
           </div>
 
@@ -2310,12 +2315,12 @@
               <div class="image-compress-title">
                 <i class="fas fa-compress-alt"></i>
                 <div>
-                  <strong>图片压缩转换</strong>
+                  <strong>{{ t('home.compressTitle') }}</strong>
                   <span>Choose whether image uploads keep originals, optimize automatically, or ask per batch.</span>
                 </div>
               </div>
-              <label class="compress-toggle" title="开启后默认在确认窗口中选择压缩">
-                <span>{{ imageCompress.enabled ? '已开启' : '未开启' }}</span>
+              <label class="compress-toggle" :title="t('home.compressToggleTip')">
+                <span>{{ imageCompress.enabled ? t('home.on') : t('home.off') }}</span>
                 <input
                   type="checkbox"
                   v-model="imageCompress.enabled"
@@ -2359,7 +2364,7 @@
                   :class="{ active: imageCompress.format === format.value }"
                   :disabled="!isFormatSupported(format.value)"
                   @click="selectCompressFormat(format.value)"
-                  :title="isFormatSupported(format.value) ? format.tip : '当前浏览器不支持输出 ' + format.label"
+                  :title="isFormatSupported(format.value) ? format.tip : t('home.formatUnsupported') + format.label"
                 >
                   <i :class="format.icon"></i>
                   <span>{{ format.label }}</span>
@@ -2367,7 +2372,7 @@
               </div>
               <div class="compress-settings-grid">
                 <div class="compress-control">
-                  <label>压缩质量：{{ imageCompress.quality }}%</label>
+                  <label>{{ t('home.quality') }}{{ imageCompress.quality }}%</label>
                   <div class="compress-range-row">
                     <input
                       type="range"
@@ -2380,7 +2385,7 @@
                   </div>
                 </div>
                 <div class="compress-control">
-                  <label>最大边长</label>
+                  <label>{{ t('home.maxDimension') }}</label>
                   <div class="compress-range-row">
                     <input
                       class="compress-number"
@@ -2391,7 +2396,7 @@
                       v-model.number="imageCompress.maxDimension"
                       @change="saveImageCompressSettings"
                     />
-                    <span class="image-compress-summary">0 为保留原始尺寸</span>
+                    <span class="image-compress-summary">{{ t('home.maxDimHint') }}</span>
                   </div>
                 </div>
               </div>
@@ -2401,7 +2406,7 @@
                   v-model="imageCompress.keepOriginalWhenLarger"
                   @change="saveImageCompressSettings"
                 />
-                压缩后体积更大时自动保留原图
+                {{ t('home.keepOriginal') }}
               </label>
             </div>
           </div>
@@ -2409,15 +2414,15 @@
           <div class="upload-methods">
             <button class="method-btn" @click="triggerUpload">
               <i class="fas fa-folder-open"></i>
-              <span>选择文件</span>
+              <span>{{ t('home.selectFile') }}</span>
             </button>
             <button class="method-btn" @click="pasteFromClipboard">
               <i class="fas fa-paste"></i>
-              <span>粘贴上传</span>
+              <span>{{ t('home.pasteUpload') }}</span>
             </button>
             <button class="method-btn" @click="showUrlInput = !showUrlInput">
               <i class="fas fa-link"></i>
-              <span>URL上传</span>
+              <span>{{ t('home.urlUpload') }}</span>
             </button>
           </div>
 
@@ -2426,14 +2431,14 @@
             <input
               type="text"
               v-model="urlToUpload"
-              placeholder="输入图片URL地址..."
+              :placeholder="t('home.urlPh')"
               @keyup.enter="uploadFromUrl"
             />
             <el-button
               type="primary"
               @click="uploadFromUrl"
               :loading="urlUploading"
-              >上传</el-button
+              >{{ t('home.upload') }}</el-button
             >
           </div>
 
@@ -2451,12 +2456,12 @@
             >
               <div>
                 <i class="fas fa-tasks"></i>
-                <span>上传队列 ({{ uploadingFiles.length }})</span>
+                <span>{{ t('home.uploadQueue') }} ({{ uploadingFiles.length }})</span>
                 <span
                   v-if="failedCount > 0"
                   style="color: #f56c6c; margin-left: 8px; font-size: 0.85em"
                 >
-                  ({{ failedCount }} 个失败)
+                  ({{ failedCount }} {{ t('home.failedSuffix') }})
                 </span>
               </div>
               <div style="display: flex; gap: 8px">
@@ -2466,10 +2471,10 @@
                   type="warning"
                   @click="retryAllFailed"
                 >
-                  <i class="fas fa-redo"></i> 重试全部失败 ({{ failedCount }})
+                  <i class="fas fa-redo"></i> {{ t('home.retryAllFailed') }} ({{ failedCount }})
                 </el-button>
                 <el-button size="mini" type="info" @click="clearUploadQueue">
-                  <i class="fas fa-broom"></i> 清空队列
+                  <i class="fas fa-broom"></i> {{ t('home.clearQueue') }}
                 </el-button>
               </div>
             </div>
@@ -2529,7 +2534,7 @@
                 v-if="file.status === 'error'"
                 class="action-btn"
                 @click="retryUpload(file)"
-                title="重试"
+                :title="t('home.retry')"
               >
                 <i class="fas fa-redo"></i>
               </button>
@@ -2542,17 +2547,17 @@
           <div class="card-header">
             <div class="card-title">
               <i class="fas fa-images"></i>
-              <span>上传结果</span>
+              <span>{{ t('home.uploadResult') }}</span>
               <span
                 v-if="uploadedFiles.length > 0"
                 style="font-size: 0.8em; color: var(--text-muted); margin-left: 8px"
               >
-                ({{ uploadedFiles.length }}个文件)
+                ({{ uploadedFiles.length }}{{ t('home.filesSuffix') }})
               </span>
             </div>
             <div class="result-actions" v-if="uploadedFiles.length > 0">
               <el-button size="mini" type="primary" @click="selectAll">
-                {{ isAllSelected ? '取消全选' : '全选' }}
+                {{ isAllSelected ? t('home.deselectAll') : t('home.selectAll') }}
               </el-button>
               <el-button
                 size="mini"
@@ -2560,13 +2565,13 @@
                 @click="copySelectedLinks"
                 :disabled="selectedCount === 0"
               >
-                复制选中 ({{ selectedCount }})
+                {{ t('home.copySelected') }} ({{ selectedCount }})
               </el-button>
               <el-button size="mini" type="warning" @click="copyAllLinks">
-                复制全部
+                {{ t('home.copyAll') }}
               </el-button>
               <el-button size="mini" type="danger" @click="clearResults">
-                清空
+                {{ t('home.clear') }}
               </el-button>
             </div>
           </div>
@@ -2577,7 +2582,7 @@
               class="format-tab"
               :class="{ active: linkFormat === 'url' }"
               @click="linkFormat = 'url'"
-              >直链 URL</span
+              >{{ t('home.directUrl') }}</span
             >
             <span
               class="format-tab"
@@ -2638,28 +2643,28 @@
                 <button
                   class="action-btn"
                   @click="copyLink(file)"
-                  title="复制链接"
+                  :title="t('home.copyLink')"
                 >
                   <i class="fas fa-copy"></i>
                 </button>
                 <button
                   class="action-btn"
                   @click="downloadFile(file)"
-                  title="下载"
+                  :title="t('home.download')"
                 >
                   <i class="fas fa-download"></i>
                 </button>
                 <button
                   class="action-btn"
                   @click="openPreview(file)"
-                  title="预览"
+                  :title="t('home.preview')"
                 >
                   <i class="fas fa-eye"></i>
                 </button>
                 <button
                   class="action-btn delete"
                   @click="removeFromResults(index)"
-                  title="移除"
+                  :title="t('home.remove')"
                 >
                   <i class="fas fa-times"></i>
                 </button>
@@ -2674,15 +2679,15 @@
             :value="getBatchLinks()"
             readonly
             @click="$event.target.select()"
-            placeholder="选中的链接将显示在这里..."
+            :placeholder="t('home.batchPh')"
           ></textarea>
 
           <!-- 空状态 -->
           <div class="empty-state" v-if="uploadedFiles.length === 0">
             <i class="fas fa-cloud-upload-alt"></i>
-            <div>上传文件后，链接将显示在这里</div>
+            <div>{{ t('home.emptyTitle') }}</div>
             <div style="margin-top: 8px; font-size: 0.9em">
-              支持批量选择和一键复制
+              {{ t('home.emptyHint') }}
             </div>
           </div>
         </div>
@@ -2693,14 +2698,14 @@
         <div class="card-header">
           <div class="card-title">
             <i class="fas fa-history"></i>
-            <span>本地上传历史</span>
+            <span>{{ t('home.localHistory') }}</span>
             <span style="font-size: 0.8em; color: var(--text-muted); margin-left: 8px"
               >({{ uploadHistory.length }})</span
             >
           </div>
           <div class="result-actions">
             <el-button size="mini" type="primary" @click="selectAllHistory">
-              {{ isAllHistorySelected ? '取消全选' : '全选' }}
+              {{ isAllHistorySelected ? t('home.deselectAll') : t('home.selectAll') }}
             </el-button>
             <el-button
               size="mini"
@@ -2708,10 +2713,10 @@
               @click="copySelectedHistoryLinks"
               :disabled="selectedHistoryCount === 0"
             >
-              复制选中 ({{ selectedHistoryCount }})
+              {{ t('home.copySelected') }} ({{ selectedHistoryCount }})
             </el-button>
             <el-button size="mini" type="danger" @click="clearHistory">
-              清空历史
+              {{ t('home.clearHistory') }}
             </el-button>
           </div>
         </div>
@@ -2721,28 +2726,28 @@
           <div class="stat-item">
             <i class="fas fa-images"></i>
             <span
-              >图片:
+              >{{ t('home.statImages') }}
               <span class="stat-value">{{ historyStats.images }}</span></span
             >
           </div>
           <div class="stat-item">
             <i class="fas fa-video"></i>
             <span
-              >视频:
+              >{{ t('home.statVideos') }}
               <span class="stat-value">{{ historyStats.videos }}</span></span
             >
           </div>
           <div class="stat-item">
             <i class="fas fa-file"></i>
             <span
-              >其他:
+              >{{ t('home.statOthers') }}
               <span class="stat-value">{{ historyStats.others }}</span></span
             >
           </div>
           <div class="stat-item">
             <i class="fas fa-hdd"></i>
             <span
-              >总大小:
+              >{{ t('home.statTotalSize') }}
               <span class="stat-value"
                 >{{ formatSize(historyStats.totalSize) }}</span
               ></span
@@ -2837,13 +2842,13 @@
               class="preview-btn preview-btn-primary"
               @click="copyPreviewLink"
             >
-              <i class="fas fa-copy"></i> 复制直链
+              <i class="fas fa-copy"></i> {{ t('home.copyDirectLink') }}
             </button>
             <button
               class="preview-btn preview-btn-default"
               @click="downloadPreviewFile"
             >
-              <i class="fas fa-download"></i> 下载
+              <i class="fas fa-download"></i> {{ t('home.download') }}
             </button>
           </div>
         </div>
@@ -2859,17 +2864,17 @@
             <div>
               <div class="compress-confirm-title">
                 <i class="fas fa-images"></i>
-                <span>上传前确认图片处理方式</span>
+                <span>{{ t('home.confirmTitle') }}</span>
               </div>
               <div class="compress-confirm-note">
-                本次选择中包含图片文件。请选择直接上传原图，或先在浏览器中压缩/转换后再上传。
+                {{ t('home.confirmNote') }}
               </div>
             </div>
             <button
               class="compress-confirm-close"
               type="button"
               @click="cancelPendingUpload"
-              title="取消"
+              :title="t('home.cancel')"
             >
               <i class="fas fa-times"></i>
             </button>
@@ -2877,15 +2882,15 @@
 
           <div class="compress-confirm-stats">
             <div class="compress-stat">
-              <span>文件数量</span>
+              <span>{{ t('home.fileCount') }}</span>
               <strong>{{ pendingUploadStats.fileCount }}</strong>
             </div>
             <div class="compress-stat">
-              <span>可处理图片</span>
+              <span>{{ t('home.processableImages') }}</span>
               <strong>{{ pendingUploadStats.imageCount }}</strong>
             </div>
             <div class="compress-stat">
-              <span>总大小</span>
+              <span>{{ t('home.totalSizeLabel') }}</span>
               <strong>{{ formatSize(pendingUploadStats.totalSize) }}</strong>
             </div>
           </div>
@@ -2899,8 +2904,8 @@
             >
               <i class="fas fa-file-image"></i>
               <div>
-                <strong>直接上传原图</strong>
-                <span>保持文件格式、尺寸和质量不变。</span>
+                <strong>{{ t('home.modeOriginalTitle') }}</strong>
+                <span>{{ t('home.modeOriginalDesc') }}</span>
               </div>
             </button>
             <button
@@ -2911,8 +2916,8 @@
             >
               <i class="fas fa-compress-alt"></i>
               <div>
-                <strong>压缩/转换后上传</strong>
-                <span>适合节省 S3、WebDAV、R2 等存储空间。</span>
+                <strong>{{ t('home.modeCompressTitle') }}</strong>
+                <span>{{ t('home.modeCompressDesc') }}</span>
               </div>
             </button>
           </div>
@@ -2927,7 +2932,7 @@
                 :class="{ active: imageCompress.format === format.value }"
                 :disabled="!isFormatSupported(format.value)"
                 @click="selectCompressFormat(format.value)"
-                :title="isFormatSupported(format.value) ? format.tip : '当前浏览器不支持输出 ' + format.label"
+                :title="isFormatSupported(format.value) ? format.tip : t('home.formatUnsupported') + format.label"
               >
                 <i :class="format.icon"></i>
                 <span>{{ format.label }}</span>
@@ -2935,7 +2940,7 @@
             </div>
             <div class="compress-settings-grid">
               <div class="compress-control">
-                <label>压缩质量：{{ imageCompress.quality }}%</label>
+                <label>{{ t('home.quality') }}{{ imageCompress.quality }}%</label>
                 <div class="compress-range-row">
                   <input
                     type="range"
@@ -2948,7 +2953,7 @@
                 </div>
               </div>
               <div class="compress-control">
-                <label>最大边长</label>
+                <label>{{ t('home.maxDimension') }}</label>
                 <div class="compress-range-row">
                   <input
                     class="compress-number"
@@ -2959,7 +2964,7 @@
                     v-model.number="imageCompress.maxDimension"
                     @change="saveImageCompressSettings"
                   />
-                  <span class="image-compress-summary">0 为保留原始尺寸</span>
+                  <span class="image-compress-summary">{{ t('home.maxDimHint') }}</span>
                 </div>
               </div>
             </div>
@@ -2969,7 +2974,7 @@
                 v-model="imageCompress.keepOriginalWhenLarger"
                 @change="saveImageCompressSettings"
               />
-              压缩后体积更大时自动保留原图
+              {{ t('home.keepOriginal') }}
             </label>
           </div>
 
@@ -2979,7 +2984,7 @@
               type="button"
               @click="cancelPendingUpload"
             >
-              取消
+              {{ t('home.cancel') }}
             </button>
             <button
               class="compress-action-btn"
@@ -2988,7 +2993,7 @@
               @click="uploadPendingOriginal"
             >
               <i class="fas fa-file-upload"></i>
-              上传原图
+              {{ t('home.uploadOriginal') }}
             </button>
             <button
               class="compress-action-btn"
@@ -2997,7 +3002,7 @@
               @click="uploadPendingCompressed"
             >
               <i class="fas fa-compress-alt"></i>
-              压缩后上传
+              {{ t('home.uploadCompressed') }}
             </button>
           </div>
         </div>
@@ -3023,10 +3028,301 @@
       // 统一媒体预览服务基础 URL
       const PREVIEW_SERVICE_BASE = "https://www.katelya.eu.org";
 
+      // 双语词典（首页）
+      if (window.I18n) {
+        I18n.register({
+          zh: {
+            'nav.home': '首页',
+            'nav.gallery': '图片浏览',
+            'nav.storage': '存储配置',
+            'nav.webdav': 'WebDAV',
+            'nav.admin': '管理后台',
+            'guest.notice1': '访客模式 - 单文件最大',
+            'guest.notice2': '，每日上限',
+            'guest.notice3': '次',
+            'home.uploadTitle': '上传文件',
+            'home.guestHint1': '访客模式：单文件最大',
+            'home.guestHint2': '，不支持分片上传',
+            'home.uploadZoneText': '点击或拖拽文件到此区域上传',
+            'home.storageLabel': '存储位置：',
+            'home.r2': 'R2 存储',
+            'home.r2NotConfigured': '未配置 - 请在环境变量中配置 R2 存储桶',
+            'home.r2Configured': 'Cloudflare R2 存储',
+            'home.s3NotConfigured': '未配置 - 请在环境变量中配置 S3 相关参数',
+            'home.s3Configured': 'S3 兼容存储',
+            'home.discordNotConfigured': '未配置 - 请在环境变量中配置 Discord 相关参数',
+            'home.discordConfigured': 'Discord 存储',
+            'home.hfNotConfigured': '未配置 - 请在环境变量中配置 HuggingFace 相关参数',
+            'home.hfConfigured': 'HuggingFace 存储',
+            'home.ghNotConfigured': '未配置 - 请在环境变量中配置 GitHub 相关参数',
+            'home.ghConfigured': 'GitHub 存储',
+            'home.uploadDir': '上传目录',
+            'home.rootDir': '根目录',
+            'home.folderPh': '留空则上传到根目录，例如：项目A/一月',
+            'home.folderTip': '上传前可先指定目标目录，上传完成后依然可以在后台继续移动文件。',
+            'home.compressTitle': '图片压缩转换',
+            'home.compressToggleTip': '开启后默认在确认窗口中选择压缩',
+            'home.on': '已开启',
+            'home.off': '未开启',
+            'home.formatUnsupported': '当前浏览器不支持输出 ',
+            'home.quality': '压缩质量：',
+            'home.maxDimension': '最大边长',
+            'home.maxDimHint': '0 为保留原始尺寸',
+            'home.keepOriginal': '压缩后体积更大时自动保留原图',
+            'home.selectFile': '选择文件',
+            'home.pasteUpload': '粘贴上传',
+            'home.urlUpload': 'URL上传',
+            'home.urlPh': '输入图片URL地址...',
+            'home.upload': '上传',
+            'home.uploadQueue': '上传队列',
+            'home.failedSuffix': '个失败',
+            'home.retryAllFailed': '重试全部失败',
+            'home.clearQueue': '清空队列',
+            'home.retry': '重试',
+            'home.uploadResult': '上传结果',
+            'home.filesSuffix': '个文件',
+            'home.deselectAll': '取消全选',
+            'home.selectAll': '全选',
+            'home.copySelected': '复制选中',
+            'home.copyAll': '复制全部',
+            'home.clear': '清空',
+            'home.directUrl': '直链 URL',
+            'home.copyLink': '复制链接',
+            'home.download': '下载',
+            'home.preview': '预览',
+            'home.remove': '移除',
+            'home.batchPh': '选中的链接将显示在这里...',
+            'home.emptyTitle': '上传文件后，链接将显示在这里',
+            'home.emptyHint': '支持批量选择和一键复制',
+            'home.localHistory': '本地上传历史',
+            'home.clearHistory': '清空历史',
+            'home.statImages': '图片:',
+            'home.statVideos': '视频:',
+            'home.statOthers': '其他:',
+            'home.statTotalSize': '总大小:',
+            'home.copyDirectLink': '复制直链',
+            'home.confirmTitle': '上传前确认图片处理方式',
+            'home.confirmNote': '本次选择中包含图片文件。请选择直接上传原图，或先在浏览器中压缩/转换后再上传。',
+            'home.cancel': '取消',
+            'home.fileCount': '文件数量',
+            'home.processableImages': '可处理图片',
+            'home.totalSizeLabel': '总大小',
+            'home.modeOriginalTitle': '直接上传原图',
+            'home.modeOriginalDesc': '保持文件格式、尺寸和质量不变。',
+            'home.modeCompressTitle': '压缩/转换后上传',
+            'home.modeCompressDesc': '适合节省 S3、WebDAV、R2 等存储空间。',
+            'home.uploadOriginal': '上传原图',
+            'home.uploadCompressed': '压缩后上传',
+            'home.statusWaiting': '等待中',
+            'home.statusProcessing': '处理中',
+            'home.statusUploading': '上传中',
+            'home.statusSuccess': '成功',
+            'home.statusError': '失败',
+            'home.tipWebp': '兼容性好，通常比 JPEG/PNG 更省空间',
+            'home.tipAvif': '压缩率更高，适合现代浏览器',
+            'home.tipJpeg': '适合照片，兼容性最好',
+            'home.tipPng': '保留透明通道，体积通常较大',
+            'home.sizeMaxDim': '最大边长 {px}px',
+            'home.sizeKeepOriginal': '保留原始尺寸',
+            'home.tgChannel': 'Telegram 频道',
+            'home.r2Bucket': 'R2 存储桶',
+            'home.s3Store': 'S3 存储',
+            'home.discordChannel': 'Discord 频道',
+            'home.hfRepo': 'HuggingFace 仓库',
+            'home.ghRepo': 'GitHub 仓库',
+            'home.toastGuestStorage': '访客模式仅支持 Telegram 和 R2 存储',
+            'home.toastNotConfigured': '{label}未配置或未启用',
+            'home.toastSwitched': '已切换到 {label}',
+            'home.toastNoClipImg': '剪贴板中没有图片',
+            'home.toastNoClipAccess': '无法访问剪贴板，请直接粘贴图片',
+            'home.toastInvalidUrl': '请输入有效的URL',
+            'home.toastUrlProtocol': '仅支持HTTP/HTTPS协议的URL',
+            'home.toastUrlFormat': 'URL格式无效',
+            'home.toastUploadFailed': '上传失败',
+            'home.toastUrlSuccess': '成功从URL上传到 {target}',
+            'home.toastUrlFailed': 'URL上传失败：{msg}',
+            'home.toastOverLimit': '{count}个文件超过{limit}限制',
+            'home.multipleTargets': '多个存储目标',
+            'home.toastUploadSuccess': '成功上传 {count} 个文件到 {target}',
+            'home.toastLinkCopied': '链接已复制',
+            'home.toastCopyFailed': '复制失败，请手动复制',
+            'home.toastCopiedN': '已复制 {count} 个链接',
+            'home.toastQueueCleared': '队列已清空',
+            'home.toastRetrying': '正在重试 {count} 个失败项...',
+            'home.toastRetrySuccess': '重试成功 {count}/{total} 个文件',
+            'home.toastDirectCopied': '直链已复制',
+            'home.confirmClearHistory': '确定要清空所有上传历史吗？',
+            'home.tip': '提示',
+            'home.confirmBtn': '确定',
+            'home.toastHistoryCleared': '历史记录已清空',
+            'home.errDecode': '图片解码失败',
+            'home.errNoCompress': '当前浏览器不支持图片压缩',
+            'home.errCompressFail': '图片压缩失败',
+            'home.reasonUnsupported': '浏览器不支持输出 {label}，已上传原图',
+            'home.errReadSize': '无法读取图片尺寸',
+            'home.errCanvas': '无法创建图片处理画布',
+            'home.reasonNotSmaller': '压缩后体积未变小，已保留原图',
+            'home.statusConverting': '正在转换为 {label}...',
+            'home.statusSkipped': '已跳过压缩',
+            'home.resizedSuffix': '，已调整尺寸',
+            'home.statusConverted': '已转为 {label}，节省 {saved}{resized}',
+            'home.statusCompressFailed': '压缩失败，已上传原图：{msg}',
+            'home.errNoPath': '未返回文件路径',
+            'home.errInitUpload': '初始化上传失败',
+            'home.errChunkUpload': '分片 {index} 上传失败',
+            'home.errMergeChunk': '合并分片失败',
+            'home.unknownFile': '未知文件'
+          },
+          en: {
+            'nav.home': 'Home',
+            'nav.gallery': 'Gallery',
+            'nav.storage': 'Storage',
+            'nav.webdav': 'WebDAV',
+            'nav.admin': 'Admin',
+            'guest.notice1': 'Guest mode - max file size',
+            'guest.notice2': ', daily limit',
+            'guest.notice3': 'uploads',
+            'home.uploadTitle': 'Upload Files',
+            'home.guestHint1': 'Guest mode: max file size',
+            'home.guestHint2': ', chunked upload not supported',
+            'home.uploadZoneText': 'Click or drag files here to upload',
+            'home.storageLabel': 'Storage:',
+            'home.r2': 'R2 Storage',
+            'home.r2NotConfigured': 'Not configured - set the R2 bucket in environment variables',
+            'home.r2Configured': 'Cloudflare R2 storage',
+            'home.s3NotConfigured': 'Not configured - set the S3 parameters in environment variables',
+            'home.s3Configured': 'S3-compatible storage',
+            'home.discordNotConfigured': 'Not configured - set the Discord parameters in environment variables',
+            'home.discordConfigured': 'Discord storage',
+            'home.hfNotConfigured': 'Not configured - set the HuggingFace parameters in environment variables',
+            'home.hfConfigured': 'HuggingFace storage',
+            'home.ghNotConfigured': 'Not configured - set the GitHub parameters in environment variables',
+            'home.ghConfigured': 'GitHub storage',
+            'home.uploadDir': 'Upload Folder',
+            'home.rootDir': 'Root',
+            'home.folderPh': 'Leave empty to upload to root, e.g. ProjectA/Jan',
+            'home.folderTip': 'You can set a target folder before uploading; files can still be moved later in the admin panel.',
+            'home.compressTitle': 'Image Compression',
+            'home.compressToggleTip': 'When enabled, compression is chosen by default in the confirm dialog',
+            'home.on': 'On',
+            'home.off': 'Off',
+            'home.formatUnsupported': 'This browser does not support output ',
+            'home.quality': 'Quality: ',
+            'home.maxDimension': 'Max dimension',
+            'home.maxDimHint': '0 keeps the original size',
+            'home.keepOriginal': 'Keep original if compressed file is larger',
+            'home.selectFile': 'Select Files',
+            'home.pasteUpload': 'Paste',
+            'home.urlUpload': 'From URL',
+            'home.urlPh': 'Enter image URL...',
+            'home.upload': 'Upload',
+            'home.uploadQueue': 'Upload Queue',
+            'home.failedSuffix': 'failed',
+            'home.retryAllFailed': 'Retry All Failed',
+            'home.clearQueue': 'Clear Queue',
+            'home.retry': 'Retry',
+            'home.uploadResult': 'Upload Results',
+            'home.filesSuffix': ' files',
+            'home.deselectAll': 'Deselect All',
+            'home.selectAll': 'Select All',
+            'home.copySelected': 'Copy Selected',
+            'home.copyAll': 'Copy All',
+            'home.clear': 'Clear',
+            'home.directUrl': 'Direct URL',
+            'home.copyLink': 'Copy link',
+            'home.download': 'Download',
+            'home.preview': 'Preview',
+            'home.remove': 'Remove',
+            'home.batchPh': 'Selected links will appear here...',
+            'home.emptyTitle': 'Links will appear here after you upload',
+            'home.emptyHint': 'Supports batch selection and one-click copy',
+            'home.localHistory': 'Local Upload History',
+            'home.clearHistory': 'Clear History',
+            'home.statImages': 'Images:',
+            'home.statVideos': 'Videos:',
+            'home.statOthers': 'Others:',
+            'home.statTotalSize': 'Total:',
+            'home.copyDirectLink': 'Copy direct link',
+            'home.confirmTitle': 'Confirm image handling before upload',
+            'home.confirmNote': 'Your selection includes image files. Choose to upload originals directly, or compress/convert them in the browser first.',
+            'home.cancel': 'Cancel',
+            'home.fileCount': 'Files',
+            'home.processableImages': 'Processable images',
+            'home.totalSizeLabel': 'Total size',
+            'home.modeOriginalTitle': 'Upload originals',
+            'home.modeOriginalDesc': 'Keep file format, dimensions and quality unchanged.',
+            'home.modeCompressTitle': 'Compress / convert before upload',
+            'home.modeCompressDesc': 'Good for saving S3, WebDAV, R2 and other storage space.',
+            'home.uploadOriginal': 'Upload Originals',
+            'home.uploadCompressed': 'Upload Compressed',
+            'home.statusWaiting': 'Waiting',
+            'home.statusProcessing': 'Processing',
+            'home.statusUploading': 'Uploading',
+            'home.statusSuccess': 'Success',
+            'home.statusError': 'Failed',
+            'home.tipWebp': 'Good compatibility, usually smaller than JPEG/PNG',
+            'home.tipAvif': 'Higher compression ratio, suited to modern browsers',
+            'home.tipJpeg': 'Great for photos, best compatibility',
+            'home.tipPng': 'Preserves transparency, usually larger',
+            'home.sizeMaxDim': 'Max dimension {px}px',
+            'home.sizeKeepOriginal': 'Keep original size',
+            'home.tgChannel': 'Telegram channel',
+            'home.r2Bucket': 'R2 bucket',
+            'home.s3Store': 'S3 storage',
+            'home.discordChannel': 'Discord channel',
+            'home.hfRepo': 'HuggingFace repo',
+            'home.ghRepo': 'GitHub repo',
+            'home.toastGuestStorage': 'Guest mode only supports Telegram and R2 storage',
+            'home.toastNotConfigured': '{label} is not configured or enabled',
+            'home.toastSwitched': 'Switched to {label}',
+            'home.toastNoClipImg': 'No image in the clipboard',
+            'home.toastNoClipAccess': 'Cannot access the clipboard, please paste the image directly',
+            'home.toastInvalidUrl': 'Please enter a valid URL',
+            'home.toastUrlProtocol': 'Only HTTP/HTTPS URLs are supported',
+            'home.toastUrlFormat': 'Invalid URL format',
+            'home.toastUploadFailed': 'Upload failed',
+            'home.toastUrlSuccess': 'Uploaded from URL to {target}',
+            'home.toastUrlFailed': 'URL upload failed: {msg}',
+            'home.toastOverLimit': '{count} file(s) exceed the {limit} limit',
+            'home.multipleTargets': 'multiple storage targets',
+            'home.toastUploadSuccess': 'Uploaded {count} file(s) to {target}',
+            'home.toastLinkCopied': 'Link copied',
+            'home.toastCopyFailed': 'Copy failed, please copy manually',
+            'home.toastCopiedN': 'Copied {count} link(s)',
+            'home.toastQueueCleared': 'Queue cleared',
+            'home.toastRetrying': 'Retrying {count} failed item(s)...',
+            'home.toastRetrySuccess': 'Retried {count}/{total} file(s) successfully',
+            'home.toastDirectCopied': 'Direct link copied',
+            'home.confirmClearHistory': 'Clear all upload history?',
+            'home.tip': 'Notice',
+            'home.confirmBtn': 'Confirm',
+            'home.toastHistoryCleared': 'History cleared',
+            'home.errDecode': 'Image decoding failed',
+            'home.errNoCompress': 'This browser does not support image compression',
+            'home.errCompressFail': 'Image compression failed',
+            'home.reasonUnsupported': 'Browser does not support output {label}, original uploaded',
+            'home.errReadSize': 'Unable to read image dimensions',
+            'home.errCanvas': 'Unable to create image processing canvas',
+            'home.reasonNotSmaller': 'Compressed file is not smaller, original kept',
+            'home.statusConverting': 'Converting to {label}...',
+            'home.statusSkipped': 'Compression skipped',
+            'home.resizedSuffix': ', resized',
+            'home.statusConverted': 'Converted to {label}, saved {saved}{resized}',
+            'home.statusCompressFailed': 'Compression failed, original uploaded: {msg}',
+            'home.errNoPath': 'No file path returned',
+            'home.errInitUpload': 'Failed to initialize upload',
+            'home.errChunkUpload': 'Chunk {index} upload failed',
+            'home.errMergeChunk': 'Failed to merge chunks',
+            'home.unknownFile': 'Unknown file'
+          }
+        });
+      }
+
       new Vue({
         el: "#app",
         data: {
           baseURL: document.location.origin,
+          lang: (window.I18n && I18n.getLang()) || 'zh',
           isDragging: false,
           showUrlInput: false,
           urlToUpload: "",
@@ -3056,7 +3352,7 @@
           isAuthenticated: false,
           folderPath: "",
           storageMode: "telegram", // 存储模式：telegram, r2, s3, discord, huggingface, github
-          storageTarget: "Telegram 频道", // 显示文本
+          storageTarget: (window.I18n ? I18n.t('home.tgChannel') : "Telegram 频道"), // 显示文本
           r2Available: false, // R2 是否可用
           s3Available: false, // S3 是否可用
           discordAvailable: false, // Discord 是否可用
@@ -3088,6 +3384,7 @@
               .length;
           },
           imageCompressFormats() {
+            void this.lang;
             return [
               {
                 value: "webp",
@@ -3095,7 +3392,7 @@
                 mime: "image/webp",
                 ext: "webp",
                 icon: "fas fa-image",
-                tip: "兼容性好，通常比 JPEG/PNG 更省空间",
+                tip: this.t('home.tipWebp'),
               },
               {
                 value: "avif",
@@ -3103,7 +3400,7 @@
                 mime: "image/avif",
                 ext: "avif",
                 icon: "fas fa-bolt",
-                tip: "压缩率更高，适合现代浏览器",
+                tip: this.t('home.tipAvif'),
               },
               {
                 value: "jpeg",
@@ -3111,7 +3408,7 @@
                 mime: "image/jpeg",
                 ext: "jpg",
                 icon: "fas fa-file-image",
-                tip: "适合照片，兼容性最好",
+                tip: this.t('home.tipJpeg'),
               },
               {
                 value: "png",
@@ -3119,7 +3416,7 @@
                 mime: "image/png",
                 ext: "png",
                 icon: "far fa-file-image",
-                tip: "保留透明通道，体积通常较大",
+                tip: this.t('home.tipPng'),
               },
             ];
           },
@@ -3129,8 +3426,8 @@
                 (item) => item.value === this.imageCompress.format,
               ) || this.imageCompressFormats[0];
             const sizeText = this.imageCompress.maxDimension
-              ? `最大边长 ${this.imageCompress.maxDimension}px`
-              : "保留原始尺寸";
+              ? this.t('home.sizeMaxDim', { px: this.imageCompress.maxDimension })
+              : this.t('home.sizeKeepOriginal');
             const modeText =
               this.imageUploadDecision === "optimized"
                 ? `Optimized images use ${format.label}, quality ${this.imageCompress.quality}%, ${sizeText}.`
@@ -3191,6 +3488,11 @@
           },
         },
         methods: {
+          t(key, params) {
+            // reference this.lang so templates re-render on language switch
+            void this.lang;
+            return window.I18n ? I18n.t(key, params) : key;
+          },
           normalizeFolderPath(value) {
             const parts = String(value || "")
               .replace(/\\/g, "/")
@@ -3269,17 +3571,17 @@
               if (files.length > 0) {
                 this.prepareFilesForUpload(files);
               } else {
-                this.showToast("剪贴板中没有图片", "error");
+                this.showToast(this.t('home.toastNoClipImg'), "error");
               }
             } catch (err) {
-              this.showToast("无法访问剪贴板，请直接粘贴图片", "error");
+              this.showToast(this.t('home.toastNoClipAccess'), "error");
             }
           },
 
           // URL上传 - 通过服务器端代理获取外部URL，解决CORS限制
           async uploadFromUrl() {
             if (!this.urlToUpload.trim()) {
-              this.showToast("请输入有效的URL", "error");
+              this.showToast(this.t('home.toastInvalidUrl'), "error");
               return;
             }
 
@@ -3287,11 +3589,11 @@
             try {
               const url = new URL(this.urlToUpload);
               if (!["http:", "https:"].includes(url.protocol)) {
-                this.showToast("仅支持HTTP/HTTPS协议的URL", "error");
+                this.showToast(this.t('home.toastUrlProtocol'), "error");
                 return;
               }
             } catch {
-              this.showToast("URL格式无效", "error");
+              this.showToast(this.t('home.toastUrlFormat'), "error");
               return;
             }
 
@@ -3315,7 +3617,7 @@
               const data = await response.json();
 
               if (!response.ok) {
-                throw new Error(data.error || "上传失败");
+                throw new Error(data.error || this.t('home.toastUploadFailed'));
               }
 
               // 处理成功响应 - 后端返回格式与普通上传一致 [{ src: '/file/xxx' }]
@@ -3339,14 +3641,14 @@
                 this.uploadedFiles.unshift(uploadedFile);
                 this.addToHistory(uploadedFile);
                 this.showToast(
-                  `成功从URL上传到 ${this.storageTarget}`,
+                  this.t('home.toastUrlSuccess', { target: this.storageTarget }),
                   "success",
                 );
               }
 
               this.urlToUpload = "";
             } catch (err) {
-              this.showToast("URL上传失败：" + err.message, "error");
+              this.showToast(this.t('home.toastUrlFailed', { msg: err.message }), "error");
             }
             this.urlUploading = false;
           },
@@ -3602,7 +3904,7 @@
 
             if (invalid.length > 0) {
               this.showToast(
-                `${invalid.length}个文件超过${maxSizeLabel}限制`,
+                this.t('home.toastOverLimit', { count: invalid.length, limit: maxSizeLabel }),
                 "error",
               );
             }
@@ -3712,7 +4014,7 @@
               };
               image.onerror = () => {
                 URL.revokeObjectURL(url);
-                reject(new Error("图片解码失败"));
+                reject(new Error(this.t('home.errDecode')));
               };
               image.src = url;
             });
@@ -3721,13 +4023,13 @@
           canvasToBlob(canvas, mime, quality) {
             return new Promise((resolve, reject) => {
               if (!canvas.toBlob) {
-                reject(new Error("当前浏览器不支持图片压缩"));
+                reject(new Error(this.t('home.errNoCompress')));
                 return;
               }
               canvas.toBlob(
                 (blob) => {
                   if (!blob) {
-                    reject(new Error("图片压缩失败"));
+                    reject(new Error(this.t('home.errCompressFail')));
                     return;
                   }
                   resolve(blob);
@@ -3748,7 +4050,7 @@
               return {
                 file,
                 changed: false,
-                reason: `浏览器不支持输出 ${format.label}，已上传原图`,
+                reason: this.t('home.reasonUnsupported', { label: format.label }),
               };
             }
 
@@ -3756,7 +4058,7 @@
             const naturalWidth = image.naturalWidth || image.width;
             const naturalHeight = image.naturalHeight || image.height;
             if (!naturalWidth || !naturalHeight) {
-              throw new Error("无法读取图片尺寸");
+              throw new Error(this.t('home.errReadSize'));
             }
 
             let width = naturalWidth;
@@ -3772,7 +4074,7 @@
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext("2d");
-            if (!ctx) throw new Error("无法创建图片处理画布");
+            if (!ctx) throw new Error(this.t('home.errCanvas'));
 
             if (format.mime === "image/jpeg") {
               ctx.fillStyle = "#ffffff";
@@ -3789,7 +4091,7 @@
               return {
                 file,
                 changed: false,
-                reason: `浏览器不支持输出 ${format.label}，已上传原图`,
+                reason: this.t('home.reasonUnsupported', { label: format.label }),
               };
             }
 
@@ -3800,7 +4102,7 @@
               return {
                 file,
                 changed: false,
-                reason: "压缩后体积未变小，已保留原图",
+                reason: this.t('home.reasonNotSmaller'),
               };
             }
 
@@ -3836,7 +4138,7 @@
 
             const format = this.getImageFormatConfig(options.format);
             item.status = "processing";
-            item.compressionStatus = `正在转换为 ${format.label}...`;
+            item.compressionStatus = this.t('home.statusConverting', { label: format.label });
 
             try {
               const result = await this.compressImageFile(
@@ -3844,7 +4146,7 @@
                 options,
               );
               if (!result.changed) {
-                item.compressionStatus = result.reason || "已跳过压缩";
+                item.compressionStatus = result.reason || this.t('home.statusSkipped');
                 return;
               }
 
@@ -3857,11 +4159,11 @@
                 0,
                 result.originalSize - result.outputSize,
               );
-              const resizedText = result.resized ? "，已调整尺寸" : "";
-              item.compressionStatus = `已转为 ${result.formatLabel}，节省 ${this.formatSize(saved)}${resizedText}`;
+              const resizedText = result.resized ? this.t('home.resizedSuffix') : "";
+              item.compressionStatus = this.t('home.statusConverted', { label: result.formatLabel, saved: this.formatSize(saved), resized: resizedText });
             } catch (err) {
               console.warn("Image compression skipped:", err);
-              item.compressionStatus = `压缩失败，已上传原图：${err.message}`;
+              item.compressionStatus = this.t('home.statusCompressFailed', { msg: err.message });
             }
           },
 
@@ -3944,9 +4246,9 @@
               const targets = [
                 ...new Set(waiting.map((item) => this.getItemStorageTarget(item))),
               ];
-              const targetText = targets.length === 1 ? targets[0] : "多个存储目标";
+              const targetText = targets.length === 1 ? targets[0] : this.t('home.multipleTargets');
               this.showToast(
-                `成功上传 ${successCount} 个文件到 ${targetText}`,
+                this.t('home.toastUploadSuccess', { count: successCount, target: targetText }),
                 "success",
               );
             }
@@ -3999,11 +4301,11 @@
               const serverError = Array.isArray(data)
                 ? data[0]?.error
                 : data?.error;
-              throw new Error(serverError || "上传失败");
+              throw new Error(serverError || this.t('home.toastUploadFailed'));
             }
 
             const src = data[0]?.src;
-            if (!src) throw new Error("未返回文件路径");
+            if (!src) throw new Error(this.t('home.errNoPath'));
 
             item.status = "success";
             item.progress = 100;
@@ -4036,7 +4338,7 @@
 
             const initData = await initResponse.json();
             if (!initResponse.ok) {
-              throw new Error(initData.error || "初始化上传失败");
+              throw new Error(initData.error || this.t('home.errInitUpload'));
             }
 
             const uploadId = initData.uploadId;
@@ -4063,7 +4365,7 @@
 
               if (!chunkResponse.ok) {
                 const errData = await chunkResponse.json();
-                throw new Error(errData.error || `分片 ${i + 1} 上传失败`);
+                throw new Error(errData.error || this.t('home.errChunkUpload', { index: i + 1 }));
               }
 
               // 更新进度
@@ -4083,7 +4385,7 @@
 
             const completeData = await completeResponse.json();
             if (!completeResponse.ok) {
-              throw new Error(completeData.error || "合并分片失败");
+              throw new Error(completeData.error || this.t('home.errMergeChunk'));
             }
 
             item.status = "success";
@@ -4138,9 +4440,9 @@
             try {
               const link = this.formatLink(file);
               await this.copyToClipboard(link);
-              this.showToast("链接已复制", "success");
+              this.showToast(this.t('home.toastLinkCopied'), "success");
             } catch (err) {
-              this.showToast("复制失败，请手动复制", "error");
+              this.showToast(this.t('home.toastCopyFailed'), "error");
             }
           },
 
@@ -4151,7 +4453,7 @@
               .map((f) => this.formatLink(f))
               .join("\n");
             this.copyToClipboard(links);
-            this.showToast(`已复制 ${this.selectedCount} 个链接`, "success");
+            this.showToast(this.t('home.toastCopiedN', { count: this.selectedCount }), "success");
           },
 
           // 复制全部链接
@@ -4161,7 +4463,7 @@
               .join("\n");
             this.copyToClipboard(links);
             this.showToast(
-              `已复制 ${this.uploadedFiles.length} 个链接`,
+              this.t('home.toastCopiedN', { count: this.uploadedFiles.length }),
               "success",
             );
           },
@@ -4183,7 +4485,7 @@
               (f) => f.status === "uploading" || f.status === "processing",
             );
             if (this.uploadingFiles.length === 0) {
-              this.showToast("队列已清空", "success");
+              this.showToast(this.t('home.toastQueueCleared'), "success");
             }
           },
 
@@ -4202,7 +4504,7 @@
             );
             if (failed.length === 0) return;
 
-            this.showToast(`正在重试 ${failed.length} 个失败项...`, "info");
+            this.showToast(this.t('home.toastRetrying', { count: failed.length }), "info");
 
             // 重置状态
             failed.forEach((item) => {
@@ -4218,7 +4520,7 @@
             ).length;
             if (successCount > 0) {
               this.showToast(
-                `重试成功 ${successCount}/${failed.length} 个文件`,
+                this.t('home.toastRetrySuccess', { count: successCount, total: failed.length }),
                 "success",
               );
             }
@@ -4325,12 +4627,12 @@
               textarea.select();
               document.execCommand("copy");
               document.body.removeChild(textarea);
-              this.showToast("直链已复制", "success");
+              this.showToast(this.t('home.toastDirectCopied'), "success");
             };
             if (navigator.clipboard && navigator.clipboard.writeText) {
               navigator.clipboard
                 .writeText(link)
-                .then(() => this.showToast("直链已复制", "success"))
+                .then(() => this.showToast(this.t('home.toastDirectCopied'), "success"))
                 .catch(() => fallback());
             } else {
               fallback();
@@ -4373,7 +4675,7 @@
               .join("\n");
             this.copyToClipboard(links);
             this.showToast(
-              `已复制 ${this.selectedHistoryCount} 个链接`,
+              this.t('home.toastCopiedN', { count: this.selectedHistoryCount }),
               "success",
             );
           },
@@ -4402,7 +4704,7 @@
               }
             }
 
-            return "未知文件";
+            return this.t('home.unknownFile');
           },
 
           // 核心方法：从污染的 URL 中提取干净的文件直链
@@ -4566,13 +4868,15 @@
           },
 
           clearHistory() {
-            this.$confirm("确定要清空所有上传历史吗？", "提示", {
+            this.$confirm(this.t('home.confirmClearHistory'), this.t('home.tip'), {
               type: "warning",
+              confirmButtonText: this.t('home.confirmBtn'),
+              cancelButtonText: this.t('home.cancel'),
             })
               .then(() => {
                 this.uploadHistory = [];
                 this.saveHistory();
-                this.showToast("历史记录已清空", "success");
+                this.showToast(this.t('home.toastHistoryCleared'), "success");
               })
               .catch(() => {});
           },
@@ -4626,8 +4930,8 @@
                         item.name = urlPath;
                         needsSave = true;
                       } else {
-                        item.fileName = "未知文件";
-                        item.name = "未知文件";
+                        item.fileName = this.t('home.unknownFile');
+                        item.name = this.t('home.unknownFile');
                         needsSave = true;
                       }
                     }
@@ -4708,11 +5012,11 @@
 
           getStatusText(status) {
             const texts = {
-              waiting: "等待中",
-              processing: "处理中",
-              uploading: "上传中",
-              success: "成功",
-              error: "失败",
+              waiting: this.t('home.statusWaiting'),
+              processing: this.t('home.statusProcessing'),
+              uploading: this.t('home.statusUploading'),
+              success: this.t('home.statusSuccess'),
+              error: this.t('home.statusError'),
             };
             return texts[status] || status;
           },
@@ -4801,7 +5105,7 @@
                     maxDailyUploads: data.guestUpload.dailyLimit || 10,
                   };
                   this.storageMode = "telegram";
-                  this.storageTarget = "Telegram 频道";
+                  this.storageTarget = this.t('home.tgChannel');
                   return true;
                 }
                 window.location.href =
@@ -4854,12 +5158,12 @@
                 github: this.githubAvailable,
               };
               const modeLabels = {
-                telegram: "Telegram 频道",
-                r2: "R2 存储桶",
-                s3: "S3 存储",
-                discord: "Discord 频道",
-                huggingface: "HuggingFace 仓库",
-                github: "GitHub 仓库",
+                telegram: this.t('home.tgChannel'),
+                r2: this.t('home.r2Bucket'),
+                s3: this.t('home.s3Store'),
+                discord: this.t('home.discordChannel'),
+                huggingface: this.t('home.hfRepo'),
+                github: this.t('home.ghRepo'),
               };
 
               // 如果保存的模式可用（且非访客模式或是 telegram/r2），恢复之
@@ -4883,7 +5187,7 @@
               }
             } catch (e) {
               this.storageMode = "telegram";
-              this.storageTarget = "Telegram 频道";
+              this.storageTarget = this.t('home.tgChannel');
               this.uploadLimits = {};
               this.r2Available = false;
               this.s3Available = false;
@@ -4896,19 +5200,19 @@
           // 切换存储模式
           setStorageMode(mode) {
             const modeConfig = {
-              telegram: { label: "Telegram 频道", available: true },
-              r2: { label: "R2 存储桶", available: this.r2Available },
-              s3: { label: "S3 存储", available: this.s3Available },
+              telegram: { label: this.t('home.tgChannel'), available: true },
+              r2: { label: this.t('home.r2Bucket'), available: this.r2Available },
+              s3: { label: this.t('home.s3Store'), available: this.s3Available },
               discord: {
-                label: "Discord 频道",
+                label: this.t('home.discordChannel'),
                 available: this.discordAvailable,
               },
               huggingface: {
-                label: "HuggingFace 仓库",
+                label: this.t('home.hfRepo'),
                 available: this.huggingfaceAvailable,
               },
               github: {
-                label: "GitHub 仓库",
+                label: this.t('home.ghRepo'),
                 available: this.githubAvailable,
               },
             };
@@ -4919,22 +5223,25 @@
 
             // 访客只允许 telegram 和 r2
             if (this.isGuest && !["telegram", "r2"].includes(mode)) {
-              this.showToast("访客模式仅支持 Telegram 和 R2 存储", "error");
+              this.showToast(this.t('home.toastGuestStorage'), "error");
               return;
             }
 
             if (!config.available && mode !== "telegram") {
-              this.showToast(`${config.label}未配置或未启用`, "error");
+              this.showToast(this.t('home.toastNotConfigured', { label: config.label }), "error");
               return;
             }
 
             this.storageMode = mode;
             this.storageTarget = config.label;
             localStorage.setItem("storageMode", mode);
-            this.showToast(`已切换到 ${config.label}`, "success");
+            this.showToast(this.t('home.toastSwitched', { label: config.label }), "success");
           },
         },
         async mounted() {
+          if (window.I18n) {
+            I18n.onChange((lang) => { this.lang = lang; });
+          }
           this.loadImageUploadDecision();
           this.loadImageCompressSettings();
           this.detectImageCompressionSupport();

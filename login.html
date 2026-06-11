@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登录 | Seraph's Pictures</title>
+  <title data-i18n="login.docTitle">登录 | Seraph's Pictures</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/logo.png">
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/theme.css">
   <script src="/theme.js?v=20260305"></script>
+  <script src="/i18n.js?v=20260611"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <style>
     :root {
@@ -459,34 +460,40 @@
   <!-- 背景图层 (通过JS动态控制) -->
   <div class="bg-image-layer" id="bgImageLayer" style="display: none;"></div>
   <div class="bg-overlay" id="bgOverlay" style="display: none;"></div>
-  
+
+  <!-- 语言切换 -->
+  <button type="button" class="lang-toggle lang-toggle-floating" data-i18n-toggle>
+    <i class="fas fa-globe lang-toggle-icon"></i>
+    <span data-lang-label>EN</span>
+  </button>
+
   <div class="login-container">
     <div class="login-card">
       <div class="logo">
         <i class="fas fa-cloud-upload-alt"></i>
       </div>
       <h1 class="title">Seraph's Pictures</h1>
-      <p class="subtitle">请登录以继续使用文件托管服务</p>
+      <p class="subtitle" data-i18n="login.subtitle">请登录以继续使用文件托管服务</p>
 
       <div class="error-message" id="errorMessage">
         <i class="fas fa-exclamation-circle"></i>
-        <span id="errorText">用户名或密码错误</span>
+        <span id="errorText" data-i18n="login.errInvalid">用户名或密码错误</span>
       </div>
 
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label for="username">用户名</label>
+          <label for="username" data-i18n="login.username">用户名</label>
           <div class="input-wrapper">
             <i class="fas fa-user"></i>
-            <input type="text" id="username" class="form-input" placeholder="请输入用户名" required autofocus>
+            <input type="text" id="username" class="form-input" data-i18n-placeholder="login.usernamePh" placeholder="请输入用户名" required autofocus>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="password">密码</label>
+          <label for="password" data-i18n="login.password">密码</label>
           <div class="input-wrapper">
             <i class="fas fa-lock"></i>
-            <input type="password" id="password" class="form-input has-toggle" placeholder="请输入密码" required>
+            <input type="password" id="password" class="form-input has-toggle" data-i18n-placeholder="login.passwordPh" placeholder="请输入密码" required>
             <button type="button" class="password-toggle" onclick="togglePassword()">
               <i class="fas fa-eye" id="passwordToggleIcon"></i>
             </button>
@@ -496,13 +503,13 @@
         <div class="remember-row">
           <label class="remember-label">
             <input type="checkbox" id="remember" checked>
-            <span>记住登录状态</span>
+            <span data-i18n="login.remember">记住登录状态</span>
           </label>
         </div>
 
         <button type="submit" class="login-btn" id="loginBtn">
           <i class="fas fa-sign-in-alt"></i>
-          <span>登 录</span>
+          <span data-i18n="login.submit">登 录</span>
         </button>
       </form>
 
@@ -510,6 +517,40 @@
   </div>
 
   <script>
+    // 双语词典
+    I18n.register({
+      zh: {
+        'login.docTitle': '登录 | Seraph\'s Pictures',
+        'login.subtitle': '请登录以继续使用文件托管服务',
+        'login.username': '用户名',
+        'login.usernamePh': '请输入用户名',
+        'login.password': '密码',
+        'login.passwordPh': '请输入密码',
+        'login.remember': '记住登录状态',
+        'login.submit': '登 录',
+        'login.submitting': '登录中...',
+        'login.errInvalid': '用户名或密码错误',
+        'login.errEmpty': '请输入用户名和密码',
+        'login.errFailed': '登录失败',
+        'login.errNetwork': '网络错误，请稍后重试'
+      },
+      en: {
+        'login.docTitle': 'Sign In | Seraph\'s Pictures',
+        'login.subtitle': 'Sign in to continue to your media workspace',
+        'login.username': 'Username',
+        'login.usernamePh': 'Enter your username',
+        'login.password': 'Password',
+        'login.passwordPh': 'Enter your password',
+        'login.remember': 'Keep me signed in',
+        'login.submit': 'Sign In',
+        'login.submitting': 'Signing in...',
+        'login.errInvalid': 'Incorrect username or password',
+        'login.errEmpty': 'Please enter your username and password',
+        'login.errFailed': 'Sign-in failed',
+        'login.errNetwork': 'Network error, please try again later'
+      }
+    });
+
     // 加载自定义背景
     (function() {
       if (
@@ -621,10 +662,10 @@
       const btn = document.getElementById('loginBtn');
       if (loading) {
         btn.disabled = true;
-        btn.innerHTML = '<div class="spinner"></div><span>登录中...</span>';
+        btn.innerHTML = '<div class="spinner"></div><span>' + I18n.t('login.submitting') + '</span>';
       } else {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>登 录</span>';
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>' + I18n.t('login.submit') + '</span>';
       }
     }
 
@@ -636,7 +677,7 @@
       const password = document.getElementById('password').value;
       
       if (!username || !password) {
-        showError('请输入用户名和密码');
+        showError(I18n.t('login.errEmpty'));
         return;
       }
       
@@ -657,12 +698,12 @@
           // 登录成功，跳转
           redirectToTarget();
         } else {
-          showError(data.message || '登录失败');
+          showError(data.message || I18n.t('login.errFailed'));
           setLoading(false);
         }
       } catch (error) {
         console.error('Login error:', error);
-        showError('网络错误，请稍后重试');
+        showError(I18n.t('login.errNetwork'));
         setLoading(false);
       }
     }

@@ -2,16 +2,16 @@
   <section class="card panel storage-panel">
     <div class="panel-head storage-head">
       <div>
-        <h2>Storage Config</h2>
-        <p class="muted">Manage backend profiles, test connectivity, and switch default target.</p>
-        <p class="muted">WebDAV is recommended as a mounted aggregation entry (for example alist/openlist WebDAV endpoint).</p>
+        <h2>{{ t('sv.title') }}</h2>
+        <p class="muted">{{ t('sv.subtitle') }}</p>
+        <p class="muted">{{ t('sv.webdavNote') }}</p>
       </div>
-      <button class="btn btn-ghost" @click="resetForm">New Config</button>
+      <button class="btn btn-ghost" @click="resetForm">{{ t('sv.newConfig') }}</button>
     </div>
 
     <div class="storage-layout">
       <article class="storage-list card-lite">
-        <h3>Configured Backends</h3>
+        <h3>{{ t('sv.configuredBackends') }}</h3>
         <ul v-if="items.length" class="list storage-listing">
           <li v-for="item in items" :key="item.id" class="storage-row">
             <div class="storage-row-main">
@@ -19,54 +19,54 @@
                 <strong>{{ item.name }}</strong>
                 <span class="badge">{{ getStorageLabel(item.type) }}</span>
                 <span class="badge" :class="item.enabled ? 'badge-ok' : 'badge-danger'">
-                  {{ item.enabled ? 'Enabled' : 'Disabled' }}
+                  {{ item.enabled ? t('sv.enabled') : t('sv.disabled') }}
                 </span>
-                <span class="badge" v-if="item.isDefault">Default</span>
+                <span class="badge" v-if="item.isDefault">{{ t('sv.default') }}</span>
               </div>
-              <p class="muted">ID: {{ item.id }}</p>
+              <p class="muted">{{ t('sv.idLabel') }}{{ item.id }}</p>
               <p v-if="testResults[item.id]" class="storage-test" :class="testResults[item.id].connected ? 'ok' : 'fail'">
                 {{ formatTestMessage(testResults[item.id]) }}
               </p>
             </div>
 
             <div class="storage-actions">
-              <button class="btn btn-ghost" @click="editItem(item)">Edit</button>
-              <button class="btn btn-ghost" @click="testItem(item.id)">Test</button>
+              <button class="btn btn-ghost" @click="editItem(item)">{{ t('sv.edit') }}</button>
+              <button class="btn btn-ghost" @click="testItem(item.id)">{{ t('sv.test') }}</button>
               <button class="btn btn-ghost" @click="toggleEnabled(item)">
-                {{ item.enabled ? 'Disable' : 'Enable' }}
+                {{ item.enabled ? t('sv.disable') : t('sv.enable') }}
               </button>
-              <button class="btn btn-ghost" @click="setDefault(item.id)" :disabled="item.isDefault">Set Default</button>
-              <button class="btn btn-danger" @click="removeItem(item.id)">Delete</button>
+              <button class="btn btn-ghost" @click="setDefault(item.id)" :disabled="item.isDefault">{{ t('sv.setDefault') }}</button>
+              <button class="btn btn-danger" @click="removeItem(item.id)">{{ t('sv.delete') }}</button>
             </div>
           </li>
         </ul>
-        <p v-else class="muted">No storage config yet.</p>
+        <p v-else class="muted">{{ t('sv.noConfig') }}</p>
       </article>
 
       <article class="storage-editor card-lite">
-        <h3>{{ editingId ? 'Edit Storage' : 'Create Storage' }}</h3>
+        <h3>{{ editingId ? t('sv.editStorage') : t('sv.createStorage') }}</h3>
 
         <form class="form-grid" @submit.prevent="submit">
           <label>
-            Name
-            <input v-model.trim="form.name" required placeholder="Readable name" />
+            {{ t('sv.name') }}
+            <input v-model.trim="form.name" required :placeholder="t('sv.namePh')" />
           </label>
 
           <label>
-            Type
+            {{ t('sv.type') }}
             <select v-model="form.type" @change="onTypeChanged">
-              <optgroup label="Direct Upload Backends">
+              <optgroup :label="t('sv.directGroup')">
                 <option v-for="type in directTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
               </optgroup>
-              <optgroup label="Mounted / Aggregation Backends">
+              <optgroup :label="t('sv.mountedGroup')">
                 <option v-for="type in mountedTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
               </optgroup>
             </select>
           </label>
 
           <div class="toggle-row">
-            <label><input v-model="form.enabled" type="checkbox" /> Enabled</label>
-            <label><input v-model="form.isDefault" type="checkbox" /> Set as default</label>
+            <label><input v-model="form.enabled" type="checkbox" /> {{ t('sv.enabledCb') }}</label>
+            <label><input v-model="form.isDefault" type="checkbox" /> {{ t('sv.setAsDefault') }}</label>
           </div>
 
           <div class="field-grid">
@@ -108,15 +108,15 @@
           <p v-if="STORAGE_NOTES[form.type]" class="muted">{{ STORAGE_NOTES[form.type] }}</p>
 
           <div class="form-actions">
-            <button class="btn" :disabled="saving">{{ saving ? 'Saving...' : 'Save Config' }}</button>
+            <button class="btn" :disabled="saving">{{ saving ? t('sv.saving') : t('sv.saveConfig') }}</button>
             <button class="btn btn-ghost" type="button" :disabled="testing" @click="testDraftConfig">
-              {{ testing ? 'Testing...' : 'Test Draft' }}
+              {{ testing ? t('sv.testing') : t('sv.testDraft') }}
             </button>
           </div>
         </form>
 
         <div v-if="draftTest" class="test-detail" :class="draftTest.connected ? 'ok' : 'fail'">
-          <strong>{{ draftTest.connected ? 'Draft connection successful' : 'Draft connection failed' }}</strong>
+          <strong>{{ draftTest.connected ? t('sv.draftOk') : t('sv.draftFail') }}</strong>
           <pre>{{ stringifyDetail(draftTest) }}</pre>
         </div>
       </article>
@@ -145,7 +145,9 @@ import {
   getStorageFields,
   getStorageLabel,
 } from '../config/storage-definitions';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const items = ref([]);
 const editingId = ref('');
 const saving = ref(false);
@@ -194,7 +196,7 @@ async function loadItems() {
   try {
     items.value = await listStorageConfigs();
   } catch (err) {
-    error.value = err.message || 'Failed to load storage configs.';
+    error.value = err.message || t('sv.msgLoadFail');
   }
 }
 
@@ -245,17 +247,17 @@ async function submit() {
     const payload = buildPayload();
     if (editingId.value) {
       await updateStorageConfig(editingId.value, payload);
-      message.value = 'Storage config updated.';
+      message.value = t('sv.msgUpdated');
     } else {
       await createStorageConfig(payload);
-      const successMessage = 'Storage config created.';
+      const successMessage = t('sv.msgCreated');
       resetForm();
       message.value = successMessage;
     }
 
     await loadItems();
   } catch (err) {
-    error.value = err.message || 'Save failed';
+    error.value = err.message || t('sv.msgSaveFail');
   } finally {
     saving.value = false;
   }
@@ -269,10 +271,10 @@ async function testDraftConfig() {
   try {
     const result = await testStorageDraft(form.type, { ...form.config });
     draftTest.value = result || { connected: false };
-    message.value = result?.connected ? 'Draft test succeeded.' : 'Draft test failed.';
+    message.value = result?.connected ? t('sv.msgDraftOk') : t('sv.msgDraftFail');
   } catch (err) {
     draftTest.value = null;
-    error.value = err.message || 'Connection test failed';
+    error.value = err.message || t('sv.msgConnTestFail');
   } finally {
     testing.value = false;
   }
@@ -288,9 +290,9 @@ async function testItem(id) {
       ...(result || {}),
       testedAt: Date.now(),
     };
-    message.value = result?.connected ? 'Connection successful.' : 'Connection failed.';
+    message.value = result?.connected ? t('sv.msgConnOk') : t('sv.msgConnFail');
   } catch (err) {
-    error.value = err.message || 'Storage test failed';
+    error.value = err.message || t('sv.msgTestFail');
   }
 }
 
@@ -302,10 +304,10 @@ async function toggleEnabled(item) {
     await updateStorageConfig(item.id, {
       enabled: !item.enabled,
     });
-    message.value = 'Storage status updated.';
+    message.value = t('sv.msgStatusUpdated');
     await loadItems();
   } catch (err) {
-    error.value = err.message || 'Update failed';
+    error.value = err.message || t('sv.msgUpdateFail');
   }
 }
 
@@ -315,34 +317,34 @@ async function setDefault(id) {
 
   try {
     await setDefaultStorageConfig(id);
-    message.value = 'Default storage updated.';
+    message.value = t('sv.msgDefaultUpdated');
     await loadItems();
   } catch (err) {
-    error.value = err.message || 'Set default failed';
+    error.value = err.message || t('sv.msgSetDefaultFail');
   }
 }
 
 async function removeItem(id) {
-  if (!window.confirm('Delete this storage config?')) return;
+  if (!window.confirm(t('sv.confirmDelete'))) return;
 
   error.value = '';
   message.value = '';
 
   try {
     await deleteStorageConfig(id);
-    message.value = 'Storage config deleted.';
+    message.value = t('sv.msgDeleted');
     await loadItems();
 
     if (editingId.value === id) {
       resetForm();
     }
   } catch (err) {
-    error.value = err.message || 'Delete failed';
+    error.value = err.message || t('sv.msgDeleteFail');
   }
 }
 
 function formatTestMessage(result) {
-  const statusText = result.connected ? 'Connected' : 'Failed';
+  const statusText = result.connected ? t('sv.tmConnected') : t('sv.tmFailed');
   const statusCode = result.status ? ` (HTTP ${result.status})` : '';
   const detail = result.detail ? ` - ${String(result.detail)}` : '';
   return `${statusText}${statusCode}${detail}`;

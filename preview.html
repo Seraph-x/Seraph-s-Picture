@@ -9,6 +9,7 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/theme.css">
   <script src="/theme.js?v=20260305"></script>
+  <script src="/i18n.js?v=20260611"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <!-- PDF.js (仅用于 PDF 预览) -->
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
@@ -679,17 +680,21 @@
     <div class="header">
       <div class="header-title">
         <i class="fas fa-eye"></i>
-        <span>文件预览</span>
+        <span>{{ t('preview.title') }}</span>
       </div>
       <div class="header-actions">
+        <button type="button" class="lang-toggle" data-i18n-toggle>
+          <i class="fas fa-globe lang-toggle-icon"></i>
+          <span data-lang-label>EN</span>
+        </button>
         <button class="btn btn-secondary" @click="copyLink">
-          <i class="fas fa-copy"></i> 复制链接
+          <i class="fas fa-copy"></i> {{ t('preview.copyLink') }}
         </button>
         <button class="btn btn-primary" @click="downloadFile">
-          <i class="fas fa-download"></i> 下载文件
+          <i class="fas fa-download"></i> {{ t('preview.download') }}
         </button>
         <a href="./" class="btn btn-secondary">
-          <i class="fas fa-home"></i> 返回首页
+          <i class="fas fa-home"></i> {{ t('preview.backHome') }}
         </a>
       </div>
     </div>
@@ -715,16 +720,16 @@
         <!-- 加载中 -->
         <div class="loading" v-if="loading">
           <div class="loading-spinner"></div>
-          <span>加载中...</span>
+          <span>{{ t('preview.loading') }}</span>
         </div>
 
         <!-- NSFW 遮罩 -->
         <div class="nsfw-mask" v-if="isNsfw && !showNsfw && !loading">
           <i class="fas fa-exclamation-triangle"></i>
-          <h3>敏感内容警告</h3>
-          <p>此内容可能包含成人或敏感内容</p>
+          <h3>{{ t('preview.nsfwTitle') }}</h3>
+          <p>{{ t('preview.nsfwDesc') }}</p>
           <button class="btn" @click="showNsfw = true">
-            <i class="fas fa-eye"></i> 仍然查看
+            <i class="fas fa-eye"></i> {{ t('preview.viewAnyway') }}
           </button>
         </div>
 
@@ -772,21 +777,21 @@
         <!-- 不支持预览 -->
         <div v-else-if="previewType === 'unsupported' && !loading" class="preview-unsupported">
           <i :class="fileIcon"></i>
-          <h3>此文件类型暂不支持在线预览</h3>
-          <p>您可以下载后使用本地软件打开</p>
+          <h3>{{ t('preview.unsupportedTitle') }}</h3>
+          <p>{{ t('preview.unsupportedDesc') }}</p>
           <button class="btn btn-primary" @click="downloadFile" style="margin-top: 16px;">
-            <i class="fas fa-download"></i> 下载文件
+            <i class="fas fa-download"></i> {{ t('preview.download') }}
           </button>
         </div>
       </div>
 
       <!-- 设置面板 -->
       <div class="settings-panel">
-        <div class="settings-title">预览设置</div>
+        <div class="settings-title">{{ t('preview.settings') }}</div>
         <div class="setting-item">
           <label class="setting-label">
             <i class="fas fa-shield-alt"></i>
-            <span>安全模式（自动检测敏感内容）</span>
+            <span>{{ t('preview.safeMode') }}</span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="safeMode" @change="saveSafeMode">
@@ -796,7 +801,7 @@
         <div class="setting-item">
           <label class="setting-label">
             <i class="fas fa-bolt"></i>
-            <span>省流模式（不加载 >5MB 图片）</span>
+            <span>{{ t('preview.dataSaver') }}</span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="dataSaverMode" @change="saveDataSaverMode">
@@ -815,9 +820,47 @@
     // 统一媒体预览服务基础 URL
     const PREVIEW_SERVICE_BASE = 'https://www.katelya.eu.org';
 
+    if (window.I18n) {
+      I18n.register({
+        zh: {
+          'preview.title': '文件预览',
+          'preview.copyLink': '复制链接',
+          'preview.download': '下载文件',
+          'preview.backHome': '返回首页',
+          'preview.loading': '加载中...',
+          'preview.nsfwTitle': '敏感内容警告',
+          'preview.nsfwDesc': '此内容可能包含成人或敏感内容',
+          'preview.viewAnyway': '仍然查看',
+          'preview.unsupportedTitle': '此文件类型暂不支持在线预览',
+          'preview.unsupportedDesc': '您可以下载后使用本地软件打开',
+          'preview.settings': '预览设置',
+          'preview.safeMode': '安全模式（自动检测敏感内容）',
+          'preview.dataSaver': '省流模式（不加载 >5MB 图片）',
+          'preview.linkCopied': '链接已复制'
+        },
+        en: {
+          'preview.title': 'File Preview',
+          'preview.copyLink': 'Copy Link',
+          'preview.download': 'Download',
+          'preview.backHome': 'Back to Home',
+          'preview.loading': 'Loading...',
+          'preview.nsfwTitle': 'Sensitive Content Warning',
+          'preview.nsfwDesc': 'This content may contain adult or sensitive material',
+          'preview.viewAnyway': 'View Anyway',
+          'preview.unsupportedTitle': 'This file type cannot be previewed online',
+          'preview.unsupportedDesc': 'You can download it and open it with local software',
+          'preview.settings': 'Preview Settings',
+          'preview.safeMode': 'Safe Mode (auto-detect sensitive content)',
+          'preview.dataSaver': 'Data Saver (skip images >5MB)',
+          'preview.linkCopied': 'Link copied'
+        }
+      });
+    }
+
     new Vue({
       el: '#app',
       data: {
+        lang: (window.I18n && I18n.getLang()) || 'zh',
         fileUrl: '',
         fileName: '',
         fileType: '',
@@ -865,6 +908,11 @@
         }
       },
       methods: {
+        t(key, params) {
+          void this.lang;
+          return window.I18n ? I18n.t(key, params) : key;
+        },
+
         formatSize(bytes) {
           if (!bytes) return '';
           const units = ['B', 'KB', 'MB', 'GB'];
@@ -1022,7 +1070,7 @@
         copyLink() {
           const url = window.location.origin + this.fileUrl;
           navigator.clipboard.writeText(url).then(() => {
-            alert('链接已复制');
+            alert(this.t('preview.linkCopied'));
           });
         },
 
@@ -1066,6 +1114,7 @@
         }
       },
       async mounted() {
+        if (window.I18n) { I18n.onChange((lang) => { this.lang = lang; }); }
         const isAuth = await this.checkAuth();
         if (!isAuth) return;
         this.init();

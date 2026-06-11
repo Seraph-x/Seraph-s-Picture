@@ -1,34 +1,34 @@
 <template>
   <section class="card panel">
     <div class="panel-head">
-      <h2>File Manager</h2>
+      <h2>{{ t('adminv.title') }}</h2>
       <div class="toolbar">
-        <input v-model.trim="search" placeholder="Search file name or id" @keyup.enter="reload" />
+        <input v-model.trim="search" :placeholder="t('adminv.searchPh')" @keyup.enter="reload" />
         <select v-model="storageFilter" @change="reload">
-          <option value="all">All Storage</option>
+          <option value="all">{{ t('adminv.allStorage') }}</option>
           <option v-for="type in STORAGE_TYPES" :key="type.value" :value="type.value">{{ type.label }}</option>
         </select>
-        <button class="btn" @click="reload">Refresh</button>
+        <button class="btn" @click="reload">{{ t('adminv.refresh') }}</button>
       </div>
     </div>
 
     <div class="stats-grid" v-if="stats">
-      <div class="stat-tile"><span>Total</span><strong>{{ stats.total ?? files.length }}</strong></div>
-      <div class="stat-tile"><span>Image</span><strong>{{ stats.byType?.image ?? 0 }}</strong></div>
-      <div class="stat-tile"><span>Video</span><strong>{{ stats.byType?.video ?? 0 }}</strong></div>
-      <div class="stat-tile"><span>Audio</span><strong>{{ stats.byType?.audio ?? 0 }}</strong></div>
+      <div class="stat-tile"><span>{{ t('adminv.total') }}</span><strong>{{ stats.total ?? files.length }}</strong></div>
+      <div class="stat-tile"><span>{{ t('adminv.image') }}</span><strong>{{ stats.byType?.image ?? 0 }}</strong></div>
+      <div class="stat-tile"><span>{{ t('adminv.video') }}</span><strong>{{ stats.byType?.video ?? 0 }}</strong></div>
+      <div class="stat-tile"><span>{{ t('adminv.audio') }}</span><strong>{{ stats.byType?.audio ?? 0 }}</strong></div>
     </div>
 
     <div class="table-wrap">
       <table class="table">
         <thead>
           <tr>
-            <th>Preview</th>
-            <th>Name</th>
-            <th>Storage</th>
-            <th>Size</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{{ t('adminv.colPreview') }}</th>
+            <th>{{ t('adminv.colName') }}</th>
+            <th>{{ t('adminv.colStorage') }}</th>
+            <th>{{ t('adminv.colSize') }}</th>
+            <th>{{ t('adminv.colStatus') }}</th>
+            <th>{{ t('adminv.colActions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -51,20 +51,20 @@
             </td>
             <td>{{ formatSize(item.metadata?.fileSize || 0) }}</td>
             <td>
-              <span class="badge" :class="statusClass(item.metadata?.ListType)">{{ item.metadata?.ListType || 'None' }}</span>
+              <span class="badge" :class="statusClass(item.metadata?.ListType)">{{ item.metadata?.ListType || t('adminv.none') }}</span>
             </td>
             <td>
               <div class="table-actions">
-                <button class="btn btn-ghost" @click="copyLink(item.name)">Copy</button>
-                <button class="btn btn-ghost" @click="toggleLike(item)">{{ item.metadata?.liked ? 'Unstar' : 'Star' }}</button>
-                <button class="btn btn-ghost" @click="setWhite(item.name)">White</button>
-                <button class="btn btn-ghost" @click="setBlock(item.name)">Block</button>
-                <button class="btn btn-danger" @click="remove(item.name)">Delete</button>
+                <button class="btn btn-ghost" @click="copyLink(item.name)">{{ t('adminv.copy') }}</button>
+                <button class="btn btn-ghost" @click="toggleLike(item)">{{ item.metadata?.liked ? t('adminv.unstar') : t('adminv.star') }}</button>
+                <button class="btn btn-ghost" @click="setWhite(item.name)">{{ t('adminv.white') }}</button>
+                <button class="btn btn-ghost" @click="setBlock(item.name)">{{ t('adminv.block') }}</button>
+                <button class="btn btn-danger" @click="remove(item.name)">{{ t('adminv.delete') }}</button>
               </div>
             </td>
           </tr>
           <tr v-if="!loading && files.length === 0">
-            <td colspan="6" class="empty">No files found.</td>
+            <td colspan="6" class="empty">{{ t('adminv.empty') }}</td>
           </tr>
         </tbody>
       </table>
@@ -72,7 +72,7 @@
 
     <div class="footer-actions">
       <button v-if="nextCursor" class="btn" :disabled="loading" @click="loadMore">
-        {{ loading ? 'Loading...' : 'Load More' }}
+        {{ loading ? t('adminv.loading') : t('adminv.loadMore') }}
       </button>
     </div>
 
@@ -84,7 +84,9 @@
 import { onMounted, ref } from 'vue';
 import { apiFetch, absoluteFileUrl } from '../api/client';
 import { STORAGE_TYPES } from '../config/storage-definitions';
+import { useI18n } from '../i18n';
 
+const { t } = useI18n();
 const files = ref([]);
 const nextCursor = ref(null);
 const loading = ref(false);
@@ -136,7 +138,7 @@ async function fetchList(reset) {
 
     nextCursor.value = data.list_complete ? null : data.cursor;
   } catch (err) {
-    error.value = err.message || 'Failed to load files';
+    error.value = err.message || t('adminv.loadError');
   } finally {
     loading.value = false;
   }
@@ -248,7 +250,7 @@ function updateListType(name, listType) {
 }
 
 async function remove(name) {
-  if (!window.confirm(`Delete ${name}?`)) return;
+  if (!window.confirm(t('adminv.confirmDelete', { name }))) return;
 
   try {
     await apiFetch(`/api/manage/delete/${encodeURIComponent(name)}`, {

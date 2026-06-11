@@ -3,33 +3,33 @@
     <section class="claude-login-shell" aria-labelledby="login-title">
       <header class="claude-login-heading">
         <span class="claude-mark" aria-hidden="true"></span>
-        <h1 id="login-title" class="claude-login-title">Welcome, Seraph</h1>
+        <h1 id="login-title" class="claude-login-title">{{ t('login.welcome') }}</h1>
       </header>
 
       <form class="claude-login-box" @submit.prevent="submit">
         <div class="claude-login-fields">
           <label class="claude-login-field">
-            <span>Username</span>
+            <span>{{ t('login.username') }}</span>
             <input v-model.trim="username" autocomplete="username" required />
           </label>
           <label class="claude-login-field">
-            <span>Password</span>
+            <span>{{ t('login.password') }}</span>
             <input v-model="password" type="password" autocomplete="current-password" required />
           </label>
         </div>
 
         <div class="claude-login-actions">
-          <p class="muted">Seraph's Pictures private workspace</p>
+          <p class="muted">{{ t('login.workspace') }}</p>
           <button class="btn" :disabled="submitting">
-            {{ submitting ? 'Signing in...' : 'Sign In' }}
+            {{ submitting ? t('login.signingIn') : t('login.signIn') }}
           </button>
         </div>
       </form>
 
       <p v-if="error" class="error">{{ error }}</p>
       <p class="muted claude-login-note">
-        Need the old page?
-        <a href="/login.html" target="_blank" rel="noopener">Open legacy login</a>
+        {{ t('login.needOld') }}
+        <a href="/login.html" target="_blank" rel="noopener">{{ t('login.openLegacy') }}</a>
       </p>
     </section>
   </div>
@@ -39,10 +39,12 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { useI18n } from '../i18n';
 
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 
 const username = ref('');
 const password = ref('');

@@ -2,18 +2,18 @@
   <section class="card panel drive-panel">
     <header class="drive-header">
       <div>
-        <h2>Drive Console</h2>
-        <p class="muted">Upload, organize folders, and copy direct/share links in one place.</p>
+        <h2>{{ t('dv.title') }}</h2>
+        <p class="muted">{{ t('dv.subtitle') }}</p>
       </div>
       <div class="drive-head-actions">
-        <button class="btn btn-ghost" @click="refreshAll">Refresh</button>
+        <button class="btn btn-ghost" @click="refreshAll">{{ t('dv.refresh') }}</button>
       </div>
     </header>
 
     <section class="adapter-visibility card-lite">
       <div class="adapter-visibility-head">
-        <h3>Storage Capability Visibility</h3>
-        <p class="muted">All adapters stay visible even when not configured.</p>
+        <h3>{{ t('dv.capVisibility') }}</h3>
+        <p class="muted">{{ t('dv.capVisibilityNote') }}</p>
       </div>
       <div class="adapter-grid">
         <article
@@ -45,8 +45,8 @@
       @click="openPicker"
     >
       <input ref="picker" type="file" multiple hidden @change="handleFilePick" />
-      <p class="dropzone-title">Drop files here or click to upload</p>
-      <p class="muted">Current storage: {{ currentStorageLabel }} | Folder: /{{ currentPath || '' }}</p>
+      <p class="dropzone-title">{{ t('dv.dropTitle') }}</p>
+      <p class="muted">{{ t('dv.currentStorage') }} {{ currentStorageLabel }} | {{ t('dv.folder') }} /{{ currentPath || '' }}</p>
     </section>
 
     <ImageProcessingPanel
@@ -59,7 +59,7 @@
 
     <section class="image-upload-behavior card-lite">
       <div>
-        <h3>Image Upload Behavior</h3>
+        <h3>{{ t('dv.imgBehavior') }}</h3>
         <p class="muted">{{ imageUploadDecisionSummary }}</p>
       </div>
       <div class="format-segments">
@@ -79,31 +79,31 @@
     <form class="url-row" @submit.prevent="uploadUrl">
       <input v-model.trim="urlInput" placeholder="https://example.com/file.zip" />
       <button class="btn" :disabled="urlUploading || !urlInput">
-        {{ urlUploading ? 'Uploading...' : 'Upload URL to Current Folder' }}
+        {{ urlUploading ? t('dv.uploading') : t('dv.uploadUrlBtn') }}
       </button>
     </form>
 
     <div v-if="queue.length" class="list-wrap">
-      <h3>Upload Queue</h3>
+      <h3>{{ t('dv.uploadQueue') }}</h3>
       <ul class="list">
         <li v-for="item in queue" :key="item.id" class="list-item">
           <div class="list-title">
             <strong>{{ item.file.name }}</strong>
             <span>{{ formatSize(item.file.size) }}</span>
           </div>
-          <p class="muted" v-if="item.relativePath">Relative path: {{ item.relativePath }}</p>
-          <p class="muted">Target folder: /{{ item.targetFolderPath || '' }}</p>
+          <p class="muted" v-if="item.relativePath">{{ t('dv.relativePath') }} {{ item.relativePath }}</p>
+          <p class="muted">{{ t('dv.targetFolder') }} /{{ item.targetFolderPath || '' }}</p>
           <p v-if="item.optimizationNote" class="muted">{{ item.optimizationNote }}</p>
           <div class="progress-track">
             <span class="progress-fill" :style="{ width: `${item.progress}%` }"></span>
           </div>
           <div class="list-meta">
-            <span>{{ item.status }}</span>
+            <span>{{ statusLabel(item.status) }}</span>
             <span v-if="item.error" class="error">{{ item.error }}</span>
           </div>
           <div class="result-actions">
-            <button class="btn btn-ghost" v-if="item.status === 'error'" @click="retryUpload(item.id)">Retry</button>
-            <button class="btn btn-ghost" v-if="item.status === 'uploading'" @click="cancelUpload(item.id)">Cancel</button>
+            <button class="btn btn-ghost" v-if="item.status === 'error'" @click="retryUpload(item.id)">{{ t('dv.retry') }}</button>
+            <button class="btn btn-ghost" v-if="item.status === 'uploading'" @click="cancelUpload(item.id)">{{ t('dv.cancel') }}</button>
           </div>
         </li>
       </ul>
@@ -112,8 +112,8 @@
     <div class="drive-layout">
       <aside class="folder-tree card-lite">
         <div class="folder-tree-head">
-          <h3>Folders</h3>
-          <button class="btn btn-ghost" @click="promptCreateFolder">New</button>
+          <h3>{{ t('dv.folders') }}</h3>
+          <button class="btn btn-ghost" @click="promptCreateFolder">{{ t('dv.new') }}</button>
         </div>
         <ul class="tree-list">
           <li
@@ -144,17 +144,17 @@
             </button>
           </div>
           <div class="toolbar">
-            <input v-model.trim="search" placeholder="Search in current view" @keyup.enter="reloadExplorer" />
+            <input v-model.trim="search" :placeholder="t('dv.searchPh')" @keyup.enter="reloadExplorer" />
             <select v-model="storageFilter" @change="refreshAll">
-              <option value="all">All Storage</option>
+              <option value="all">{{ t('dv.allStorage') }}</option>
               <option v-for="type in STORAGE_TYPES" :key="type.value" :value="type.value">{{ type.label }}</option>
             </select>
             <select v-model="viewMode">
-              <option value="list">List</option>
-              <option value="grid">Grid</option>
+              <option value="list">{{ t('dv.viewList') }}</option>
+              <option value="grid">{{ t('dv.viewGrid') }}</option>
             </select>
-            <button class="btn btn-ghost" @click="promptMoveSelected" :disabled="selectedFileIds.length === 0">Move</button>
-            <button class="btn btn-danger" @click="deleteSelected" :disabled="selectedFileIds.length === 0">Delete</button>
+            <button class="btn btn-ghost" @click="promptMoveSelected" :disabled="selectedFileIds.length === 0">{{ t('dv.move') }}</button>
+            <button class="btn btn-danger" @click="deleteSelected" :disabled="selectedFileIds.length === 0">{{ t('dv.delete') }}</button>
           </div>
         </div>
 
@@ -162,12 +162,12 @@
           <article v-for="folder in folders" :key="folder.path" class="folder-card">
             <button class="folder-open" @dblclick="openPath(folder.path)" @click="openPath(folder.path)">
               <strong>{{ folder.name }}</strong>
-              <small>{{ folder.fileCount }} files</small>
+              <small>{{ folder.fileCount }} {{ t('dv.files') }}</small>
             </button>
             <div class="folder-card-actions">
-              <button class="btn btn-ghost" @click="promptRenameFolder(folder)">Rename</button>
-              <button class="btn btn-ghost" @click="promptMoveFolder(folder)">Move</button>
-              <button class="btn btn-danger" @click="deleteFolderAction(folder)">Delete</button>
+              <button class="btn btn-ghost" @click="promptRenameFolder(folder)">{{ t('dv.rename') }}</button>
+              <button class="btn btn-ghost" @click="promptMoveFolder(folder)">{{ t('dv.move') }}</button>
+              <button class="btn btn-danger" @click="deleteFolderAction(folder)">{{ t('dv.delete') }}</button>
             </div>
           </article>
         </div>
@@ -179,16 +179,16 @@
             </label>
             <a :href="fileLink(file.name)" target="_blank" rel="noopener" class="file-preview">
               <img v-if="isImage(file.metadata?.fileName || file.name)" :src="fileLink(file.name)" :alt="file.metadata?.fileName || file.name" />
-              <span v-else>FILE</span>
+              <span v-else>{{ t('dv.filePlaceholder') }}</span>
             </a>
             <strong class="file-name">{{ file.metadata?.fileName || file.name }}</strong>
             <small class="muted">{{ formatSize(file.metadata?.fileSize || 0) }}</small>
             <div class="file-actions">
-              <button class="btn btn-ghost" @click="copyDirect(file)">Direct</button>
-              <button class="btn btn-ghost" @click="copyShare(file)">Share</button>
-              <button class="btn btn-ghost" @click="promptRenameFile(file)">Rename</button>
-              <button class="btn btn-ghost" @click="promptMoveFile(file)">Move</button>
-              <button class="btn btn-danger" @click="deleteFile(file)">Delete</button>
+              <button class="btn btn-ghost" @click="copyDirect(file)">{{ t('dv.direct') }}</button>
+              <button class="btn btn-ghost" @click="copyShare(file)">{{ t('dv.share') }}</button>
+              <button class="btn btn-ghost" @click="promptRenameFile(file)">{{ t('dv.rename') }}</button>
+              <button class="btn btn-ghost" @click="promptMoveFile(file)">{{ t('dv.move') }}</button>
+              <button class="btn btn-danger" @click="deleteFile(file)">{{ t('dv.delete') }}</button>
             </div>
           </article>
         </div>
@@ -198,11 +198,11 @@
             <thead>
               <tr>
                 <th><input type="checkbox" :checked="allSelected" @change="toggleSelectAll" /></th>
-                <th>Name</th>
-                <th>Storage</th>
-                <th>Size</th>
-                <th>Updated</th>
-                <th>Actions</th>
+                <th>{{ t('dv.colName') }}</th>
+                <th>{{ t('dv.colStorage') }}</th>
+                <th>{{ t('dv.colSize') }}</th>
+                <th>{{ t('dv.colUpdated') }}</th>
+                <th>{{ t('dv.colActions') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -214,21 +214,21 @@
                     <small>{{ file.name }}</small>
                   </div>
                 </td>
-                <td><span class="badge">{{ file.metadata?.storageType || 'unknown' }}</span></td>
+                <td><span class="badge">{{ file.metadata?.storageType || t('dv.unknown') }}</span></td>
                 <td>{{ formatSize(file.metadata?.fileSize || 0) }}</td>
                 <td>{{ formatTime(file.metadata?.TimeStamp) }}</td>
                 <td>
                   <div class="table-actions">
-                    <button class="btn btn-ghost" @click="copyDirect(file)">Direct</button>
-                    <button class="btn btn-ghost" @click="copyShare(file)">Share</button>
-                    <button class="btn btn-ghost" @click="promptRenameFile(file)">Rename</button>
-                    <button class="btn btn-ghost" @click="promptMoveFile(file)">Move</button>
-                    <button class="btn btn-danger" @click="deleteFile(file)">Delete</button>
+                    <button class="btn btn-ghost" @click="copyDirect(file)">{{ t('dv.direct') }}</button>
+                    <button class="btn btn-ghost" @click="copyShare(file)">{{ t('dv.share') }}</button>
+                    <button class="btn btn-ghost" @click="promptRenameFile(file)">{{ t('dv.rename') }}</button>
+                    <button class="btn btn-ghost" @click="promptMoveFile(file)">{{ t('dv.move') }}</button>
+                    <button class="btn btn-danger" @click="deleteFile(file)">{{ t('dv.delete') }}</button>
                   </div>
                 </td>
               </tr>
               <tr v-if="!loading && files.length === 0">
-                <td colspan="6" class="empty">No files in this folder.</td>
+                <td colspan="6" class="empty">{{ t('dv.emptyFolder') }}</td>
               </tr>
             </tbody>
           </table>
@@ -236,7 +236,7 @@
 
         <div class="footer-actions">
           <button v-if="nextCursor" class="btn" :disabled="loading" @click="loadMore">
-            {{ loading ? 'Loading...' : 'Load More' }}
+            {{ loading ? t('dv.loading') : t('dv.loadMore') }}
           </button>
         </div>
       </article>
@@ -280,6 +280,10 @@ import UploadPreparationDialog from '../components/UploadPreparationDialog.vue';
 import { useImageProcessing } from '../composables/useImageProcessing';
 import { STORAGE_TYPES, getStorageLabel, getUploadLimit, storageEnabledFromStatus } from '../config/storage-definitions';
 import { isImageProcessable } from '../utils/image-processing';
+import { useI18n } from '../i18n';
+
+const { t } = useI18n();
+
 
 const picker = ref(null);
 const dragActive = ref(false);
@@ -293,7 +297,7 @@ const selectedStorage = ref('telegram');
 const treeNodes = ref([]);
 const folders = ref([]);
 const files = ref([]);
-const breadcrumbs = ref([{ path: '', name: 'All Files' }]);
+const breadcrumbs = ref([{ path: '', name: t('dv.allFiles') }]);
 const currentPath = ref('');
 const storageFilter = ref('all');
 const search = ref('');
@@ -322,20 +326,20 @@ const {
   prepareQueuedImage,
 } = useImageProcessing({ formatSize });
 
-const imageUploadDecisionOptions = [
-  { value: 'original', label: 'Original' },
-  { value: 'optimized', label: 'Optimized' },
-  { value: 'ask', label: 'Ask' },
-];
+const imageUploadDecisionOptions = computed(() => [
+  { value: 'original', label: t('dv.optOriginal') },
+  { value: 'optimized', label: t('dv.optOptimized') },
+  { value: 'ask', label: t('dv.optAsk') },
+]);
 
 const imageUploadDecisionSummary = computed(() => {
   if (imageUploadDecision.value === 'optimized') {
-    return 'Supported images are processed with the current compression settings before upload.';
+    return t('dv.decOptimized');
   }
   if (imageUploadDecision.value === 'ask') {
-    return 'Show the chooser when selected files include processable images.';
+    return t('dv.decAsk');
   }
-  return 'Upload selected images unchanged, matching the original direct-upload flow.';
+  return t('dv.decOriginal');
 });
 
 const selectedSet = computed(() => new Set(selectedFileIds.value));
@@ -348,17 +352,17 @@ const capabilityCards = computed(() => {
       type: item.value,
       label: item.label,
       layer: item.layer || 'direct',
-      enableHint: 'Configure this adapter in Storage Config.',
+      enableHint: t('dv.configureAdapter'),
     }));
 
   return capabilityList.map((cap) => {
     const detail = status.value?.[cap.type] || {};
     const configured = Boolean(detail.configured);
     const available = storageEnabledFromStatus(status.value, cap.type);
-    const layerLabel = cap.layer === 'mounted' ? 'Mounted' : 'Direct';
-    let statusText = 'Not configured';
-    if (available) statusText = 'Available';
-    else if (configured) statusText = detail.message || 'Configured but unavailable';
+    const layerLabel = cap.layer === 'mounted' ? t('dv.layerMounted') : t('dv.layerDirect');
+    let statusText = t('dv.stNotConfigured');
+    if (available) statusText = t('dv.stAvailable');
+    else if (configured) statusText = detail.message || t('dv.stConfiguredUnavailable');
     return {
       ...cap,
       description: STORAGE_TYPES.find((x) => x.value === cap.type)?.description || '',
@@ -366,7 +370,7 @@ const capabilityCards = computed(() => {
       available,
       layerLabel,
       statusText,
-      hint: available ? 'Ready to use' : (detail.message || cap.enableHint || 'Configure to enable'),
+      hint: available ? t('dv.hintReady') : (detail.message || cap.enableHint || t('dv.hintConfigureToEnable')),
     };
   });
 });
@@ -409,7 +413,7 @@ async function refreshStatus() {
       selectedStorage.value = availableModes.value[0]?.type || 'telegram';
     }
   } catch (err) {
-    error.value = err.message || 'Failed to load status';
+    error.value = err.message || t('dv.errLoadStatus');
   }
 }
 
@@ -421,7 +425,7 @@ async function loadTree() {
   try {
     treeNodes.value = await getDriveTree(storageFilter.value);
   } catch (err) {
-    error.value = err.message || 'Failed to load folder tree';
+    error.value = err.message || t('dv.errLoadTree');
   }
 }
 
@@ -450,7 +454,7 @@ async function loadExplorer(reset) {
     });
 
     folders.value = Array.isArray(data.folders) ? data.folders : [];
-    breadcrumbs.value = Array.isArray(data.breadcrumbs) ? data.breadcrumbs : [{ path: '', name: 'All Files' }];
+    breadcrumbs.value = Array.isArray(data.breadcrumbs) ? data.breadcrumbs : [{ path: '', name: t('dv.allFiles') }];
 
     const incomingFiles = Array.isArray(data.files) ? data.files : [];
     if (reset) {
@@ -465,7 +469,7 @@ async function loadExplorer(reset) {
 
     nextCursor.value = data.list_complete ? null : data.cursor;
   } catch (err) {
-    error.value = err.message || 'Failed to load drive explorer';
+    error.value = err.message || t('dv.errLoadExplorer');
   } finally {
     loading.value = false;
   }
@@ -648,7 +652,7 @@ async function processQueue() {
       if (item.status !== 'pending') continue;
       if (!availableModes.value.some((mode) => mode.type === item.storageMode)) {
         item.status = 'error';
-        item.error = 'Selected storage is not available.';
+        item.error = t('dv.errStorageUnavailable');
         continue;
       }
 
@@ -674,7 +678,7 @@ async function processQueue() {
           item.error = '';
         } else {
           item.status = 'error';
-          item.error = humanizeError(err.message || 'Upload failed');
+          item.error = humanizeError(err.message || t('dv.errUploadFailed'));
         }
       }
     }
@@ -694,12 +698,12 @@ function validateUploadSize(item) {
   const limit = getItemUploadLimit(item);
   const maxBytes = Number(limit.maxBytes || 0);
   if (maxBytes > 0 && item.file.size > maxBytes) {
-    throw new Error(limit.message || `${item.storageLabel} upload limit is ${formatSize(maxBytes)}.`);
+    throw new Error(limit.message || t('dv.errLimit', { label: item.storageLabel, size: formatSize(maxBytes) }));
   }
 
   const directThreshold = Number(limit.directThreshold || DEFAULT_CHUNK_SIZE);
   if (item.file.size > directThreshold && limit.supportsChunkUpload === false) {
-    throw new Error(limit.message || `${item.storageLabel} does not support browser chunk upload for files above ${formatSize(directThreshold)}.`);
+    throw new Error(limit.message || t('dv.errNoChunk', { label: item.storageLabel, size: formatSize(directThreshold) }));
   }
 }
 
@@ -732,21 +736,21 @@ function humanizeError(message) {
   const normalized = text.toLowerCase();
 
   if (normalized.includes('auth_failed') || normalized.includes('unauthorized') || normalized.includes('forbidden')) {
-    return `Authentication failed: ${text}`;
+    return `${t('dv.errAuth')}: ${text}`;
   }
   if (normalized.includes('rate') || normalized.includes('too many requests') || normalized.includes('flood')) {
-    return `Rate limited: ${text}`;
+    return `${t('dv.errRate')}: ${text}`;
   }
   if (normalized.includes('quota') || normalized.includes('limit exceeded') || normalized.includes('too large') || normalized.includes('413')) {
-    return `File size or quota exceeded: ${text}`;
+    return `${t('dv.errQuota')}: ${text}`;
   }
   if (normalized.includes('network') || normalized.includes('timeout') || normalized.includes('fetch failed')) {
-    return `Network or upstream issue: ${text}`;
+    return `${t('dv.errNetwork')}: ${text}`;
   }
   if (normalized.includes('not configured')) {
-    return `Storage is not configured: ${text}`;
+    return `${t('dv.errNotConfigured')}: ${text}`;
   }
-  return text || 'Upload failed';
+  return text || t('dv.errUploadFailed');
 }
 
 function resolveUploadErrorMessage(payload, statusCode, rawText = '') {
@@ -761,9 +765,9 @@ function resolveUploadErrorMessage(payload, statusCode, rawText = '') {
   }
 
   if (rawText) {
-    return `Backend returned non-JSON response (${statusCode}): ${truncate(rawText)}`;
+    return t('dv.errNonJson', { code: statusCode, text: truncate(rawText) });
   }
-  return `Upload failed (${statusCode})`;
+  return t('dv.errUploadFailedCode', { code: statusCode });
 }
 
 function directUpload(item) {
@@ -795,7 +799,7 @@ function directUpload(item) {
         return;
       }
       if (!body) {
-        reject(new Error(`Backend returned non-JSON response: ${truncate(rawText) || '<empty body>'}`));
+        reject(new Error(t('dv.errNonJsonEmpty', { text: truncate(rawText) || t('dv.emptyBody') })));
         return;
       }
       resolve(body);
@@ -803,13 +807,13 @@ function directUpload(item) {
 
     xhr.onerror = () => {
       item.xhr = null;
-      reject(new Error('Network error'));
+      reject(new Error(t('dv.errNetworkShort')));
     };
 
     xhr.onabort = () => {
       item.xhr = null;
       item.cancelled = true;
-      reject(new Error('Upload cancelled'));
+      reject(new Error(t('dv.errCancelled')));
     };
 
     xhr.send(formData);
@@ -839,7 +843,7 @@ async function chunkUpload(item) {
   const chunkSize = Number(init.chunkSize || DEFAULT_CHUNK_SIZE);
 
   for (let index = 0; index < totalChunks; index += 1) {
-    if (item.cancelled) throw new Error('Upload cancelled');
+    if (item.cancelled) throw new Error(t('dv.errCancelled'));
 
     const start = index * chunkSize;
     const end = Math.min(item.file.size, start + chunkSize);
@@ -918,7 +922,7 @@ async function uploadUrl() {
     urlInput.value = '';
     await refreshAll();
   } catch (err) {
-    error.value = humanizeError(err.message || 'URL upload failed');
+    error.value = humanizeError(err.message || t('dv.errUrlUploadFailed'));
   } finally {
     urlUploading.value = false;
   }
@@ -941,19 +945,19 @@ function toggleSelectAll() {
 }
 
 async function promptCreateFolder() {
-  const name = window.prompt('Folder name');
+  const name = window.prompt(t('dv.promptFolderName'));
   if (!name) return;
   const path = joinPath(currentPath.value, name);
   try {
     await createFolder(path);
     await refreshAll();
   } catch (err) {
-    error.value = err.message || 'Create folder failed';
+    error.value = err.message || t('dv.errCreateFolder');
   }
 }
 
 async function promptRenameFolder(folder) {
-  const nextName = window.prompt('Rename folder', folder.name);
+  const nextName = window.prompt(t('dv.promptRenameFolder'), folder.name);
   if (!nextName || nextName === folder.name) return;
   const parent = folder.parentPath || '';
   const targetPath = joinPath(parent, nextName);
@@ -964,12 +968,12 @@ async function promptRenameFolder(folder) {
     }
     await refreshAll();
   } catch (err) {
-    error.value = err.message || 'Rename folder failed';
+    error.value = err.message || t('dv.errRenameFolder');
   }
 }
 
 async function promptMoveFolder(folder) {
-  const target = window.prompt('Move folder to path (e.g. assets/images)', folder.path);
+  const target = window.prompt(t('dv.promptMoveFolder'), folder.path);
   if (!target || target === folder.path) return;
   try {
     await moveFolder(folder.path, target);
@@ -978,18 +982,18 @@ async function promptMoveFolder(folder) {
     }
     await refreshAll();
   } catch (err) {
-    error.value = err.message || 'Move folder failed';
+    error.value = err.message || t('dv.errMoveFolder');
   }
 }
 
 async function deleteFolderAction(folder) {
-  if (!window.confirm(`Delete folder "${folder.name}"?`)) return;
+  if (!window.confirm(t('dv.confirmDeleteFolder', { name: folder.name }))) return;
   try {
     await deleteFolder(folder.path, false);
     await refreshAll();
   } catch (err) {
     if (String(err.message || '').includes('not empty')) {
-      const recursive = window.confirm('Folder not empty. Delete recursively (including files)?');
+      const recursive = window.confirm(t('dv.confirmDeleteRecursive'));
       if (!recursive) return;
       try {
         await deleteFolder(folder.path, true);
@@ -998,67 +1002,67 @@ async function deleteFolderAction(folder) {
         }
         await refreshAll();
       } catch (nestedError) {
-        error.value = nestedError.message || 'Recursive delete failed';
+        error.value = nestedError.message || t('dv.errRecursiveDelete');
       }
       return;
     }
-    error.value = err.message || 'Delete folder failed';
+    error.value = err.message || t('dv.errDeleteFolder');
   }
 }
 
 async function promptRenameFile(file) {
-  const nextName = window.prompt('Rename file', file.metadata?.fileName || file.name);
+  const nextName = window.prompt(t('dv.promptRenameFile'), file.metadata?.fileName || file.name);
   if (!nextName) return;
   try {
     await renameFile(file.name, nextName);
     await reloadExplorer();
   } catch (err) {
-    error.value = err.message || 'Rename failed';
+    error.value = err.message || t('dv.errRename');
   }
 }
 
 async function promptMoveFile(file) {
-  const target = window.prompt('Move file to folder path (empty = root)', currentPath.value);
+  const target = window.prompt(t('dv.promptMoveFile'), currentPath.value);
   if (target == null) return;
   try {
     await moveFiles([file.name], target);
     await refreshAll();
   } catch (err) {
-    error.value = err.message || 'Move failed';
+    error.value = err.message || t('dv.errMove');
   }
 }
 
 async function deleteFile(file) {
-  if (!window.confirm(`Delete ${file.metadata?.fileName || file.name}?`)) return;
+  if (!window.confirm(t('dv.confirmDeleteFile', { name: file.metadata?.fileName || file.name }))) return;
   try {
     await deleteFiles([file.name]);
     await refreshAll();
   } catch (err) {
-    error.value = err.message || 'Delete failed';
+    error.value = err.message || t('dv.errDelete');
   }
 }
 
 async function promptMoveSelected() {
-  const target = window.prompt('Move selected files to folder path (empty = root)', currentPath.value);
+  const target = window.prompt(t('dv.promptMoveSelected'), currentPath.value);
   if (target == null) return;
   try {
     await moveFiles(selectedFileIds.value, target);
     selectedFileIds.value = [];
     await refreshAll();
   } catch (err) {
-    error.value = err.message || 'Batch move failed';
+    error.value = err.message || t('dv.errBatchMove');
   }
 }
 
 async function deleteSelected() {
   if (selectedFileIds.value.length === 0) return;
-  if (!window.confirm(`Delete ${selectedFileIds.value.length} selected files?`)) return;
+  if (!window.confirm(t('dv.confirmDeleteSelected', { n: selectedFileIds.value.length }))) return;
   try {
     await deleteFiles(selectedFileIds.value);
     selectedFileIds.value = [];
     await refreshAll();
   } catch (err) {
-    error.value = err.message || 'Batch delete failed';
+    error.value = err.message || t('dv.errBatchDelete');
   }
 }
 
@@ -1068,17 +1072,17 @@ function fileLink(id) {
 
 async function copyDirect(file) {
   await copyText(fileLink(file.name));
-  message.value = 'Direct link copied.';
+  message.value = t('dv.msgDirectCopied');
 }
 
 async function copyShare(file) {
   try {
     const payload = await signShareLink(file.name);
     await copyText(payload.shareUrl);
-    const expireAt = payload.expiresAt ? new Date(payload.expiresAt).toLocaleString() : 'Never';
-    message.value = `Share link copied. Permission: ${payload.permission}. Expires: ${expireAt}.`;
+    const expireAt = payload.expiresAt ? new Date(payload.expiresAt).toLocaleString() : t('dv.expiresNever');
+    message.value = t('dv.msgShareCopied', { permission: payload.permission, expireAt });
   } catch (err) {
-    error.value = err.message || 'Failed to create share link';
+    error.value = err.message || t('dv.errShareLink');
   }
 }
 
@@ -1093,6 +1097,17 @@ async function copyText(text) {
     document.execCommand('copy');
     document.body.removeChild(input);
   }
+}
+
+function statusLabel(status) {
+  const map = {
+    pending: t('dv.stPending'),
+    uploading: t('dv.stUploading'),
+    success: t('dv.stSuccess'),
+    error: t('dv.stError'),
+    cancelled: t('dv.stCancelled'),
+  };
+  return map[status] || status;
 }
 
 function isImage(name = '') {
