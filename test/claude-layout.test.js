@@ -141,6 +141,12 @@ describe('Claude layout balance contract', function () {
     assert.match(adminHtml, /class="actions admin-header-tools"/);
     assert.match(adminHtml, /class="admin-header-system"/);
     assert.match(adminHtml, /showStorageConfigPanel/);
+    assert.match(adminHtml, /\{ name: '上传中心', url: '\/', icon: 'fas fa-cloud-upload-alt' \}/);
+    assert.match(adminHtml, /\{ name: '图片浏览', url: '\/gallery\.html', icon: 'fas fa-images' \}/);
+    assert.match(adminHtml, /window\.location\.href = target/);
+    assert.doesNotMatch(adminHtml, /Movavi|FreeConvert|YouCompress|Cloudinary/);
+    assert.doesNotMatch(adminHtml, /editWebsites|编辑快捷方式/);
+    assert.doesNotMatch(adminHtml, /window\.open\(url, '_blank'\)/);
     assert.match(layout, /\.admin-page\s+\.header-content[\s\S]*display:\s*grid\s*!important/);
     assert.match(layout, /grid-template-columns:\s*minmax\(300px,\s*0\.85fr\)\s+minmax\(520px,\s*1\.45fr\)\s+minmax\(160px,\s*0\.45fr\)\s*!important/);
     assert.match(layout, /\.admin-header-tools[\s\S]*justify-content:\s*center\s*!important/);

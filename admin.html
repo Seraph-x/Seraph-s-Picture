@@ -904,7 +904,6 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="selectAllInPage"><i class="fas fa-check-square"></i> 全选当前页</el-dropdown-item>
                 <el-dropdown-item command="checkBrokenFiles"><i class="fas fa-wrench"></i> 检测失效文件</el-dropdown-item>
-                <el-dropdown-item command="editWebsites"><i class="fas fa-edit"></i> 编辑快捷方式</el-dropdown-item>
                 <el-dropdown-item command="openUploader"><i class="fas fa-cloud-upload-alt"></i> 打开上传中心</el-dropdown-item>
                 <el-dropdown-item command="exportLinks"><i class="fas fa-file-export"></i> 导出全部链接</el-dropdown-item>
                 <el-dropdown-item command="manageApiTokens"><i class="fas fa-key"></i> API Token 管理</el-dropdown-item>
@@ -1512,12 +1511,8 @@
       },
       previewData: null,  // 模态框预览数据
       quickWebsites: [
-        { name: '上传中心', url: './', icon: 'fas fa-cloud-upload-alt' },
-        { name: '图片浏览', url: './gallery.html', icon: 'fas fa-images' },
-        { name: 'Movavi', url: 'https://www.movavi.com/zh/movavi-video-converter.html', icon: 'fas fa-file-video' },
-        { name: 'FreeConvert', url: 'https://www.freeconvert.com/zh/video-compressor', icon: 'fas fa-file' },
-        { name: 'YouCompress', url: 'https://www.youcompress.com/zh-cn/', icon: 'fas fa-file-zipper' },
-        { name: 'Cloudinary', url: 'https://console.cloudinary.com/', icon: 'fas fa-cloud' },
+        { name: '上传中心', url: '/', icon: 'fas fa-cloud-upload-alt' },
+        { name: '图片浏览', url: '/gallery.html', icon: 'fas fa-images' },
       ],
       tokenDialogVisible: false,
       tokenLoading: false,
@@ -3410,7 +3405,6 @@
         switch (command) {
           case 'selectAllInPage': this.selectAllInPage(); break;
           case 'checkBrokenFiles': this.checkBrokenFiles(); break;
-          case 'editWebsites': this.editWebsites(); break;
           case 'openUploader': this.openUploader(); break;
           case 'exportLinks': this.exportAllLinks(); break;
           case 'manageApiTokens': this.openApiTokenDialog(); break;
@@ -3532,7 +3526,7 @@
         }
       },
       openUploader() {  // 打开上传中心
-        window.open('./', '_blank');
+        window.location.href = '/';
       },
       exportAllLinks() {  // 导出全部链接
         const loading = this.$message({ message: '正在生成链接列表...', duration: 0 });
@@ -3609,51 +3603,13 @@
         });
       },
       // 处理网站点击
-      handleWebsite(url) { window.open(url, '_blank'); },
-      // 编辑快捷方式
-      editWebsites() {
-        const websiteText = this.quickWebsites
-          .map(site => `${site.name}|${site.url}|${site.icon}`)
-          .join('\n');
-
-        this.$prompt('', '编辑快捷方式', {
-          inputType: 'textarea',
-          inputValue: websiteText,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          dangerouslyUseHTMLString: true,
-          customClass: 'website-edit-dialog',
-          message: `
-            <div>
-              每行一个网站，格式：名称|网址|图标类名<br>
-              图标需在 <a href="https://fontawesome.com/v6/search?m=free" target="_blank" style="color: #409EFF; text-decoration: underline">Font Awesome</a> 中选择
-            </div>
-          `,
-          inputValidator: (value) => {
-            const lines = value.split('\n');
-            if (lines.length > 10) return '不能超过10行';
-            for (let line of lines) {
-              if (!line.trim()) continue;
-              const [name, url, icon = 'fas fa-link'] = line.split('|');
-              if (!name || !url) return '名称和网址不能为空：' + line;
-              if (!(/^https?:\/\/.+/.test(url) || /^\.\/.*/.test(url))) return '网址格式错误：'+line;
-              if (!/^(fas?|fa-brands|fa-regular|fa-solid)\s+fa-[a-z0-9-]+$/.test(icon)) {
-                return '图标类名格式错误：' + line;
-              }
-            }
-            return true;
-          }
-        }).then(({ value }) => {
-          const newSites = value.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
-              const [name, url, icon = 'fas fa-link'] = line.split('|');
-              return { name, url, icon };
-            });
-          this.quickWebsites = newSites;
-          localStorage.setItem('quickWebsites', JSON.stringify(newSites));
-          this.$message.success('保存成功');
-        }).catch(() => {});
+      handleWebsite(url) {
+        const target = String(url || '').trim();
+        if (!target.startsWith('/')) {
+          this.$message.error('快捷入口仅支持站内跳转');
+          return;
+        }
+        window.location.href = target;
       },
       getFileIcon(filename) {
         const ext = filename.split('.').pop().toLowerCase();
@@ -4305,10 +4261,7 @@
         })
         .catch(() => {});
 
-      // 恢复快捷方式设置
-      if (localStorage.getItem('quickWebsites')) {
-        this.quickWebsites = JSON.parse(localStorage.getItem('quickWebsites'));
-      }
+      localStorage.removeItem('quickWebsites');
     }
     ,
     beforeDestroy() {
