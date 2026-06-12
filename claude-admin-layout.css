@@ -206,7 +206,7 @@ body.admin-page .pagination-container {
   padding: 8px 14px !important;
   border: 1px solid var(--claude-line) !important;
   border-radius: 999px !important;
-  background: var(--claude-panel) !important;
+  background: var(--card-bg, var(--claude-panel)) !important;
   box-shadow: var(--shadow-hover) !important;
   backdrop-filter: var(--ui-card-backdrop-filter, blur(16px)) !important;
   -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(16px)) !important;
@@ -316,7 +316,9 @@ body.admin-page .empty-tip {
 
 /* Visual hierarchy improvements */
 body.admin-page .folder-sidebar {
-  background: var(--claude-panel-soft) !important;
+  background: var(--card-bg, var(--claude-panel-soft)) !important;
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(10px)) !important;
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(10px)) !important;
   border-right: 1px solid var(--claude-line) !important;
 }
 

@@ -39,10 +39,12 @@ a {
 }
 
 .card {
-  background: var(--card);
+  background: var(--card-bg, var(--card));
   border: 1px solid var(--line);
   border-radius: 14px;
   box-shadow: var(--shadow);
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
 }
 
 .topbar {
@@ -54,7 +56,9 @@ a {
   position: sticky;
   top: 10px;
   z-index: 10;
-  backdrop-filter: blur(6px);
+  background: var(--card-bg, var(--card));
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(6px));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(6px));
 }
 
 .brand-group {
