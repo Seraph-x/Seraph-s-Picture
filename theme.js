@@ -872,6 +872,7 @@
     root.style.setProperty("--bg", darkMode ? "var(--ui-page-bg-dark)" : "var(--ui-page-bg)");
     root.style.setProperty("--card-bg", cardBg);
     root.style.setProperty("--claude-panel", cardBg);
+    root.style.setProperty("--claude-panel-soft", surface2);
     root.style.setProperty("--surface-1", surface1);
     root.style.setProperty("--surface-2", surface2);
     root.style.setProperty("--surface-3", surface3);
