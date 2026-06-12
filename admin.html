@@ -913,10 +913,6 @@
             </el-dropdown>
           </div>
           <div class="admin-header-system">
-            <button type="button" class="lang-toggle" data-i18n-toggle>
-              <i class="fas fa-globe lang-toggle-icon"></i>
-              <span data-lang-label>EN</span>
-            </button>
             <el-dropdown @command="handleLoadSettings" :hide-on-click="false">
               <span class="el-dropdown-link"><i class="fas fa-cog"></i></span>
               <el-dropdown-menu slot="dropdown">
@@ -4890,6 +4886,12 @@
         .catch(() => {});
 
       localStorage.removeItem('quickWebsites');
+
+      // Remove theme toggle button
+      this.$nextTick(() => {
+        const themeToggle = document.querySelector('[data-theme-toggle]');
+        if (themeToggle) themeToggle.remove();
+      });
     }
     ,
     beforeDestroy() {
