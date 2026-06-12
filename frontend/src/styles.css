@@ -209,7 +209,6 @@ textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  writing-mode: horizontal-tb;
   white-space: nowrap;
 }
 
