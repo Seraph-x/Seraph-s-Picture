@@ -96,7 +96,7 @@ a {
   font-size: 13px;
 }
 
-.nav-link.router-link-active,
+.nav-link.router-link-exact-active,
 .nav-link:hover {
   color: var(--text);
   border-color: var(--line);
