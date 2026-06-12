@@ -113,7 +113,7 @@ a {
   border-radius: 10px;
 }
 
-.nav-link.router-link-active,
+.nav-link.router-link-exact-active,
 .nav-link:hover,
 .btn-ghost,
 .chip,
