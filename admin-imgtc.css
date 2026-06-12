@@ -32,10 +32,10 @@ body {
   align-items: center;
   margin: 12px;
   padding: 12px 24px;
-  background-color: rgba(255, 255, 255, 0.92);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: var(--card-bg, rgba(255, 255, 255, 0.92));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
+  border: 1px solid var(--surface-border, rgba(255, 255, 255, 0.5));
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
   border-radius: 20px;
@@ -70,7 +70,9 @@ body {
   align-items: center;
   cursor: pointer;
   font-size: clamp(0.9em, 1.5vw, 1.2em);
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--card-bg, rgba(255, 255, 255, 0.9));
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
   margin-right: 8px;
   padding: 2px 8px;
   border-radius: 12px;
@@ -236,6 +238,11 @@ body {
 
 .el-card, .el-card__body{
   border: none !important;
+}
+.el-card {
+  background: var(--card-bg) !important;
+  backdrop-filter: var(--ui-card-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter) !important;
 }
 .el-card__body{
   padding: 14px !important;
@@ -484,7 +491,9 @@ body {
   align-items: center;
   gap: 12px;
   padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--card-bg, rgba(255, 255, 255, 0.95));
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -554,12 +563,12 @@ body {
   align-items: center;
   gap: 12px;
   padding: 10px 18px;
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--card-bg, rgba(255, 255, 255, 0.65));
   border: 1px solid rgba(194, 100, 63, 0.25);
   border-radius: 999px;
   box-shadow: 0 12px 30px rgba(194, 100, 63, 0.25);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(14px));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(14px));
   z-index: 1000;
   cursor: grab;
   user-select: none;
@@ -826,7 +835,9 @@ body {
 .header-content {
   border-radius: 18px;
   border: 1px solid var(--admin-line);
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--card-bg, rgba(255, 255, 255, 0.78));
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(14px));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(14px));
   box-shadow: 0 14px 38px rgba(20, 32, 51, 0.12);
 }
 
@@ -841,7 +852,9 @@ body {
 
 .search-card .el-input__inner {
   border: 1px solid rgba(194, 100, 63, 0.2);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--card-bg, rgba(255, 255, 255, 0.95));
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(10px));
   box-shadow: none;
 }
 

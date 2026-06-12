@@ -208,8 +208,8 @@ body.admin-page .pagination-container {
   border-radius: 999px !important;
   background: var(--claude-panel) !important;
   box-shadow: var(--shadow-hover) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(16px)) !important;
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(16px)) !important;
 }
 
 /* Element UI pagination re-themed to the warm accent */

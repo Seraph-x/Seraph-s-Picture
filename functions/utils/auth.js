@@ -136,7 +136,7 @@ export function createLegacyClearSessionCookieHeaders() {
  * 检查是否需要认证
  */
 export function isAuthRequired(env) {
-  return env.BASIC_USER && env.BASIC_PASS;
+  return !!(env.BASIC_USER && env.BASIC_PASS);
 }
 
 /**
