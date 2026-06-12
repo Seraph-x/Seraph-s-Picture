@@ -89,8 +89,17 @@
       background: rgba(255, 255, 255, 0.1);
       border-radius: 12px;
     }
+    .preview-toolbar .el-button {
+      background: var(--surface-2) !important;
+      border-color: rgba(17, 24, 39, 0.12) !important;
+    }
+    .preview-toolbar .el-button--primary {
+      background: #c2643f !important;
+      border-color: #c2643f !important;
+      color: #fff !important;
+    }
     .preview-filename {
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--text);
       font-size: 0.9em;
       max-width: 300px;
       overflow: hidden;
@@ -250,14 +259,31 @@
       border-radius: 16px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.62);
-      background: rgba(255, 255, 255, 0.9);
+      background: var(--card-bg);
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
       padding: 8px;
     }
     .list-view-card .el-table th {
-      background: rgba(194, 100, 63, 0.08);
+      background: var(--surface-2) !important;
       color: #4f3d75;
       font-weight: 600;
+    }
+    .list-view-card .el-table__empty-block {
+      background: var(--card-bg) !important;
+    }
+    .list-view-card .el-table__body-wrapper {
+      background: transparent !important;
+    }
+    .list-view-card .el-table,
+    .list-view-card .el-table__header-wrapper,
+    .list-view-card .el-table__body {
+      background: transparent !important;
+    }
+    .list-view-card .el-table tr {
+      background: transparent !important;
+    }
+    .list-view-card .el-table--striped .el-table__body tr.el-table__row--striped td {
+      background: var(--surface-1) !important;
     }
     .list-actions .el-button {
       margin-left: 0 !important;
@@ -372,6 +398,12 @@
       border-color: rgba(194, 100, 63, 0.42);
       background: rgba(16, 27, 44, 0.9);
       color: #f1ece3;
+    }
+    html[data-theme="dark"] .el-dropdown-menu,
+    html[data-theme="dark"] .el-popper {
+      background: var(--card-bg) !important;
+      backdrop-filter: var(--ui-card-backdrop-filter) !important;
+      -webkit-backdrop-filter: var(--ui-card-backdrop-filter) !important;
     }
     .token-toolbar {
       display: flex;
