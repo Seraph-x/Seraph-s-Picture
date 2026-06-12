@@ -274,13 +274,16 @@
       }
 
       .nav-links a:hover {
-        background: linear-gradient(
-          135deg,
-          rgba(217, 119, 87, 0.1),
-          rgba(229, 138, 104, 0.3)
-        );
+        background: rgba(194, 100, 63, 0.12);
         color: var(--primary-color);
         transform: translateY(-2px);
+      }
+
+      .nav-links a.is-active,
+      .nav-links a.active {
+        background: rgba(194, 100, 63, 0.15);
+        color: var(--primary-color);
+        font-weight: 600;
       }
 
       .nav-links .theme-toggle-btn,

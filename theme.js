@@ -1088,3 +1088,38 @@
     init();
   }
 })();
+
+// Auto-highlight active navigation link
+(function() {
+  "use strict";
+  
+  function highlightActiveNav() {
+    var currentPath = window.location.pathname;
+    var navLinks = document.querySelectorAll('.nav-links a, .action-link, .nav-btn');
+    
+    navLinks.forEach(function(link) {
+      var href = link.getAttribute('href');
+      if (!href) return;
+      
+      // Normalize paths
+      var linkPath = href.startsWith('/') ? href : '/' + href;
+      linkPath = linkPath.replace(/^\.\//, '/');
+      
+      // Check if current page matches
+      var isActive = currentPath === linkPath || 
+                     (linkPath !== '/' && currentPath.startsWith(linkPath));
+      
+      if (isActive) {
+        link.classList.add('is-active', 'active');
+      } else {
+        link.classList.remove('is-active', 'active');
+      }
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', highlightActiveNav);
+  } else {
+    highlightActiveNav();
+  }
+})();
