@@ -929,6 +929,7 @@
             </el-dropdown>
             <el-tooltip :content="t('admin.tooltipStorage')" placement="bottom"><i class="fas fa-server" @click="showStorageConfigPanel"></i></el-tooltip>
             <el-tooltip :content="t('admin.tooltipUiDesign')" placement="bottom"><i class="fas fa-sliders-h" @click="showUiDesignSettingsPanel"></i></el-tooltip>
+            <i class="fas fa-moon admin-theme-toggle" data-theme-toggle @click="toggleTheme" :title="t('admin.tooltipTheme')"></i>
             <i class="fas fa-sign-out-alt" @click="handleLogout"></i>
           </div>
         </div>
@@ -1465,6 +1466,7 @@
         'admin.safeModeMenu': '安全模式(NSFW)',
         'admin.tooltipStorage': '存储状态与配置',
         'admin.tooltipUiDesign': '前端 UI 设计',
+        'admin.tooltipTheme': '切换主题',
         'admin.totalRecords': '总记录:',
         'admin.loadedCount': '已加载',
         'admin.folderManage': '目录管理',
@@ -1773,6 +1775,7 @@
         'admin.safeModeMenu': 'Safe Mode (NSFW)',
         'admin.tooltipStorage': 'Storage Status & Config',
         'admin.tooltipUiDesign': 'Frontend UI Design',
+        'admin.tooltipTheme': 'Toggle Theme',
         'admin.totalRecords': 'Total:',
         'admin.loadedCount': 'Loaded',
         'admin.folderManage': 'Folder Management',
@@ -3420,6 +3423,19 @@
         a.click();
       },
       
+      toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        // 更新图标
+        const themeIcon = document.querySelector('.admin-theme-toggle');
+        if (themeIcon) {
+          themeIcon.className = newTheme === 'dark' ? 'fas fa-sun admin-theme-toggle' : 'fas fa-moon admin-theme-toggle';
+        }
+      },
       async handleLogout() {  // 退出登录
         try {
           const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
