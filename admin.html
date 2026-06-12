@@ -836,6 +836,39 @@
     .admin-theme-btn i {
       pointer-events: none;
     }
+
+    /* Element UI dropdown menu transparency support */
+    .el-dropdown-menu,
+    .el-popper {
+      background: var(--card-bg) !important;
+      backdrop-filter: var(--ui-card-backdrop-filter) !important;
+      -webkit-backdrop-filter: var(--ui-card-backdrop-filter) !important;
+      border: 1px solid var(--claude-line) !important;
+      box-shadow: var(--shadow) !important;
+    }
+
+    .el-dropdown-menu__item {
+      background: transparent !important;
+      color: var(--claude-text) !important;
+    }
+
+    .el-dropdown-menu__item:hover {
+      background: var(--surface-2) !important;
+      color: var(--claude-text-strong) !important;
+    }
+
+    /* Element UI circular buttons (sidebar actions) */
+    .el-button.is-circle {
+      background: var(--card-bg) !important;
+      border-color: var(--claude-line) !important;
+      color: var(--claude-text) !important;
+    }
+
+    .el-button.is-circle:hover {
+      background: var(--surface-2) !important;
+      border-color: var(--primary-light) !important;
+      color: var(--claude-text-strong) !important;
+    }
   </style>
   <link rel="stylesheet" href="/mobile-refactor.css">
   <link rel="stylesheet" href="/claude-theme.css">

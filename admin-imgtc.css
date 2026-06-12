@@ -901,7 +901,7 @@ body {
   height: 38px;
   border-radius: 11px;
   border: 1px solid var(--admin-line);
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--card-bg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
