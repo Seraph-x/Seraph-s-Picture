@@ -73,11 +73,8 @@ function writeAppDeepLinkEntrypoints() {
 
   for (const route of appDeepLinkRoutes) {
     const directoryEntry = path.resolve(appDistDir, route, 'index.html');
-    const htmlEntry = path.resolve(appDistDir, `${route}.html`);
     ensureDir(directoryEntry);
-    ensureDir(htmlEntry);
     fs.writeFileSync(directoryEntry, appIndexHtml);
-    fs.writeFileSync(htmlEntry, appIndexHtml);
   }
 }
 
@@ -88,6 +85,22 @@ function writeRedirects() {
     '',
   ];
   fs.writeFileSync(path.resolve(distDir, '_redirects'), redirects.join('\n'), 'utf8');
+}
+
+function copyMiddleware() {
+  const functionsDir = path.resolve(distDir, 'functions');
+  fs.mkdirSync(functionsDir, { recursive: true });
+
+  const middlewareContent = `export async function onRequest(context) {
+  const url = new URL(context.request.url);
+  if (url.pathname.startsWith('/app/') && !url.pathname.match(/\\.(js|css|png|jpg|svg|ico|json)$/)) {
+    url.pathname = '/app/index.html';
+    return context.env.ASSETS.fetch(new Request(url, context.request));
+  }
+  return context.next();
+}
+`;
+  fs.writeFileSync(path.resolve(functionsDir, '_middleware.js'), middlewareContent, 'utf8');
 }
 
 fs.mkdirSync(distDir, { recursive: true });
@@ -105,5 +118,16 @@ for (const dir of legacyDirs) {
 }
 
 writeRedirects();
+copyMiddleware();
+
+// Copy dist/app to project root for Wrangler dev server
+const projectRoot = path.resolve(rootDir);
+const distAppDir = path.resolve(distDir, 'app');
+const rootAppDir = path.resolve(projectRoot, 'app');
+
+if (fs.existsSync(distAppDir)) {
+  fs.cpSync(distAppDir, rootAppDir, { recursive: true, force: true });
+  console.log('[frontend] app/ directory synced to project root');
+}
 
 console.log('[frontend] legacy root + optional /app Vue assets copied to dist');
