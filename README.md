@@ -136,7 +136,20 @@ WEBDAV_*                 # 可选 WebDAV
 DISCORD_*                # 可选 Discord
 HUGGINGFACE_*            # 可选 Hugging Face
 GITHUB_*                 # 可选 GitHub
+TG_GUEST_BOT_TOKEN       # 可选 访客上传专用 bot token（密钥，控制台配置，勿提交）
+TG_GUEST_CHAT_ID         # 可选 访客上传专用频道 chat id（密钥，控制台配置，勿提交）
+GUEST_UPLOAD             # 可选 访客上传初始默认（true/false；保存后以 KV 为准）
+GUEST_RETENTION_DAYS     # 可选 访客文件保留天数初始默认（1-3）
+GUEST_DAILY_LIMIT        # 可选 单 IP 每日上传次数初始默认
+GUEST_MAX_FILE_SIZE      # 可选 访客单文件大小初始默认（字节，上限 20MB）
 ```
+
+### 访客上传
+
+- 未登录访客的文件走**独立的 Telegram bot + 频道**（`TG_GUEST_BOT_TOKEN` / `TG_GUEST_CHAT_ID`），与管理员存储隔离；未配置时回退到主 bot。
+- 访客策略（开关、保留天数 1–3、单 IP 每日次数、单文件大小上限 ≤ 20MB）存于 KV，**可在后台「访客上传设置」面板随时调整**，无需改环境变量或重新部署。`GUEST_*` 环境变量仅作首次读取的初始默认。
+- 访客文件的 KV 记录带 `expirationTtl`，到期后访问链接自动失效（字节仍留在免费的访客频道，需要彻底清空时直接清空/重建该频道）。
+
 
 ## Docker 运行
 

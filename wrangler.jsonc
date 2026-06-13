@@ -18,4 +18,13 @@
       "bucket_name": "k-vault-files"
     }
   ]
+  // Guest uploads use a SEPARATE Telegram bot/channel so guest abuse cannot get
+  // the main bot banned. Configure these as Secrets in the Pages dashboard
+  // (Settings -> Environment variables / Secrets) — never commit real values:
+  //   TG_GUEST_BOT_TOKEN   guest bot token
+  //   TG_GUEST_CHAT_ID     guest channel chat id
+  // Guest policy (enabled / retentionDays 1-3 / dailyLimit / maxFileSize) lives in
+  // KV (key "guest_config") and is edited from the admin "访客上传设置" panel.
+  // The optional GUEST_UPLOAD / GUEST_RETENTION_DAYS / GUEST_DAILY_LIMIT /
+  // GUEST_MAX_FILE_SIZE vars only seed the first read before a value is saved to KV.
 }
