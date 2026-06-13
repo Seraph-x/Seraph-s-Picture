@@ -1841,7 +1841,7 @@
         'admin.guestEnableLabel': '允许未登录访客上传',
         'admin.guestEnableTip': '关闭后，访客上传与访客 URL 上传都会被拒绝（401）。',
         'admin.guestRetentionTitle': '文件保留天数',
-        'admin.guestRetentionUnit': '天（1–3，到期后链接自动失效）',
+        'admin.guestRetentionUnit': '天（0 = 永不过期；正整数为保留天数，到期后链接自动失效）',
         'admin.guestDailyLimitTitle': '单 IP 每日上传次数',
         'admin.guestDailyLimitUnit': '次/天（0 表示不限）',
         'admin.guestMaxFileSizeTitle': '单文件大小上限',
@@ -2180,7 +2180,7 @@
         'admin.guestEnableLabel': 'Allow guest (not-logged-in) uploads',
         'admin.guestEnableTip': 'When disabled, both guest uploads and guest URL uploads are rejected (401).',
         'admin.guestRetentionTitle': 'File retention (days)',
-        'admin.guestRetentionUnit': 'days (1-3; links expire automatically after this period)',
+        'admin.guestRetentionUnit': 'days (0 = never expires; otherwise links expire after that many days)',
         'admin.guestDailyLimitTitle': 'Daily uploads per IP',
         'admin.guestDailyLimitUnit': 'per day (0 means unlimited)',
         'admin.guestMaxFileSizeTitle': 'Max file size',
@@ -5019,7 +5019,7 @@
             <section class="ui-design-section">
               <div class="ui-design-section-title"><i class="fas fa-calendar-day"></i> ${this.t('admin.guestRetentionTitle')}</div>
               <div class="ui-design-inline">
-                <input id="guestRetentionDays" class="ui-design-input" type="number" min="1" max="3" step="1" value="${clamp(current.retentionDays, 1, 3)}">
+                <input id="guestRetentionDays" class="ui-design-input" type="number" min="0" step="1" value="${Math.max(0, Math.round(Number(current.retentionDays) || 0))}">
                 <span>${this.t('admin.guestRetentionUnit')}</span>
               </div>
             </section>
@@ -5048,7 +5048,7 @@
 
         const readValues = () => ({
           enabled: !!document.getElementById('guestEnabled')?.checked,
-          retentionDays: clamp(document.getElementById('guestRetentionDays')?.value, 1, 3),
+          retentionDays: Math.max(0, Math.round(Number(document.getElementById('guestRetentionDays')?.value) || 0)),
           dailyLimit: clamp(document.getElementById('guestDailyLimit')?.value, 0, 1000),
           maxFileSize: Math.round(clamp(document.getElementById('guestMaxFileSize')?.value, 0, 20) * 1024 * 1024),
         });

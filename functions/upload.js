@@ -97,7 +97,7 @@ export async function onRequestPost(context) {
         : {
             guest: true,
             guestIp: getClientIP(request),
-            retentionDays: guestConfig?.retentionDays || 3,
+            retentionDays: guestConfig?.retentionDays ?? 3,
           };
       result = await uploadToTelegramStorage(
         uploadFile,
@@ -287,8 +287,8 @@ async function uploadToTelegramStorage(
 
     const putOptions = { metadata };
     if (isGuest) {
-      const days = Math.max(1, Number(guestOptions.retentionDays) || 1);
-      putOptions.expirationTtl = days * 86400;
+      const days = Math.max(0, Math.round(Number(guestOptions.retentionDays)) || 0);
+      if (days > 0) putOptions.expirationTtl = days * 86400;
     }
     await env.img_url.put(`${fileId}.${fileExtension}`, "", putOptions);
   }

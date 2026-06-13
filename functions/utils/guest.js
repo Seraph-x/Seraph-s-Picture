@@ -8,14 +8,13 @@ export const KV_BINDING_CANDIDATES = ['img_url', 'KV', 'UI_CONFIG_KV'];
 
 // Telegram native single-file ceiling for guest uploads; backend can only lower it.
 const MAX_GUEST_FILE_BYTES = 20 * 1024 * 1024;
-const MIN_RETENTION_DAYS = 1;
-const MAX_RETENTION_DAYS = 3;
+const DEFAULT_RETENTION_DAYS = 3;
 const MAX_DAILY_LIMIT = 1000;
 
 export const DEFAULT_GUEST_CONFIG = {
   version: 1,
   enabled: false,
-  retentionDays: MAX_RETENTION_DAYS,
+  retentionDays: DEFAULT_RETENTION_DAYS,
   dailyLimit: 10,
   maxFileSize: 5 * 1024 * 1024,
 };
@@ -24,6 +23,12 @@ function clampNumber(value, min, max) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return min;
   return Math.min(max, Math.max(min, numeric));
+}
+
+// Guest file retention in days: any non-negative integer; 0 means never expire.
+function clampRetentionDays(value) {
+  const n = Math.round(Number(value));
+  return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
 function parseBooleanFlag(value, fallback = false) {
@@ -43,7 +48,7 @@ export function normalizeGuestConfig(raw) {
   return {
     version: 1,
     enabled: parseBooleanFlag(next.enabled, DEFAULT_GUEST_CONFIG.enabled),
-    retentionDays: Math.round(clampNumber(next.retentionDays, MIN_RETENTION_DAYS, MAX_RETENTION_DAYS)),
+    retentionDays: clampRetentionDays(next.retentionDays),
     dailyLimit: Math.round(clampNumber(next.dailyLimit, 0, MAX_DAILY_LIMIT)),
     maxFileSize: Math.round(clampNumber(next.maxFileSize, 0, MAX_GUEST_FILE_BYTES)),
   };
@@ -62,7 +67,7 @@ export function getEnvGuestDefaults(env = {}) {
   const envDaily = parseInt(env.GUEST_DAILY_LIMIT, 10);
   if (Number.isFinite(envDaily) && envDaily >= 0) seed.dailyLimit = envDaily;
   const envRetention = parseInt(env.GUEST_RETENTION_DAYS, 10);
-  if (Number.isFinite(envRetention) && envRetention > 0) seed.retentionDays = envRetention;
+  if (Number.isFinite(envRetention) && envRetention >= 0) seed.retentionDays = envRetention;
   return normalizeGuestConfig(seed);
 }
 

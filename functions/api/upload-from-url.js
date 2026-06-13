@@ -135,7 +135,7 @@ export async function onRequestPost(context) {
       : {
           guest: true,
           guestIp: getClientIP(request),
-          retentionDays: guestConfig?.retentionDays || 3,
+          retentionDays: guestConfig?.retentionDays ?? 3,
         };
     const telegramResponse = await uploadToTelegram(arrayBuffer, fileName, fileExtension, contentType, fileSize, env, new URL(request.url).origin, folderPath, guestOptions);
     if (!isAdmin && telegramResponse.status >= 200 && telegramResponse.status < 300) {
@@ -505,8 +505,8 @@ async function processTelegramSuccess(responseData, fileName, fileExtension, mim
 
     const putOptions = { metadata };
     if (isGuest) {
-      const days = Math.max(1, Number(guestOptions.retentionDays) || 1);
-      putOptions.expirationTtl = days * 86400;
+      const days = Math.max(0, Math.round(Number(guestOptions.retentionDays)) || 0);
+      if (days > 0) putOptions.expirationTtl = days * 86400;
     }
     await env.img_url.put(`${fileId}.${fileExtension}`, "", putOptions);
   }
