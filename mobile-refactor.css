@@ -948,23 +948,27 @@ html[data-theme="dark"] {
 html[data-theme="dark"] .header-content .actions > i,
 html[data-theme="dark"] .header-content .actions > .el-dropdown > .el-dropdown-link,
 html[data-theme="dark"] .header-content .actions > .theme-admin-toggle {
-  background: rgba(38, 35, 32, 0.96) !important;
-  border-color: rgba(56, 52, 46, 0.48) !important;
+  background: var(--card-bg, rgba(38, 35, 32, 0.96)) !important;
+  backdrop-filter: var(--ui-card-backdrop-filter, none) !important;
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, none) !important;
+  border-color: var(--surface-border, rgba(56, 52, 46, 0.48)) !important;
   color: #eef5ff !important;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28) !important;
+  box-shadow: var(--shadow, 0 8px 18px rgba(0, 0, 0, 0.28)) !important;
 }
 
 html[data-theme="dark"] .header-content .actions > i:hover,
 html[data-theme="dark"] .header-content .actions > .el-dropdown > .el-dropdown-link:hover,
 html[data-theme="dark"] .header-content .actions > .theme-admin-toggle:hover {
-  background: rgba(56, 52, 46, 0.98) !important;
+  background: var(--surface-2, rgba(56, 52, 46, 0.98)) !important;
   border-color: rgba(217, 211, 200, 0.64) !important;
   color: #ffffff !important;
 }
 
 html[data-theme="dark"] .status-panel {
-  background: rgba(32, 30, 27, 0.96) !important;
-  border-color: rgba(56, 52, 46, 0.38) !important;
+  background: var(--card-bg, rgba(32, 30, 27, 0.96)) !important;
+  backdrop-filter: var(--ui-card-backdrop-filter, none) !important;
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, none) !important;
+  border-color: var(--surface-border, rgba(56, 52, 46, 0.38)) !important;
 }
 
 html[data-theme="dark"] .status-item span {
@@ -974,9 +978,11 @@ html[data-theme="dark"] .status-item span {
 html[data-theme="dark"] .el-dropdown-menu,
 html[data-theme="dark"] .el-select-dropdown,
 html[data-theme="dark"] .el-popover {
-  background: rgba(38, 35, 32, 0.98) !important;
-  border-color: rgba(56, 52, 46, 0.32) !important;
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38) !important;
+  background: var(--card-bg, rgba(38, 35, 32, 0.98)) !important;
+  backdrop-filter: var(--ui-card-backdrop-filter, blur(16px) saturate(115%)) !important;
+  -webkit-backdrop-filter: var(--ui-card-backdrop-filter, blur(16px) saturate(115%)) !important;
+  border-color: var(--claude-line, rgba(56, 52, 46, 0.32)) !important;
+  box-shadow: var(--shadow, 0 16px 34px rgba(0, 0, 0, 0.38)) !important;
 }
 
 html[data-theme="dark"] .el-dropdown-menu__item,

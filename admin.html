@@ -789,8 +789,8 @@
       color: #faf7f1;
     }
     html[data-theme="dark"] .ui-design-section {
-      border-color: rgba(148, 163, 184, 0.24);
-      background: rgba(15, 23, 39, 0.72);
+      border-color: var(--surface-border, rgba(148, 163, 184, 0.24));
+      background: var(--surface-2, rgba(15, 23, 39, 0.72));
     }
     html[data-theme="dark"] .ui-design-input {
       background: rgba(15, 23, 39, 0.84);
@@ -803,8 +803,8 @@
     }
     html[data-theme="dark"] .ui-upload-drop,
     html[data-theme="dark"] .ui-segmented {
-      background: rgba(15, 23, 39, 0.72);
-      border-color: rgba(148, 163, 184, 0.26);
+      background: var(--surface-2, rgba(15, 23, 39, 0.72));
+      border-color: var(--surface-border, rgba(148, 163, 184, 0.26));
       color: #c9d8f7;
     }
     html[data-theme="dark"] .ui-segment span {
@@ -818,9 +818,11 @@
       color: #9fb2d8;
     }
     html[data-theme="dark"] .ui-design-alert .el-message-box {
-      border-color: rgba(148, 163, 184, 0.24) !important;
-      background: rgba(12, 18, 30, 0.85) !important;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45) !important;
+      border-color: var(--surface-border, rgba(148, 163, 184, 0.24)) !important;
+      background: var(--card-bg, rgba(12, 18, 30, 0.85)) !important;
+      backdrop-filter: var(--ui-card-backdrop-filter, none) !important;
+      -webkit-backdrop-filter: var(--ui-card-backdrop-filter, none) !important;
+      box-shadow: var(--shadow, 0 12px 40px rgba(0, 0, 0, 0.45)) !important;
     }
     html[data-theme="dark"] .ui-design-alert .el-message-box__header,
     html[data-theme="dark"] .ui-design-alert .el-message-box__btns {
