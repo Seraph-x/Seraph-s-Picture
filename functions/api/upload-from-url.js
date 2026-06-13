@@ -1,4 +1,6 @@
-﻿import { createS3Client } from "../utils/s3client.js";
+﻿import { checkAuthentication, isAuthRequired } from "../utils/auth.js";
+import { checkGuestUpload, incrementGuestCount, readGuestConfig, getClientIP } from "../utils/guest.js";
+import { createS3Client } from "../utils/s3client.js";
 import { uploadToDiscord } from "../utils/discord.js";
 import { hasHuggingFaceConfig, uploadToHuggingFace } from "../utils/huggingface.js";
 import { hasWebDAVConfig, normalizeWebDAVPath, uploadToWebDAV } from "../utils/webdav.js";
@@ -8,6 +10,7 @@ import {
   buildTelegramDirectLink,
   buildTelegramBotApiUrl,
   createSignedTelegramFileId,
+  getTelegramCreds,
   getTelegramUploadMethodAndField,
   pickTelegramFileId,
   sendTelegramUploadNotice,
@@ -25,11 +28,23 @@ export async function onRequestPost(context) {
   try {
     const body = await request.json();
     const url = String(body?.url || "").trim();
-    const storageMode = String(body?.storageMode || "telegram").toLowerCase();
+    let storageMode = String(body?.storageMode || "telegram").toLowerCase();
     const folderPath = normalizeFolderPath(body?.folderPath || body?.folder || "");
 
     if (!url) {
       return jsonResponse({ error: "URL is required" }, 400);
+    }
+
+    // Gate anonymous (guest) callers: this endpoint used to be fully public.
+    const isAdmin = await isUserAuthenticated(context);
+    let guestConfig = null;
+    if (!isAdmin) {
+      guestConfig = await readGuestConfig(env);
+      if (!guestConfig.enabled) {
+        return jsonResponse({ error: "未启用访客上传，请登录后操作" }, 401);
+      }
+      // Guests are forced onto the guest Telegram channel.
+      storageMode = "telegram";
     }
 
     try {
@@ -54,6 +69,14 @@ export async function onRequestPost(context) {
         { error: `File too large (${formatSize(fileSize)}). Max allowed is ${formatSize(MAX_FILE_SIZE)}.` },
         413
       );
+    }
+
+    // Enforce guest size/quota now that the real size is known.
+    if (!isAdmin) {
+      const guestCheck = await checkGuestUpload(request, env, fileSize, guestConfig);
+      if (!guestCheck.allowed) {
+        return jsonResponse({ error: guestCheck.reason }, guestCheck.status || 403);
+      }
     }
 
     const storageValidation = validateStorageSize(storageMode, fileSize);
@@ -107,10 +130,32 @@ export async function onRequestPost(context) {
       return await uploadToGitHubStorage(arrayBuffer, fileName, fileExtension, contentType, fileSize, env, folderPath);
     }
 
-    return await uploadToTelegram(arrayBuffer, fileName, fileExtension, contentType, fileSize, env, new URL(request.url).origin, folderPath);
+    const guestOptions = isAdmin
+      ? null
+      : {
+          guest: true,
+          guestIp: getClientIP(request),
+          retentionDays: guestConfig?.retentionDays || 3,
+        };
+    const telegramResponse = await uploadToTelegram(arrayBuffer, fileName, fileExtension, contentType, fileSize, env, new URL(request.url).origin, folderPath, guestOptions);
+    if (!isAdmin && telegramResponse.status >= 200 && telegramResponse.status < 300) {
+      await incrementGuestCount(request, env, guestConfig);
+    }
+    return telegramResponse;
   } catch (error) {
     console.error("URL upload error:", error);
     return jsonResponse({ error: `Server error: ${error.message}` }, 500);
+  }
+}
+
+async function isUserAuthenticated(context) {
+  const { env } = context;
+  if (!isAuthRequired(env)) return true;
+  try {
+    const auth = await checkAuthentication(context);
+    return auth.authenticated;
+  } catch {
+    return false;
   }
 }
 
@@ -374,17 +419,19 @@ function appendCommonMetadata(metadata, folderPath) {
   };
 }
 
-async function uploadToTelegram(arrayBuffer, fileName, fileExtension, contentType, fileSize, env, fallbackOrigin = "", folderPath = "") {
+async function uploadToTelegram(arrayBuffer, fileName, fileExtension, contentType, fileSize, env, fallbackOrigin = "", folderPath = "", guestOptions = null) {
+  const isGuest = Boolean(guestOptions);
+  const creds = getTelegramCreds(env, { guest: isGuest });
   const blob = new Blob([arrayBuffer], { type: contentType });
   const file = new File([blob], fileName, { type: contentType });
 
   const formData = new FormData();
-  formData.append("chat_id", env.TG_Chat_ID);
+  formData.append("chat_id", creds.chatId);
 
   const { method: apiEndpoint, field } = getTelegramUploadMethodAndField(contentType);
   formData.append(field, file);
 
-  const apiUrl = buildTelegramBotApiUrl(env, apiEndpoint);
+  const apiUrl = buildTelegramBotApiUrl(env, apiEndpoint, creds);
 
   let response;
   try {
@@ -401,26 +448,27 @@ async function uploadToTelegram(arrayBuffer, fileName, fileExtension, contentTyp
   if (!response.ok) {
     if (apiEndpoint === "sendPhoto" || apiEndpoint === "sendAudio") {
       const docFormData = new FormData();
-      docFormData.append("chat_id", env.TG_Chat_ID);
+      docFormData.append("chat_id", creds.chatId);
       docFormData.append("document", file);
 
-      const docResponse = await fetch(buildTelegramBotApiUrl(env, "sendDocument"), {
+      const docResponse = await fetch(buildTelegramBotApiUrl(env, "sendDocument", creds), {
         method: "POST",
         body: docFormData,
       });
 
       const docData = await docResponse.json();
       if (docResponse.ok) {
-        return processTelegramSuccess(docData, fileName, fileExtension, contentType, fileSize, env, fallbackOrigin, folderPath);
+        return processTelegramSuccess(docData, fileName, fileExtension, contentType, fileSize, env, fallbackOrigin, folderPath, guestOptions);
       }
     }
     return jsonResponse({ error: responseData.description || "Telegram upload failed" }, 500);
   }
 
-  return processTelegramSuccess(responseData, fileName, fileExtension, contentType, fileSize, env, fallbackOrigin, folderPath);
+  return processTelegramSuccess(responseData, fileName, fileExtension, contentType, fileSize, env, fallbackOrigin, folderPath, guestOptions);
 }
 
-async function processTelegramSuccess(responseData, fileName, fileExtension, mimeType, fileSize, env, fallbackOrigin = "", folderPath = "") {
+async function processTelegramSuccess(responseData, fileName, fileExtension, mimeType, fileSize, env, fallbackOrigin = "", folderPath = "", guestOptions = null) {
+  const isGuest = Boolean(guestOptions);
   const fileId = pickTelegramFileId(responseData);
   const messageId = responseData?.result?.message_id;
 
@@ -428,50 +476,66 @@ async function processTelegramSuccess(responseData, fileName, fileExtension, mim
     return jsonResponse({ error: "Failed to get Telegram file ID" }, 500);
   }
 
-  const directId = await buildTelegramDirectId(fileId, fileExtension, fileName, mimeType, fileSize, messageId, env);
+  // Guests always use a plain (non-signed) id so the KV record drives TTL expiry.
+  const useSigned = !isGuest && shouldUseSignedTelegramLinks(env);
+  const directId = useSigned
+    ? await createSignedTelegramFileId({ fileId, fileExtension, fileName, mimeType, fileSize, messageId }, env)
+    : `${fileId}.${fileExtension}`;
 
-  if (env.img_url && shouldWriteTelegramMetadata(env)) {
-    await env.img_url.put(`${fileId}.${fileExtension}`, "", {
-      metadata: appendCommonMetadata(
-        {
-          TimeStamp: Date.now(),
-          ListType: "None",
-          Label: "None",
-          liked: false,
-          fileName,
-          fileSize,
-          storageType: "telegram",
-          telegramFileId: fileId,
-          telegramMessageId: messageId || undefined,
-          signedLink: shouldUseSignedTelegramLinks(env),
-        },
-        folderPath
-      ),
-    });
-  }
-
-  const directLink = buildTelegramDirectLink(env, directId, fallbackOrigin);
-  try {
-    const noticeResult = await sendTelegramUploadNotice(
+  // Guests always persist a KV record (with TTL); admins follow the metadata flag.
+  if (env.img_url && (isGuest || shouldWriteTelegramMetadata(env))) {
+    const metadata = appendCommonMetadata(
       {
-        chatId: env.TG_Chat_ID,
-        replyToMessageId: messageId || undefined,
-        directLink,
-        fileId,
-        messageId,
+        TimeStamp: Date.now(),
+        ListType: "None",
+        Label: "None",
+        liked: false,
         fileName,
         fileSize,
+        storageType: "telegram",
+        telegramFileId: fileId,
+        telegramMessageId: messageId || undefined,
+        signedLink: useSigned,
+        ...(isGuest
+          ? { guest: true, guestIp: guestOptions.guestIp, tgBot: "guest" }
+          : {}),
       },
-      env
+      folderPath
     );
-    if (!noticeResult?.ok && !noticeResult?.skipped) {
-      console.warn(
-        "Telegram upload notice failed:",
-        noticeResult?.data?.description || noticeResult?.error || "unknown error"
-      );
+
+    const putOptions = { metadata };
+    if (isGuest) {
+      const days = Math.max(1, Number(guestOptions.retentionDays) || 1);
+      putOptions.expirationTtl = days * 86400;
     }
-  } catch (error) {
-    console.warn("Telegram upload notice error:", error.message);
+    await env.img_url.put(`${fileId}.${fileExtension}`, "", putOptions);
+  }
+
+  // The upload notice targets the admin channel via the main bot; skip for guests.
+  if (!isGuest) {
+    const directLink = buildTelegramDirectLink(env, directId, fallbackOrigin);
+    try {
+      const noticeResult = await sendTelegramUploadNotice(
+        {
+          chatId: env.TG_Chat_ID,
+          replyToMessageId: messageId || undefined,
+          directLink,
+          fileId,
+          messageId,
+          fileName,
+          fileSize,
+        },
+        env
+      );
+      if (!noticeResult?.ok && !noticeResult?.skipped) {
+        console.warn(
+          "Telegram upload notice failed:",
+          noticeResult?.data?.description || noticeResult?.error || "unknown error"
+        );
+      }
+    } catch (error) {
+      console.warn("Telegram upload notice error:", error.message);
+    }
   }
 
   return jsonResponse([{ src: `/file/${directId}` }]);
@@ -702,21 +766,4 @@ async function uploadToGitHubStorage(arrayBuffer, fileName, fileExtension, conte
     console.error("GitHub upload error:", error);
     return jsonResponse({ error: `GitHub upload failed: ${error.message}` }, 500);
   }
-}
-
-async function buildTelegramDirectId(fileId, fileExtension, fileName, mimeType, fileSize, messageId, env) {
-  if (!shouldUseSignedTelegramLinks(env)) {
-    return `${fileId}.${fileExtension}`;
-  }
-  return createSignedTelegramFileId(
-    {
-      fileId,
-      fileExtension,
-      fileName,
-      mimeType,
-      fileSize,
-      messageId,
-    },
-    env
-  );
 }
