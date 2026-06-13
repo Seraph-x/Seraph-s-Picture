@@ -97,7 +97,7 @@ export async function readGuestConfig(env = {}) {
  * 只信任 Cloudflare 注入的 CF-Connecting-IP;X-Forwarded-For / X-Real-IP 可被客户端伪造,
  * 一旦用于按 IP 限额会被轻易绕过,故不再回退到它们。
  */
-function getClientIP(request) {
+export function getClientIP(request) {
   return request.headers.get('CF-Connecting-IP') || '0.0.0.0';
 }
 
