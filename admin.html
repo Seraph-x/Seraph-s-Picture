@@ -1030,7 +1030,7 @@
             </el-dropdown>
             <el-tooltip :content="t('admin.tooltipStorage')" placement="bottom"><i class="fas fa-server" @click="showStorageConfigPanel"></i></el-tooltip>
             <el-tooltip :content="t('admin.tooltipUiDesign')" placement="bottom"><i class="fas fa-sliders-h" @click="showUiDesignSettingsPanel"></i></el-tooltip>
-            <el-tooltip content="访客上传设置" placement="bottom"><i class="fas fa-user-shield" @click="showGuestSettingsPanel"></i></el-tooltip>
+            <el-tooltip :content="t('admin.tooltipGuestUpload')" placement="bottom"><i class="fas fa-user-shield" @click="showGuestSettingsPanel"></i></el-tooltip>
             <button type="button" class="admin-theme-btn" data-theme-toggle :title="t('admin.tooltipTheme')">
               <i class="fas fa-moon" data-theme-icon></i>
             </button>
@@ -1571,6 +1571,7 @@
         'admin.tooltipStorage': '存储状态与配置',
         'admin.tooltipUiDesign': '前端 UI 设计',
         'admin.tooltipTheme': '切换主题',
+        'admin.tooltipGuestUpload': '访客上传设置',
         'admin.totalRecords': '总记录:',
         'admin.loadedCount': '已加载',
         'admin.folderManage': '目录管理',
@@ -1764,6 +1765,7 @@
         'admin.openDiagPanel': '打开诊断界面',
         'admin.storageStatusTitle': '存储状态与配置',
         'admin.close': '关闭',
+        'admin.statusUnknown': '未知',
         'admin.readStorageFailed': '读取存储状态失败: {msg}',
         'admin.generatingLinks': '正在生成链接列表...',
         'admin.exportedNLinks': '已导出 {n} 个链接',
@@ -1880,6 +1882,7 @@
         'admin.tooltipStorage': 'Storage Status & Config',
         'admin.tooltipUiDesign': 'Frontend UI Design',
         'admin.tooltipTheme': 'Toggle Theme',
+        'admin.tooltipGuestUpload': 'Guest Upload Settings',
         'admin.totalRecords': 'Total:',
         'admin.loadedCount': 'Loaded',
         'admin.folderManage': 'Folder Management',
@@ -2073,6 +2076,7 @@
         'admin.openDiagPanel': 'Open Diagnostics',
         'admin.storageStatusTitle': 'Storage Status & Config',
         'admin.close': 'Close',
+        'admin.statusUnknown': 'Unknown',
         'admin.readStorageFailed': 'Failed to read storage status: {msg}',
         'admin.generatingLinks': 'Generating link list...',
         'admin.exportedNLinks': 'Exported {n} links',
@@ -4218,7 +4222,7 @@
         }
       },
       async showStorageConfigPanel() {
-        const loading = this.$message({ message: '正在读取存储状态...', duration: 0 });
+        const loading = this.$message({ message: this.t('admin.readingStorageStatus'), duration: 0 });
         try {
           const status = await this.fetchSystemStatus();
           loading.close();
@@ -4238,26 +4242,26 @@
                 <strong>${label}</strong>
                 <span style="background:${this.getStatusColor(item)}"></span>
               </div>
-              <p>${this.getStatusMark(item)} ${item?.message || '未知'}</p>
+              <p>${this.getStatusMark(item)} ${item?.message || this.t('admin.statusUnknown')}</p>
             </div>
           `).join('');
           const html = `
             <div class="storage-config-panel">
               <div class="storage-config-grid">${rows}</div>
               <div class="storage-config-actions">
-                <a class="el-button el-button--primary" href="/app/storage">打开配置界面</a>
-                <a class="el-button" href="/app/status">打开诊断界面</a>
+                <a class="el-button el-button--primary" href="/app/storage">${this.t('admin.openConfigPanel')}</a>
+                <a class="el-button" href="/app/status">${this.t('admin.openDiagPanel')}</a>
               </div>
             </div>
           `;
-          this.$alert(html, '存储状态与配置', {
+          this.$alert(html, this.t('admin.storageStatusTitle'), {
             customClass: 'storage-config-alert',
             dangerouslyUseHTMLString: true,
-            confirmButtonText: '关闭'
+            confirmButtonText: this.t('admin.close')
           });
         } catch (error) {
           loading.close();
-          this.$message.error('读取存储状态失败: ' + error.message);
+          this.$message.error(this.t('admin.readStorageFailed').replace('{msg}', error.message));
         }
       },
       openUploader() {  // 打开上传中心

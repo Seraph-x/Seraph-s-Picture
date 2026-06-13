@@ -22,26 +22,37 @@
     return normalizeTheme(root.getAttribute(THEME_ATTR));
   }
 
+  function uiLang() {
+    try {
+      if (window.I18n && typeof window.I18n.getLang === "function") {
+        return window.I18n.getLang();
+      }
+    } catch (e) {}
+    var l = root.getAttribute("lang") || "";
+    return String(l).toLowerCase().indexOf("en") === 0 ? "en" : "zh";
+  }
+
+  function tLabel(zh, en) {
+    return uiLang() === "en" ? en : zh;
+  }
+
   function updateToggleVisual(button, theme) {
     var normalized = normalizeTheme(theme);
     var icon = button.querySelector("[data-theme-icon]");
     var label = button.querySelector("[data-theme-label]");
     var toDark = normalized !== "dark";
 
-    button.setAttribute(
-      "aria-label",
-      toDark ? "切换到夜间模式" : "切换到亮色模式"
-    );
-    button.setAttribute(
-      "title",
-      toDark ? "切换到夜间模式" : "切换到亮色模式"
-    );
+    var hint = toDark
+      ? tLabel("切换到夜间模式", "Switch to dark mode")
+      : tLabel("切换到亮色模式", "Switch to light mode");
+    button.setAttribute("aria-label", hint);
+    button.setAttribute("title", hint);
 
     if (icon) {
       icon.className = toDark ? "fas fa-moon" : "fas fa-sun";
     }
     if (label) {
-      label.textContent = toDark ? "夜间" : "亮色";
+      label.textContent = toDark ? tLabel("夜间", "Dark") : tLabel("亮色", "Light");
     }
   }
 
@@ -1090,6 +1101,11 @@
     if (isLoginPage()) document.body.classList.add("login-page");
     ensureLayers();
     applySettings(settings, { persist: false, silent: true });
+    if (window.I18n && typeof window.I18n.onChange === "function") {
+      window.I18n.onChange(function () {
+        updateAllToggles(getCurrentTheme());
+      });
+    }
   }
 
   var manager = {
