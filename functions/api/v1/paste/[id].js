@@ -4,8 +4,8 @@ import { apiError, apiSuccess, decodePathParam } from '../../../utils/api-v1.js'
 async function handleGet(context, pasteId) {
   const url = new URL(context.request.url);
   const password =
-    url.searchParams.get('password')
-    || context.request.headers.get('X-Paste-Password')
+    context.request.headers.get('X-Paste-Password')
+    || url.searchParams.get('password')
     || '';
 
   const result = await getPasteById(pasteId, context.env, { password });

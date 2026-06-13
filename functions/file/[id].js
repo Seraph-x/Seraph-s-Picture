@@ -150,7 +150,7 @@ function getMimeType(fileName = '') {
 function addCorsHeaders(headers) {
   headers.set('Access-Control-Allow-Origin', '*');
   headers.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-  headers.set('Access-Control-Allow-Headers', 'Range, Content-Type, Accept, Origin');
+  headers.set('Access-Control-Allow-Headers', 'Range, Content-Type, Accept, Origin, X-File-Password, X-Share-Password');
   headers.set('Access-Control-Expose-Headers', 'Content-Length, Content-Range, Accept-Ranges, Content-Type, Content-Disposition');
   headers.set('CDN-Cache-Control', 'no-store');
   return headers;
@@ -228,12 +228,14 @@ async function getRecordWithKey(env, fileId) {
   return { record: null, kvKey: fileId };
 }
 
+// Header is preferred: query-string passwords leak into access logs,
+// browser history, and Referer headers. Query kept for backward compat.
 function getSharePassword(request) {
   const url = new URL(request.url);
   return String(
-    url.searchParams.get('password')
-    || request.headers.get('X-File-Password')
+    request.headers.get('X-File-Password')
     || request.headers.get('X-Share-Password')
+    || url.searchParams.get('password')
     || ''
   );
 }
