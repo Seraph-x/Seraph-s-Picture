@@ -21,6 +21,15 @@ function getTodayKey() {
 }
 
 /**
+ * 距离当天 UTC 结束的秒数(KV TTL 最小 60 秒)
+ */
+function secondsUntilEndOfUtcDay() {
+    const now = Date.now();
+    const endOfDay = new Date(now).setUTCHours(24, 0, 0, 0);
+    return Math.max(Math.ceil((endOfDay - now) / 1000), 60);
+}
+
+/**
  * 检查访客上传权限
  * @returns {{ allowed: boolean, reason?: string, status?: number, remaining?: number }}
  */
@@ -70,6 +79,7 @@ export async function checkGuestUpload(request, env, fileSize) {
 
 /**
  * 增加访客上传计数
+ * Best-effort: KV 是最终一致的,并发请求可能少计数;按日 key 保证窗口边界正确。
  */
 export async function incrementGuestCount(request, env) {
     if (!env.img_url || env.GUEST_UPLOAD !== 'true') return;
@@ -82,7 +92,7 @@ export async function incrementGuestCount(request, env) {
         const countStr = await env.img_url.get(kvKey);
         const currentCount = parseInt(countStr) || 0;
         await env.img_url.put(kvKey, String(currentCount + 1), {
-            expirationTtl: 86400 // 24 小时后自动过期
+            expirationTtl: secondsUntilEndOfUtcDay()
         });
     } catch (e) {
         console.error('Guest count increment error:', e);

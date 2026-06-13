@@ -292,12 +292,21 @@ function shouldCountAsDownload(method, response) {
   return response.status === 200 || response.status === 206;
 }
 
+// Best-effort: KV is eventually consistent, so concurrent downloads may
+// under-count. Re-read latest metadata before writing to narrow the race
+// window and avoid clobbering other metadata updates made mid-request.
 async function incrementShareDownloadCount(env, kvKey, metadata = {}) {
   if (!env?.img_url || !kvKey || !metadata) return;
-  const nextCount = Number(metadata.shareDownloadCount || 0) + 1;
+  let latest = metadata;
+  try {
+    const fresh = await env.img_url.getWithMetadata(kvKey);
+    if (fresh?.metadata) latest = fresh.metadata;
+  } catch {
+    // fall back to the metadata read at request start
+  }
   const nextMetadata = {
-    ...metadata,
-    shareDownloadCount: nextCount,
+    ...latest,
+    shareDownloadCount: Number(latest.shareDownloadCount || 0) + 1,
   };
   await env.img_url.put(kvKey, '', { metadata: nextMetadata });
 }
