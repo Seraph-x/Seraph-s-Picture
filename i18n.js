@@ -7,7 +7,6 @@
   'use strict';
 
   var STORAGE_KEY = 'seraph-lang';
-  var DEFAULT_LANG = 'zh';
   var SUPPORTED = ['zh', 'en'];
   var HTML_LANG = { zh: 'zh-CN', en: 'en' };
   // Short label shown on a toggle button = the language you will switch TO.
@@ -25,7 +24,20 @@
     }
   }
 
-  var current = readSaved() || DEFAULT_LANG;
+  // Default language follows the browser: Chinese stays Chinese, everything
+  // else falls back to English. A manual choice saved in localStorage wins.
+  function detectBrowserLang() {
+    try {
+      var nav = global.navigator || {};
+      var primary = String(
+        (nav.languages && nav.languages[0]) || nav.language || nav.userLanguage || ''
+      ).toLowerCase();
+      if (primary.indexOf('zh') === 0) return 'zh';
+    } catch (e) {}
+    return 'en';
+  }
+
+  var current = readSaved() || detectBrowserLang();
 
   function register(map) {
     if (!map) return;
