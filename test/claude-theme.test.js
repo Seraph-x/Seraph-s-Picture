@@ -40,11 +40,11 @@ describe('Claude-inspired theme contract', function () {
     const appShell = readRepoFile('frontend/src/components/AppShell.vue');
     const appIndex = readRepoFile('frontend/index.html');
 
-    assert.match(legacyLogin, /<title>登录 \| Seraph's Pictures<\/title>/);
+    assert.match(legacyLogin, /<title>Seraph's Pictures<\/title>/);
     assert.match(legacyLogin, /<h1 class="title">Seraph's Pictures<\/h1>/);
     assert.doesNotMatch(legacyLogin, />K-Vault</);
-    assert.match(galleryHtml, /<title>图片浏览器 \| Seraph's Pictures<\/title>/);
-    assert.match(webdavHtml, /<title>WebDAV 上传中心 \| Seraph's Pictures<\/title>/);
+    assert.match(galleryHtml, /<title>Seraph's Pictures<\/title>/);
+    assert.match(webdavHtml, /<title>Seraph's Pictures<\/title>/);
     assert.match(webdavHtml, /alt="Seraph's Pictures Logo"/);
     assert.match(appShell, /<h1>Seraph's Pictures<\/h1>/);
     assert.doesNotMatch(appShell, /<h1>K-Vault<\/h1>/);

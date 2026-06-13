@@ -107,7 +107,7 @@ describe('Claude layout balance contract', function () {
     const indexHtml = readRepoFile('index.html');
     const layout = readRepoFile('seraph-ui-polish.css');
 
-    assert.match(indexHtml, /<title>Seraph's Pictures \| 文件托管<\/title>/);
+    assert.match(indexHtml, /<title>Seraph's Pictures<\/title>/);
     assert.match(indexHtml, /alt="Seraph's Pictures Logo"/);
     assert.match(indexHtml, /<span>Seraph's Pictures<\/span>/);
     assert.match(indexHtml, /class="theme-toggle-btn header-theme-toggle theme-icon-only"/);

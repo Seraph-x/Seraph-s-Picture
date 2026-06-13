@@ -26,7 +26,7 @@ describe('frontend Pages entrypoint', function () {
   it('serves the legacy upload page at the site root', function () {
     const indexHtml = readDistFile(distIndexPath);
 
-    assert.match(indexHtml, /Seraph's Pictures \| 文件托管/);
+    assert.match(indexHtml, /<title>Seraph's Pictures<\/title>/);
     assert.match(indexHtml, /class="upload-zone"/);
     assert.doesNotMatch(indexHtml, /<title>Seraph's Pictures App<\/title>/);
     assert.doesNotMatch(indexHtml, /Upload files, manage folders/);
