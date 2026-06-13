@@ -1030,6 +1030,7 @@
             </el-dropdown>
             <el-tooltip :content="t('admin.tooltipStorage')" placement="bottom"><i class="fas fa-server" @click="showStorageConfigPanel"></i></el-tooltip>
             <el-tooltip :content="t('admin.tooltipUiDesign')" placement="bottom"><i class="fas fa-sliders-h" @click="showUiDesignSettingsPanel"></i></el-tooltip>
+            <el-tooltip content="访客上传设置" placement="bottom"><i class="fas fa-user-shield" @click="showGuestSettingsPanel"></i></el-tooltip>
             <button type="button" class="admin-theme-btn" data-theme-toggle :title="t('admin.tooltipTheme')">
               <i class="fas fa-moon" data-theme-icon></i>
             </button>
@@ -4909,6 +4910,153 @@
 
           bindUpload('uiUploadGlobalBtn', 'uiUploadGlobalInput', 'uiGlobalBgUrl');
           bindUpload('uiUploadLoginBtn', 'uiUploadLoginInput', 'uiLoginBgUrl');
+        });
+      },
+      async showGuestSettingsPanel() {
+        const clamp = (value, min, max) => {
+          const n = Number(value);
+          if (!Number.isFinite(n)) return min;
+          return Math.min(max, Math.max(min, n));
+        };
+
+        const requestGuestConfig = async (method, config) => {
+          const url = method === 'GET'
+            ? `/api/guest-config?_ts=${Date.now()}`
+            : '/api/guest-config';
+          const init = {
+            method,
+            credentials: 'include',
+            headers: { Accept: 'application/json' }
+          };
+          if (method !== 'GET') {
+            init.headers['Content-Type'] = 'application/json';
+            init.body = JSON.stringify({ config });
+          }
+          const response = await fetch(url, init);
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || payload?.success === false) {
+            const detail = payload?.error?.message || payload?.error || `请求失败 (${response.status})`;
+            const err = new Error(detail);
+            err.status = response.status;
+            throw err;
+          }
+          return payload;
+        };
+
+        const DEFAULTS = { enabled: false, retentionDays: 3, dailyLimit: 10, maxFileSize: 5 * 1024 * 1024 };
+        let current = { ...DEFAULTS };
+        try {
+          const payload = await requestGuestConfig('GET');
+          current = Object.assign({}, DEFAULTS, payload?.config || {});
+        } catch (error) {
+          this.$message.warning(`读取访客上传配置失败：${error.message || error}`);
+        }
+
+        const checked = (cond) => (cond ? 'checked' : '');
+        const maxMB = Math.round(((Number(current.maxFileSize) || 0) / 1024 / 1024) * 10) / 10;
+
+        const html = `
+          <div class="ui-design-panel" id="guestSettingsPanel">
+            <div class="ui-design-head">
+              <div>
+                <div class="ui-design-title"><i class="fas fa-user-shield"></i><span>访客上传设置</span></div>
+                <div class="ui-design-subtitle">未登录访客的上传策略，存于 KV，保存后立即生效。</div>
+              </div>
+            </div>
+
+            <section class="ui-design-section">
+              <label class="ui-design-inline">
+                <input id="guestEnabled" type="checkbox" ${checked(current.enabled)}>
+                <span>允许未登录访客上传</span>
+              </label>
+              <div class="ui-design-tip">关闭后，访客上传与访客 URL 上传都会被拒绝（401）。</div>
+            </section>
+
+            <section class="ui-design-section">
+              <div class="ui-design-section-title"><i class="fas fa-calendar-day"></i> 文件保留天数</div>
+              <div class="ui-design-inline">
+                <input id="guestRetentionDays" class="ui-design-input" type="number" min="1" max="3" step="1" value="${clamp(current.retentionDays, 1, 3)}">
+                <span>天（1–3，到期后链接自动失效）</span>
+              </div>
+            </section>
+
+            <section class="ui-design-section">
+              <div class="ui-design-section-title"><i class="fas fa-hashtag"></i> 单 IP 每日上传次数</div>
+              <div class="ui-design-inline">
+                <input id="guestDailyLimit" class="ui-design-input" type="number" min="0" max="1000" step="1" value="${clamp(current.dailyLimit, 0, 1000)}">
+                <span>次/天（0 表示不限）</span>
+              </div>
+            </section>
+
+            <section class="ui-design-section">
+              <div class="ui-design-section-title"><i class="fas fa-file"></i> 单文件大小上限</div>
+              <div class="ui-design-inline">
+                <input id="guestMaxFileSize" class="ui-design-input" type="number" min="0" max="20" step="0.5" value="${maxMB}">
+                <span>MB（上限 20，即 Telegram 原生限制；0 表示不额外限制）</span>
+              </div>
+            </section>
+
+            <div class="ui-design-foot">
+              <span id="guestSaveStatus" class="ui-design-save-status"></span>
+            </div>
+          </div>
+        `;
+
+        const readValues = () => ({
+          enabled: !!document.getElementById('guestEnabled')?.checked,
+          retentionDays: clamp(document.getElementById('guestRetentionDays')?.value, 1, 3),
+          dailyLimit: clamp(document.getElementById('guestDailyLimit')?.value, 0, 1000),
+          maxFileSize: Math.round(clamp(document.getElementById('guestMaxFileSize')?.value, 0, 20) * 1024 * 1024),
+        });
+
+        const setSaveStatus = (state, text) => {
+          const status = document.getElementById('guestSaveStatus');
+          if (!status) return;
+          status.setAttribute('data-state', state || '');
+          status.textContent = text || '';
+        };
+
+        this.$alert(html, '访客上传设置', {
+          customClass: 'ui-design-alert ui-design-footer-actions',
+          dangerouslyUseHTMLString: true,
+          showCancelButton: true,
+          closeOnClickModal: false,
+          confirmButtonText: '保存设置',
+          cancelButtonText: '取消',
+          beforeClose: (action, instance, done) => {
+            if (action !== 'confirm') {
+              done();
+              return;
+            }
+
+            const values = readValues();
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = '保存中...';
+            setSaveStatus('saving', '保存中...');
+
+            requestGuestConfig('POST', values)
+              .then(async (payload) => {
+                const saved = payload?.config || values;
+                const verifyPayload = await requestGuestConfig('GET');
+                const verified = verifyPayload?.config || saved;
+                if (JSON.stringify(verified) !== JSON.stringify(saved)) {
+                  throw new Error('保存后回读校验失败，请检查 KV 绑定与 Functions 日志。');
+                }
+                instance.confirmButtonLoading = false;
+                instance.confirmButtonText = '✓ 已保存';
+                const bindingName = payload?.binding ? `（KV: ${payload.binding}）` : '';
+                setSaveStatus('success', `已保存并同步到服务端${bindingName}。`);
+                this.$message.success(`访客上传设置已保存${bindingName}`);
+                window.setTimeout(() => done(), 260);
+              })
+              .catch((error) => {
+                instance.confirmButtonLoading = false;
+                instance.confirmButtonText = '保存设置';
+                const msg = error?.status === 401 ? '需要管理员登录后才能保存。' : (error.message || error);
+                setSaveStatus('warning', `保存失败：${msg}`);
+                this.$message.error(`保存失败：${msg}`);
+              });
+          }
         });
       },
       shouldShowImage(item) {
