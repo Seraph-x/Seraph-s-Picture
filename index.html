@@ -4631,7 +4631,15 @@
               return;
             }
 
-            // 其他类型（office/.zip/.exe 等）- 直接下载
+            // Office 文档 - 微软 Office Online Viewer（需文件公网可访问）
+            const officeExts = ["doc", "docx", "xls", "xlsx", "ppt", "pptx"];
+            if (officeExts.includes(ext)) {
+              const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+              this.previewData = { ...base, type: "iframe", iframeUrl: officeUrl };
+              return;
+            }
+
+            // 其他类型（.zip/.exe 等）- 直接下载
             this.downloadFile(file);
           },
 

@@ -771,7 +771,12 @@
         <!-- 文本预览 -->
         <pre v-else-if="previewType === 'text' && !loading" class="preview-text">{{ textContent }}</pre>
 
-        <!-- Office / 其他类型 - 暂不支持在线预览，提示下载 -->
+        <!-- Office 文档预览 - 微软 Office Online Viewer -->
+        <div v-else-if="previewType === 'office' && !loading" class="iframe-preview-container">
+          <iframe ref="mediaIframe" :src="officeViewerUrl" allow="fullscreen" allowfullscreen></iframe>
+        </div>
+
+        <!-- 其他类型 - 暂不支持在线预览，提示下载 -->
         <div v-else-if="!loading" class="preview-unsupported">
           <i :class="fileIcon"></i>
           <h3>{{ t('preview.unsupportedTitle') }}</h3>
@@ -885,6 +890,10 @@
         fullFileUrl() {
           const fileUrlPath = this.fileUrl.startsWith('/') ? this.fileUrl : `/file/${this.fileUrl}`;
           return window.location.origin + fileUrlPath;
+        },
+        // Office 文档在线预览 - 微软 Office Online Viewer（需文件公网可访问）
+        officeViewerUrl() {
+          return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(this.fullFileUrl)}`;
         }
       },
       methods: {
