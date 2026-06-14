@@ -187,14 +187,14 @@
     /* 图片预览 - 原生方式 */
     .preview-image {
       max-width: 100%;
-      max-height: 70vh;
+      max-height: 85vh;
       object-fit: contain;
     }
 
     /* 原生视频/音频预览 */
     .preview-media {
       max-width: 100%;
-      max-height: 70vh;
+      max-height: 85vh;
       border-radius: 8px;
       background: #000;
     }
@@ -203,14 +203,37 @@
       width: 100%;
     }
 
-    /* 统一媒体预览 - iframe 容器 (85% 屏幕宽高) */
+    /* 媒体预览 - iframe 容器 */
     .iframe-preview-container {
       width: 100%;
-      height: 70vh;
+      height: 85vh;
       position: relative;
       border-radius: 8px;
       overflow: hidden;
       background: #000;
+    }
+
+    /* 全屏预览：预览区铺满整个屏幕 */
+    .preview-area:fullscreen,
+    .preview-area:-webkit-full-screen {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+    }
+    .preview-area:fullscreen .preview-image,
+    .preview-area:-webkit-full-screen .preview-image,
+    .preview-area:fullscreen .preview-media,
+    .preview-area:-webkit-full-screen .preview-media,
+    .preview-area:fullscreen .iframe-preview-container,
+    .preview-area:-webkit-full-screen .iframe-preview-container {
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      border-radius: 0;
     }
 
     .iframe-preview-container iframe {
@@ -698,6 +721,9 @@
         <button type="button" class="theme-floating-toggle" data-i18n-toggle aria-label="切换语言">
           <span data-lang-label>EN</span>
         </button>
+        <button class="btn btn-secondary" v-if="['image','video','pdf','office'].includes(previewType) && !loading" @click="togglePreviewFullscreen" :title="isFullscreen ? t('preview.exitFullscreen') : t('preview.fullscreen')">
+          <i :class="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"></i> {{ isFullscreen ? t('preview.exitFullscreen') : t('preview.fullscreen') }}
+        </button>
         <button class="btn btn-secondary" @click="copyLink">
           <i class="fas fa-copy"></i> {{ t('preview.copyLink') }}
         </button>
@@ -727,7 +753,7 @@
       </div>
 
       <!-- 预览区域 -->
-      <div class="preview-area">
+      <div class="preview-area" ref="previewArea">
         <!-- 加载中 -->
         <div class="loading" v-if="loading">
           <div class="loading-spinner"></div>
@@ -824,6 +850,8 @@
         zh: {
           'preview.title': '文件预览',
           'preview.copyLink': '复制链接',
+          'preview.fullscreen': '全屏',
+          'preview.exitFullscreen': '退出全屏',
           'preview.download': '下载文件',
           'preview.backHome': '返回首页',
           'preview.loading': '加载中...',
@@ -840,6 +868,8 @@
         en: {
           'preview.title': 'File Preview',
           'preview.copyLink': 'Copy Link',
+          'preview.fullscreen': 'Fullscreen',
+          'preview.exitFullscreen': 'Exit Fullscreen',
           'preview.download': 'Download',
           'preview.backHome': 'Back to Home',
           'preview.loading': 'Loading...',
@@ -871,7 +901,8 @@
         showNsfw: false,
         safeMode: true,
         dataSaverMode: false,
-        nsfwModel: null
+        nsfwModel: null,
+        isFullscreen: false
       },
       computed: {
         fileIcon() {
@@ -900,6 +931,20 @@
         t(key, params) {
           void this.lang;
           return window.I18n ? I18n.t(key, params) : key;
+        },
+
+        // 切换预览全屏（对预览区域请求全屏）
+        togglePreviewFullscreen() {
+          const el = this.$refs.previewArea;
+          const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+          if (fsEl) {
+            (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+          } else if (el) {
+            (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+          }
+        },
+        handlePreviewFullscreenChange() {
+          this.isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
         },
 
         formatSize(bytes) {
@@ -1104,11 +1149,15 @@
       },
       async mounted() {
         if (window.I18n) { I18n.onChange((lang) => { this.lang = lang; }); }
+        document.addEventListener('fullscreenchange', this.handlePreviewFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', this.handlePreviewFullscreenChange);
         const isAuth = await this.checkAuth();
         if (!isAuth) return;
         this.init();
       },
       beforeDestroy() {
+        document.removeEventListener('fullscreenchange', this.handlePreviewFullscreenChange);
+        document.removeEventListener('webkitfullscreenchange', this.handlePreviewFullscreenChange);
         // 销毁 iframe 防止后台继续播放
         this.destroyIframes();
       }
