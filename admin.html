@@ -545,6 +545,7 @@
       flex: 1 1 240px;
       min-width: 0;
       width: 100%;
+      box-sizing: border-box;
       height: 38px;
       padding: 0 12px;
       border-radius: 10px;
@@ -557,6 +558,37 @@
       outline: none;
       border-color: rgba(194, 100, 63, 0.55);
       box-shadow: 0 0 0 3px rgba(194, 100, 63, 0.16);
+    }
+    .acc-pass-field {
+      position: relative;
+    }
+    .acc-pass-field .ui-design-input {
+      padding-right: 42px;
+    }
+    .acc-pass-toggle {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      border: 0;
+      background: transparent;
+      color: #667085;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+    .acc-pass-toggle:hover {
+      color: #c2643f;
+      background: rgba(194, 100, 63, 0.08);
+    }
+    .ui-design-foot.acc-foot-center {
+      justify-content: center;
+      text-align: center;
     }
     .ui-upload-drop {
       min-width: 128px;
@@ -5057,24 +5089,39 @@
             </section>
 
             <section class="ui-design-section">
+              <div class="ui-design-section-title">${this.t('admin.accountCurrentPasswordLabel')}</div>
+              <div class="acc-pass-field">
+                <input id="accCurrentPassword" class="ui-design-input" type="password" autocomplete="current-password"
+                  placeholder="${this.t('admin.accountCurrentPasswordPh')}">
+                <button type="button" class="acc-pass-toggle" data-toggle-for="accCurrentPassword" aria-label="toggle">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="ui-design-section">
               <div class="ui-design-section-title">${this.t('admin.accountNewPasswordLabel')}</div>
-              <input id="accNewPassword" class="ui-design-input" type="password" autocomplete="new-password"
-                placeholder="${this.t('admin.accountNewPasswordPh')}">
+              <div class="acc-pass-field">
+                <input id="accNewPassword" class="ui-design-input" type="password" autocomplete="new-password"
+                  placeholder="${this.t('admin.accountNewPasswordPh')}">
+                <button type="button" class="acc-pass-toggle" data-toggle-for="accNewPassword" aria-label="toggle">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
             </section>
 
             <section class="ui-design-section">
               <div class="ui-design-section-title">${this.t('admin.accountNewPasswordConfirmLabel')}</div>
-              <input id="accNewPassword2" class="ui-design-input" type="password" autocomplete="new-password"
-                placeholder="${this.t('admin.accountNewPasswordConfirmPh')}">
+              <div class="acc-pass-field">
+                <input id="accNewPassword2" class="ui-design-input" type="password" autocomplete="new-password"
+                  placeholder="${this.t('admin.accountNewPasswordConfirmPh')}">
+                <button type="button" class="acc-pass-toggle" data-toggle-for="accNewPassword2" aria-label="toggle">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
             </section>
 
-            <section class="ui-design-section">
-              <div class="ui-design-section-title">${this.t('admin.accountCurrentPasswordLabel')}</div>
-              <input id="accCurrentPassword" class="ui-design-input" type="password" autocomplete="current-password"
-                placeholder="${this.t('admin.accountCurrentPasswordPh')}">
-            </section>
-
-            <div class="ui-design-foot">
+            <div class="ui-design-foot acc-foot-center">
               <span id="accSaveStatus" class="ui-design-save-status"></span>
             </div>
           </div>
@@ -5085,6 +5132,22 @@
           if (!status) return;
           status.setAttribute('data-state', state || '');
           status.textContent = text || '';
+        };
+
+        const bindPasswordToggles = () => {
+          document.querySelectorAll('.acc-pass-toggle').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const input = document.getElementById(btn.getAttribute('data-toggle-for'));
+              const icon = btn.querySelector('i');
+              if (!input) return;
+              const show = input.type === 'password';
+              input.type = show ? 'text' : 'password';
+              if (icon) {
+                icon.classList.toggle('fa-eye', !show);
+                icon.classList.toggle('fa-eye-slash', show);
+              }
+            });
+          });
         };
 
         this.$alert(html, this.t('admin.accountPanelTitle'), {
@@ -5153,6 +5216,7 @@
               });
           }
         });
+        window.setTimeout(bindPasswordToggles, 0);
       },
       async showGuestSettingsPanel() {
         const clamp = (value, min, max) => {
