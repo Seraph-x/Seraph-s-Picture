@@ -595,7 +595,7 @@
       gap: 8px;
     }
     .acc-passkey-empty {
-      color: #98a2b3;
+      color: var(--text-secondary, #98a2b3);
       font-size: 13px;
       padding: 6px 2px;
     }
@@ -606,8 +606,8 @@
       gap: 10px;
       padding: 10px 12px;
       border-radius: 12px;
-      border: 1px solid rgba(17, 24, 39, 0.08);
-      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid var(--surface-border, rgba(17, 24, 39, 0.08));
+      background: var(--surface-3, rgba(255, 255, 255, 0.6));
     }
     .acc-passkey-meta {
       display: flex;
@@ -621,14 +621,14 @@
     .acc-passkey-name {
       font-weight: 600;
       font-size: 14px;
-      color: #1f2937;
+      color: var(--text-primary, #1f2937);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .acc-passkey-date {
       font-size: 12px;
-      color: #98a2b3;
+      color: var(--text-secondary, #98a2b3);
     }
     .acc-passkey-actions {
       display: inline-flex;
@@ -638,11 +638,11 @@
     .acc-passkey-mini {
       width: 30px;
       height: 30px;
-      border: 1px solid rgba(17, 24, 39, 0.1);
+      border: 1px solid var(--surface-border, rgba(17, 24, 39, 0.1));
       background: transparent;
       border-radius: 8px;
       cursor: pointer;
-      color: #475467;
+      color: var(--text-secondary, #475467);
       display: inline-flex;
       align-items: center;
       justify-content: center;
