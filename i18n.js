@@ -9,8 +9,8 @@
   var STORAGE_KEY = 'seraph-lang';
   var SUPPORTED = ['zh', 'en'];
   var HTML_LANG = { zh: 'zh-CN', en: 'en' };
-  // Short label shown on a toggle button = the language you will switch TO.
-  var TOGGLE_LABEL = { zh: 'EN', en: '中文' };
+  // Short label shown on a toggle button = the language currently in use.
+  var TOGGLE_LABEL = { zh: '中', en: 'EN' };
 
   var dict = { zh: {}, en: {} };
   var listeners = [];

@@ -1002,6 +1002,11 @@
     .admin-theme-btn i {
       pointer-events: none;
     }
+    .admin-lang-btn {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+    }
 
     /* Element UI dropdown menu transparency support */
     .el-dropdown-menu,
@@ -1152,6 +1157,9 @@
             <el-tooltip :content="t('admin.tooltipUiDesign')" placement="bottom"><i class="fas fa-sliders-h" @click="showUiDesignSettingsPanel"></i></el-tooltip>
             <el-tooltip :content="t('admin.tooltipGuestUpload')" placement="bottom"><i class="fas fa-user-shield" @click="showGuestSettingsPanel"></i></el-tooltip>
             <el-tooltip :content="t('admin.tooltipAccount')" placement="bottom"><i class="fas fa-user-cog" @click="showAccountSecurityPanel"></i></el-tooltip>
+            <button type="button" class="admin-theme-btn admin-lang-btn" data-i18n-toggle aria-label="切换语言">
+              <span data-lang-label>EN</span>
+            </button>
             <button type="button" class="admin-theme-btn" data-theme-toggle :title="t('admin.tooltipTheme')">
               <i class="fas fa-moon" data-theme-icon></i>
             </button>

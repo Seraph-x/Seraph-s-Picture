@@ -592,7 +592,7 @@ body.login-page .bg-overlay {
   border-radius: 999px;
   border: 1px solid var(--claude-border, rgba(255, 255, 255, 0.18));
   background: var(--claude-panel-soft, rgba(255, 255, 255, 0.12));
-  color: var(--claude-text-strong, #fff);
+  color: var(--claude-accent, #d97757);
   font-size: 13px;
   font-weight: 600;
   line-height: 1;
@@ -615,7 +615,12 @@ body.login-page .bg-overlay {
 
 .lang-toggle .lang-toggle-icon {
   font-size: 12px;
-  opacity: 0.9;
+  opacity: 1;
+  color: var(--claude-accent, #d97757);
+}
+
+.lang-toggle:hover .lang-toggle-icon {
+  color: #fff;
 }
 
 /* Floating placement (e.g. login page without a header).

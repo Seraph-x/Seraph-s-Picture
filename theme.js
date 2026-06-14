@@ -41,6 +41,7 @@
     var icon = button.querySelector("[data-theme-icon]");
     var label = button.querySelector("[data-theme-label]");
     var toDark = normalized !== "dark";
+    var isDark = normalized === "dark";
 
     var hint = toDark
       ? tLabel("切换到夜间模式", "Switch to dark mode")
@@ -48,11 +49,12 @@
     button.setAttribute("aria-label", hint);
     button.setAttribute("title", hint);
 
+    // Show the theme currently in use (not the one we'd switch to).
     if (icon) {
-      icon.className = toDark ? "fas fa-moon" : "fas fa-sun";
+      icon.className = isDark ? "fas fa-moon" : "fas fa-sun";
     }
     if (label) {
-      label.textContent = toDark ? tLabel("夜间", "Dark") : tLabel("亮色", "Light");
+      label.textContent = isDark ? tLabel("夜间", "Dark") : tLabel("亮色", "Light");
     }
   }
 
