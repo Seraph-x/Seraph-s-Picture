@@ -1511,9 +1511,11 @@
             </template>
             <div class="pagination-container">
               <el-pagination
-                background layout="total, prev, pager, next"
+                background layout="slot, prev, pager, next"
                 :total="paginationTotal" :page-size="pageSize"
-                @current-change="handlePageChange" :current-page.sync="currentPage" />
+                @current-change="handlePageChange" :current-page.sync="currentPage">
+                <span class="el-pagination__total">{{ t('admin.pageTotal', { n: paginationTotal }) }}</span>
+              </el-pagination>
             </div>
             <div v-if="nextCursor" class="load-more-container">
               <el-button :loading="isLoadingMore" :disabled="isLoadingMore" @click="loadMore">
@@ -1824,6 +1826,7 @@
         'admin.accountPasskeyNamePh': '为这个 Passkey 取个名字（如 我的 Mac）',
         'admin.totalRecords': '总记录:',
         'admin.loadedCount': '已加载',
+        'admin.pageTotal': '共 {n} 条',
         'admin.folderManage': '目录管理',
         'admin.refreshFolders': '刷新目录与文件',
         'admin.createFolderTitle': '新建目录',
@@ -2205,6 +2208,7 @@
         'admin.accountPasskeyNamePh': 'Name this passkey (e.g. My Mac)',
         'admin.totalRecords': 'Total:',
         'admin.loadedCount': 'Loaded',
+        'admin.pageTotal': 'Total {n}',
         'admin.folderManage': 'Folder Management',
         'admin.refreshFolders': 'Refresh folders and files',
         'admin.createFolderTitle': 'New Folder',
