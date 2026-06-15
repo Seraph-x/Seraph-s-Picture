@@ -43,6 +43,11 @@ body.admin-page .header-content .actions.admin-header-tools {
   -webkit-backdrop-filter: none !important;
 }
 
+/* 搜索框内文字/占位符居中 */
+.admin-header-primary .search-card .el-input__inner {
+  text-align: center !important;
+}
+
 .admin-header-tools > .el-dropdown,
 .admin-header-system > .el-dropdown,
 .admin-header-system > .el-tooltip,
