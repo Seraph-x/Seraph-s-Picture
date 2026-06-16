@@ -17,6 +17,7 @@ test-login.json
 .playwright-cli/
 .playwright-mcp/
 .serena/
+.claude/
 .DS_Store
 
 # Internal planning / scratch docs (local working notes, not for the public repo)
