@@ -62,6 +62,7 @@ function loadConfig(env = process.env) {
     nodeEnv: normalizeEnvString(env.NODE_ENV, 'development'),
     publicBaseUrl: normalizeEnvString(env.PUBLIC_BASE_URL),
 
+    authDisabled: toBool(env.AUTH_DISABLED, false),
     basicUser: normalizeEnvString(env.BASIC_USER),
     basicPass: normalizeEnvString(env.BASIC_PASS),
     sessionCookieName: normalizeEnvString(env.SESSION_COOKIE_NAME, 'seraph_pictures_session'),

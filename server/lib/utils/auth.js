@@ -30,7 +30,7 @@ class AuthService {
   }
 
   isAuthRequired() {
-    return Boolean(this.config.basicUser && this.config.basicPass);
+    return !this.config.authDisabled;
   }
 
   generateToken() {
@@ -115,7 +115,7 @@ class AuthService {
 
   checkAuthentication(request) {
     if (!this.isAuthRequired()) {
-      return { authenticated: true, reason: 'no-auth-required', user: 'anonymous' };
+      return { authenticated: true, reason: 'auth-disabled', user: 'anonymous' };
     }
 
     const sessionToken = this.getSessionTokenFromRequest(request);

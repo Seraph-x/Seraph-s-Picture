@@ -293,8 +293,13 @@ export function createLegacyClearSessionCookieHeaders() {
 /**
  * 检查是否需要认证
  */
-export function isAuthRequired(env) {
-  return !!(env.BASIC_USER && env.BASIC_PASS);
+function isTruthy(value) {
+  if (value == null || value === '') return false;
+  return ['1', 'true', 'yes', 'on'].includes(String(value).trim().toLowerCase());
+}
+
+export function isAuthRequired(env = {}) {
+  return !isTruthy(env.AUTH_DISABLED);
 }
 
 /**
@@ -303,9 +308,9 @@ export function isAuthRequired(env) {
 export async function checkAuthentication(context) {
   const { request, env } = context;
   
-  // 如果没有配置认证，直接放行
+  // 只有显式 AUTH_DISABLED=true 才关闭认证。
   if (!isAuthRequired(env)) {
-    return { authenticated: true, reason: 'no-auth-required' };
+    return { authenticated: true, reason: 'auth-disabled' };
   }
   
   // 检查 Cookie 会话
