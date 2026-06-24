@@ -190,6 +190,8 @@ describe('Claude layout balance contract', function () {
     assert.doesNotMatch(adminHtml, /href="\/app\/storage"/);
     assert.doesNotMatch(adminHtml, /href="\/app\/status"/);
     assert.match(adminHtml, /confirmButtonText:\s*this\.t\('admin\.close'\)/);
+    assert.match(adminHtml, /\.storage-config-alert\s+\.el-message-box__title[\s\S]*text-align:\s*center/);
+    assert.match(adminHtml, /\.storage-config-alert\s+\.el-message-box__btns[\s\S]*justify-content:\s*center/);
   });
 
   it('centers UI design dialog controls and removes old project footer branding', function () {
