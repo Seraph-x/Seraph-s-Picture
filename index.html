@@ -2317,6 +2317,8 @@
             alt="Seraph's Pictures Logo"
             class="brand-logo"
             loading="eager"
+            data-brand-home="1"
+            @click.stop="handleBrandLogoClick"
             onerror="this.onerror=null;this.src='/favicon.ico';"
           />
           <span class="brand-name">Seraph's Pictures</span>
@@ -3744,6 +3746,17 @@
             // reference this.lang so templates re-render on language switch
             void this.lang;
             return window.I18n ? I18n.t(key, params) : key;
+          },
+
+          handleBrandLogoClick() {
+            if (!this.isGuest) {
+              window.location.href = "/";
+              return;
+            }
+            const currentPath =
+              window.location.pathname + window.location.search;
+            window.location.href =
+              "/login.html?redirect=" + encodeURIComponent(currentPath || "/");
           },
           normalizeFolderPath(value) {
             const parts = String(value || "")
