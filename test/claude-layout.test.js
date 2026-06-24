@@ -203,6 +203,10 @@ describe('Claude layout balance contract', function () {
     assert.match(adminHtml, /ui-design-action-grid/);
     assert.match(adminHtml, /ui-design-footer-actions/);
     assert.match(adminHtml, /ui-effect-grid/);
+    assert.match(adminHtml, /\.ui-design-alert\s+\.el-message-box__header[\s\S]*text-align:\s*center/);
+    assert.match(adminHtml, /\.ui-design-alert\s+\.el-message-box__title[\s\S]*justify-content:\s*center/);
+    assert.match(adminHtml, /class="ui-design-foot ui-design-reset-foot"[\s\S]*id="uiResetDefaults"/);
+    assert.match(adminHtml, /\.ui-design-reset-foot[\s\S]*justify-items:\s*center/);
     assert.match(layout, /\.ui-design-panel[\s\S]*text-align:\s*center/);
     assert.match(layout, /\.ui-design-action-grid[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
     assert.match(layout, /\.ui-effect-grid[\s\S]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/);

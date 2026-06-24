@@ -906,6 +906,15 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+    .ui-design-reset-foot {
+      display: grid;
+      justify-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .ui-design-reset-foot .ui-design-save-status {
+      justify-content: center;
+    }
     .ui-design-save-status {
       min-height: 20px;
       font-size: 12px;
@@ -937,11 +946,14 @@
     .ui-design-alert .el-message-box__header {
       padding: 20px 24px 10px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      text-align: center;
     }
     .ui-design-alert .el-message-box__title {
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      width: 100%;
       font-size: 16px;
       font-weight: 600;
       color: #111827;
@@ -5092,7 +5104,7 @@
               <div class="ui-design-tip">${this.t('admin.uiOptimizeTip')}</div>
             </section>
 
-            <div class="ui-design-foot">
+            <div class="ui-design-foot ui-design-reset-foot">
               <button type="button" id="uiResetDefaults" class="el-button el-button--small">${this.t('admin.uiResetDefaults')}</button>
               <span id="uiSaveStatus" class="ui-design-save-status"></span>
             </div>
